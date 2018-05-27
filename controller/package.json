@@ -1,0 +1,42 @@
+{
+  "name": "rayscale",
+  "version": "0.0.1",
+  "description": "Raytracer for parallel processing in containers",
+  "main": "master/server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "tsc && node dist/server.js",
+    "build": "tsc",
+    "watch": "tsc -w & nodemon dist/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benc-uk/rayscale.git"
+  },
+  "author": "Ben Coleman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benc-uk/rayscale/issues"
+  },
+  "homepage": "https://github.com/benc-uk/rayscale#readme",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "gl-matrix": "^2.6.1",
+    "morgan": "^1.9.0",
+    "typescript": "^2.8.3",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.16.8",
+    "@types/cors": "^2.8.4",
+    "@types/dotenv": "^4.0.3",
+    "@types/express": "4.11.1",
+    "@types/gl-matrix": "^2.4.0",
+    "@types/morgan": "^1.7.35",
+    "@types/uuid": "^3.4.3"
+  }
+}

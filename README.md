@@ -1,2 +1,2 @@
-# rayscale
-Raytracer designed for container based scaling in Kubernetes
+# RayScale
+Raytracer written in Node.js designed for container based scaling in Kubernetes.
