@@ -13,11 +13,10 @@ import { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import uuidv4 from 'uuid/v4';
 
-
 dotenv.config();
 
 // Globals
-var tracers: any[] = Array();
+var tracers: any = {};
 var job: any = {};
 var scene: any = {};
 
@@ -47,10 +46,14 @@ app.use('*', function (req, res, next) {
 })
 
 // Start server
-let port = process.env.PORT || 8500;
+let port = process.env.PORT || 9000;
+let checkInterval = process.env.HEALTH_CHECK_INTERVAL || "10";
 const server = app.listen(port, function () {
-  console.log(`### Server listening on ${port}`);
+  console.log(`### Controller server listening on ${port}`);
+  setInterval(tracerHealthCheck, parseInt(checkInterval) * 1000);
 });
+
+// =======================================================================================================
 
 function getStatus(req: Request, res: Response) {
   res.status(200).send({msg:"Hello!"})
@@ -58,14 +61,15 @@ function getStatus(req: Request, res: Response) {
 
 function addTracer(req: Request, res: Response) {
   let tracer = req.body;
-  tracer.id = uuidv4();
-  tracers.push(tracer);
+  //console.log(tracer);
+  
+  tracers[tracer.id] = tracer;
 
   console.log(`### ${JSON.stringify(tracer)}`);
   res.contentType('application.json');
-  res.status(200).send(tracer);
+  res.status(200).send({h:"shit"});
 
-  console.log(`### Tracers online: ${tracers.length}`);
+  console.log(`### Tracers online: ${Object.keys(tracers).length}`);
 }
 
 function startJob(req: Request, res: Response) {
@@ -90,4 +94,12 @@ function listJobs(req: Request, res: Response) {
 
 function listTracers(req: Request, res: Response) {
   console.log(req);
+}
+
+function tracerHealthCheck() {
+  console.log(`### Running tracer health check...`);
+  
+  for(let tracer in tracers) {
+    console.log(tracers[tracer]);
+  }
 }
