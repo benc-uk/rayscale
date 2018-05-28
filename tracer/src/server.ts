@@ -5,15 +5,17 @@
 //
 
 // Load in modules, and create Express app 
-import express from 'express';
+import express, { Application } from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
 import cors from 'cors';
-import { Application, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import uuidv4 from 'uuid/v4';
 import request from 'request-promise-native';
 import os from 'os';
+import { Utils } from './lib/utils'
+import { API } from './api';
+import { Raytracer } from './raytracer';
 
 dotenv.config();
 
@@ -32,79 +34,58 @@ if (app.get('env') === 'production') {
 }
 console.log(`### Node environment mode is '${app.get('env')}'`);
 
-// Routing here!
-app.get ('/api/status',  getStatus);
-app.get ('/api/tasks',   listTasks);
-app.post('/api/tasks',   newTask);
+// Initial checks
+let ctrlEndpoint = process.env.CONTROLLER_ENDPOINT;
+if(!ctrlEndpoint) {
+  console.error(`### Error! No CONTROLLER_ENDPOINT supplied, exiting!`);
+  process.exit(1);
+}
 
-
+// Routing here
+let api = new API(ctrlEndpoint)
+app.get ('/api/ping',    api.healthPing);
+app.get ('/api/status',  api.getStatus);
+app.get ('/api/tasks',   api.listTasks);
+app.post('/api/tasks',   api.newTask);
 // Global catch all for all requests not caught by other routes
-// Just return a HTTP 400
 app.use('*', function (req, res, next) {
   res.sendStatus(400);
 })
 
 // Start server
-async function startServer() {
-  let ctrlEndpoint = process.env.CONTROLLER_ENDPOINT;
-  if(!ctrlEndpoint) {
-    console.error(`### Error! No CONTROLLER_ENDPOINT supplied, exiting!`);
-    process.exit(1);
+let port = process.env.PORT || 8500;
+const server = app.listen(port, async () => {
+  console.log(`### Tracer server listening on ${port}`);
+
+  // Get hostname / IP address info
+  let hostname = null;
+  if(process.env.USE_IPADDRESS == 'true') {
+    hostname = Utils.getNetInterfaceIP();
+  } else {
+    hostname = os.hostname()
+  }
+  if(hostname) {
+    console.log(`### Detected hostname: ${hostname}`);     
+  } else {
+    console.error(`### ERROR! Unable to get hostname, exiting!`);  
+    process.exit(2);   
   }
 
-  let port = process.env.PORT || 8500;
-  const server = app.listen(port, async () => {
-    console.log(`### Tracer server listening on ${port}`);
+  // Register with controller
+  let regRequest = {
+    endPoint: `http://${hostname}:${port}/api`,
+    id: uuidv4()
+  }
   
-    // Register with controller
+  let resp = await request.post({
+    url: `${ctrlEndpoint}/tracers`,
+    body: JSON.stringify(regRequest), 
+    headers: {'content-type' : 'application/json'}
+  })
+  .catch(err => {
+    console.error(`### ERROR! Unable to register with controller API`);
+    console.log(`### ERROR! ${err.message}, exiting!`);
+    process.exit(3);   
+  })
 
-    // Work out local address / IP
-    let addr = process.env.LOCAL_ADDRESS || null;
-    if(!addr) {
-      for(let iface in os.networkInterfaces()) {
-        if(iface.startsWith('eth')) {
-          addr = os.networkInterfaces()[iface][0].address;
-        }
-      }
-    }
-    if(addr) {
-      console.log(`### Detected local network address: ${addr}`);     
-    } else {
-      console.error(`### ERROR! Unable to get local net address, exiting!`);  
-      process.exit(2);   
-    }
-
-    let regRequest = {
-      endPoint: `http://${addr}:${port}/api`,
-      id: uuidv4()
-    }
-    
-    let resp = await request.post({
-      url: `${ctrlEndpoint}/tracers`,
-      body: JSON.stringify(regRequest), 
-      headers: {'content-type' : 'application/json'}
-    })
-    .catch(err => {
-      console.error(`### ERROR! Unable to register with controller API`);
-      console.log(`### ERROR! ${err.message}, exiting!`);
-      process.exit(3);   
-    })
-  });
-}
-
-// Begin!
-startServer();
-
-// =======================================================================================================
-
-function getStatus(req: Request, res: Response) {
-  res.status(200).send({msg:"Hello!"})
-}
-
-function newTask(req: Request, res: Response) {
-  res.status(200).send({});
-}
-
-function listTasks(req: Request, res: Response) {
-  console.log(req);
-}
+});

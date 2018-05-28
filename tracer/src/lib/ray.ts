@@ -1,5 +1,5 @@
 //
-// Rayscale - Base classes
+// Rayscale - Base raytracing classes
 // (C) Ben Coleman 2018
 //
 
@@ -11,6 +11,10 @@ class Ray {
 
   constructor(pos: vec3, dir: vec3) {
     this.pos = pos;
-    this.dir = dir;
+    vec3.normalize(this.dir, dir);
+  }
+
+  toString(): string  {
+    return `(pos: [${this.pos}], dir: [${this.dir}])`;
   }
 }
