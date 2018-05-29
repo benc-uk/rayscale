@@ -5,19 +5,19 @@
 //
 
 // Load in modules, and create Express app 
-import express from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
 import cors from 'cors';
-import { Application, Request, Response } from 'express';
+import express from 'express';
 import dotenv from 'dotenv';
 import { API } from './api';
 
 dotenv.config();
 
-const app:Application = express();
+const app = express();
 app.use(cors());
 app.use(bodyParser.json())
+app.use(bodyParser.raw({ limit: '10mb', type: 'application/octet-stream' }));
 
 // Set up logging
 if (app.get('env') === 'production') {
@@ -49,4 +49,8 @@ const server = app.listen(port, function () {
   console.log(`### Controller server listening on ${port}`);
   console.log(`### Health checks run every ${checkInterval} seconds`);
   setInterval(api.tracerHealthCheck, parseInt(checkInterval) * 1000);
+
+  // TESTING HARNESS
+  api.createJob({name: 'testJob', width: 255, height: 32});
+
 });

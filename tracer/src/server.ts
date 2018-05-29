@@ -5,7 +5,7 @@
 //
 
 // Load in modules, and create Express app 
-import express, { Application } from 'express';
+import express from 'express';
 import bodyParser from 'body-parser';
 import logger from 'morgan';
 import cors from 'cors';
@@ -22,7 +22,7 @@ dotenv.config();
 // Globals
 var scene: any = {};
 
-const app:Application = express();
+const app = express();
 app.use(cors());
 app.use(bodyParser.json())
 
@@ -80,7 +80,7 @@ const server = app.listen(port, async () => {
   let resp = await request.post({
     url: `${ctrlEndpoint}/tracers`,
     body: JSON.stringify(regRequest), 
-    headers: {'content-type' : 'application/json'}
+    headers: {'content-type': 'application/json'}
   })
   .catch(err => {
     console.error(`### ERROR! Unable to register with controller API`);

@@ -35,7 +35,7 @@ export class API {
         console.log(`### Task complete, letting controller know`);
         request.post({
           url: `${this.ctrlEndPoint}/tasks`,
-          body: {msg: "Task done",
+          body: {msg: "Task done"},
           headers: { 'content-type': 'application/json' }
         })
         .then(res => { console.log(res) })

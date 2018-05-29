@@ -1,6 +1,8 @@
 import { Request, Response } from 'express';
 import request from 'request-promise-native';
 import uuidv4 from 'uuid/v4';
+import * as PNG from 'pngjs';
+import fs from 'fs';
 
 export class API {
 
@@ -35,15 +37,9 @@ export class API {
       res.status(400).send({title: "No tracers online"}); return;
     }
   
-    this.job = req.body;
-    this.job.id = uuidv4();
-    this.job.status = "RUNNING"; 
-    this.job.taskCount = this.tracers.length; 
-    this.job.tasksComplete = 0; 
+    this.createJob(req.body)
   
-    // Create tasks and send to tracers
-  
-    res.status(200).send(this.job);
+    res.status(200).send({msg:"OK"});
   }
   
   public listJobs = (req: Request, res: Response) => {
@@ -55,7 +51,27 @@ export class API {
   }
   
   public taskComplete = (req: Request, res: Response) => {
-    console.log("COMPLETE!!!!");
+    let buff = req.body;
+
+    console.log(`### Image buffer received from tracer`);
+    for (var x = 0; x < this.job.width; x++) {
+      for (var y = 0; y < this.job.height; y++) {
+        let pngIdx = (this.job.width * y + x) << 2;
+        let buffIndx = ((this.job.width * y + x) * 3);
+
+        this.job.png.data[pngIdx + 0] = buff[buffIndx + 0];
+        this.job.png.data[pngIdx + 1] = buff[buffIndx + 1];
+        this.job.png.data[pngIdx + 2] = buff[buffIndx + 2];
+        this.job.png.data[pngIdx + 3] = 255
+      }
+    }
+
+    this.job.png.pack()
+    .pipe(fs.createWriteStream('outfile.png'))
+    .on('finish', function() {
+      console.log('### PNG Written!');
+    });
+    
     res.send({})
   }
   
@@ -74,5 +90,21 @@ export class API {
       });
     }
     //console.log(`### Tracers online: ${Object.keys(tracers).length}`);
+  }
+
+  public createJob(job: any) {
+    // Basic stuff supplied to us    
+    this.job = job;
+
+    // Add extra properties and objects we need
+    this.job.id = uuidv4();
+    this.job.status = "RUNNING"; 
+    this.job.taskCount = this.tracers.length; 
+    this.job.tasksComplete = 0;
+    this.job.png = new PNG.PNG({width:this.job.width, height:this.job.height});
+  
+    // Create tasks and send to tracers
+
+    console.log(`### New job created: ${this.job.name} with ${this.job.taskCount} tasks`)
   }
 }
