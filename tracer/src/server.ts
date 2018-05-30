@@ -27,11 +27,11 @@ app.use(cors());
 app.use(bodyParser.json())
 
 // Set up logging
-if (app.get('env') === 'production') {
-    app.use(logger('combined'));
-  } else {
-    app.use(logger('dev'));
-}
+// if (app.get('env') === 'production') {
+//     app.use(logger('combined'));
+//   } else {
+//     app.use(logger('dev'));
+// }
 console.log(`### Node environment mode is '${app.get('env')}'`);
 
 // Initial checks

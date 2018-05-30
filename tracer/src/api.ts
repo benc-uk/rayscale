@@ -7,6 +7,7 @@ import { Raytracer } from './raytracer';
 export class API {
 
   ctrlEndPoint: string;
+  //task: any;
 
   constructor(ep: string) {
     this.ctrlEndPoint = ep;
@@ -24,22 +25,25 @@ export class API {
     // All starts here!
     let task = req.body.task;
     let scene = req.body.scene;
-
-    let rt: Raytracer = new Raytracer({}, {});
   
-    console.log(`### Starting task ${task}, ${scene}`);
+    console.log(`### Starting task ${JSON.stringify(task)}, ${scene}`);
     res.status(200).send({ msg: "OK" });
 
+    let rt: Raytracer = new Raytracer(task, scene);
     rt.startTrace()
-      .then(() => {
-        console.log(`### Task complete, letting controller know`);
+      .then(imgbuffer => {
+        console.log(`### Task complete, sending image fragment back to controller`);
         request.post({
-          url: `${this.ctrlEndPoint}/tasks`,
-          body: {msg: "Task done"},
-          headers: { 'content-type': 'application/json' }
+          url: `${this.ctrlEndPoint}/tasks/${task.id}`,
+          body: imgbuffer,
+          headers: { 'content-type': 'application/octet-stream' }
         })
-        .then(res => { console.log(res) })
+        .then(res => {})
         .catch(err => { console.log(err) })
+      })
+      .catch(err => {
+        console.log(`### ERROR! Raytracing failed, we're fubar now`);
+        console.error(err);
       })
   }
 

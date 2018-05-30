@@ -17,24 +17,24 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json())
-app.use(bodyParser.raw({ limit: '10mb', type: 'application/octet-stream' }));
+app.use(bodyParser.raw({ limit: '100mb', type: 'application/octet-stream' }));
 
 // Set up logging
-if (app.get('env') === 'production') {
-    app.use(logger('combined'));
-  } else {
-    app.use(logger('dev'));
-}
+// if (app.get('env') === 'production') {
+//     app.use(logger('combined'));
+//   } else {
+//     app.use(logger('dev'));
+// }
 console.log(`### Node environment mode is '${app.get('env')}'`);
 
 // Routing here!
 const api = new API();
-app.get ('/api/status',  api.getStatus);
-app.get ('/api/jobs',    api.listJobs);
-app.post('/api/jobs',    api.startJob);
-app.get ('/api/tracers', api.listTracers);
-app.post('/api/tracers', api.addTracer);
-app.post('/api/tasks',   api.taskComplete);
+app.get ('/api/status',      api.getStatus);    // Stub
+app.get ('/api/jobs',        api.listJobs);     // Stub
+app.post('/api/jobs',        api.startJob);
+app.get ('/api/tracers',     api.listTracers);  // Stub
+app.post('/api/tracers',     api.addTracer);
+app.post('/api/tasks/:id',   api.taskComplete);
 
 // Global catch all for all requests not caught by other routes
 // Just return a HTTP 400
@@ -50,7 +50,7 @@ const server = app.listen(port, function () {
   console.log(`### Health checks run every ${checkInterval} seconds`);
   setInterval(api.tracerHealthCheck, parseInt(checkInterval) * 1000);
 
-  // TESTING HARNESS
-  api.createJob({name: 'testJob', width: 255, height: 32});
+  // !!! TESTING HARNESS - REMOVE LATER
+  //api.createJob({name: 'testJob', width: 255, height: 32});
 
 });
