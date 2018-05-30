@@ -12,8 +12,8 @@ export class Colour {
     this.b = b;
   }
 
-  toString() {
-    return `${this.r}, ${this.g}, ${this.b}`
+  public toString() {
+    return `r:${this.r}, g:${this.g}, b:${this.b}`
   }
 
   writePixeltoBuffer(img: Buffer, width: number, x: number, y: number) {

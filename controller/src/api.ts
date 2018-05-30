@@ -3,19 +3,19 @@ import request from 'request-promise-native';
 import uuidv4 from 'uuid/v4';
 import * as PNG from 'pngjs';
 import fs from 'fs';
-import { Job } from '../../models/job';
-import { Task } from '../../models/task';
-import { Tracer } from '../../models/tracer';
+import { Job } from './lib/job';
+import { Task } from './lib/task';
+import { Tracer } from './lib/tracer';
+import { Scene } from '../../tracer/src/lib/scene';
 
 export class API {
 
   private tracers: { [id: string]: Tracer };
   private job: Job;
-  private scene: any = {};
 
   constructor() {
-    this.tracers = {}
-    this.scene = {};
+    // Tracers starts as empty dict  
+    this.tracers = {};
   }
 
   //
@@ -74,7 +74,7 @@ export class API {
     for (var x = 0; x < this.job.width; x++) {
       let yBuff = 0;
 
-      for (var y = (task.height * task.index); y < (task.height * (task.index+1)); y++) {
+      for (var y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y++) {
         let pngIdx = (this.job.width * y + x) << 2;
         let buffIndx = ((this.job.width * yBuff + x) * 3);
 
@@ -124,6 +124,7 @@ export class API {
     this.job.name = jobInput.name;
     this.job.width = jobInput.width;
     this.job.height = jobInput.height;
+    this.job.scene = new Scene();
 
     // Add extra properties and objects we need
     this.job.id = uuidv4();
@@ -143,15 +144,17 @@ export class API {
       // !TODO! sliceHeight needs to account for remainder when non-integer
       let task = new Task();
       task.id = uuidv4();
-      task.width = this.job.width;
-      task.height = sliceHeight;
+      task.imageWidth = this.job.width;
+      task.imageHeight = this.job.height;
       task.index = taskIndex;
+      task.sliceStart = taskIndex * sliceHeight;
+      task.sliceHeight = sliceHeight;
 
       this.job.tasks.push(task); 
 
       request.post({
         uri: `${tracer.endPoint}/tasks`,
-        body: JSON.stringify({ task: task, scene: {} }),
+        body: JSON.stringify({ task: task, scene: jobInput.scene }),
         headers: { 'content-type': 'application/json' }
       })
       .catch(err => {

@@ -1,5 +1,5 @@
 import { Task } from './task';
-import { Scene } from './scene';
+import { Scene } from '../../../tracer/src/lib/scene';
 
 export class Job {
   name: string;             // Job name, no spaces!

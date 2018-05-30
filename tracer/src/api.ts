@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import request from 'request-promise-native';
 import { Raytracer } from './raytracer';
+import { Task } from '../../controller/src/lib/task';
 
 // =======================================================================================================
 
 export class API {
 
   ctrlEndPoint: string;
-  //task: any;
 
   constructor(ep: string) {
     this.ctrlEndPoint = ep;
@@ -23,10 +23,11 @@ export class API {
 
   public newTask = (req: Request, res: Response) => {
     // All starts here!
-    let task = req.body.task;
+    let task: Task = req.body.task;
     let scene = req.body.scene;
+    console.dir(task);
   
-    console.log(`### Starting task ${JSON.stringify(task)}, ${scene}`);
+    console.log(`### Starting task...`);
     res.status(200).send({ msg: "OK" });
 
     let rt: Raytracer = new Raytracer(task, scene);

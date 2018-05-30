@@ -9,7 +9,5 @@
     "outDir": "./dist",
     "rootDirs": ["."],
     "baseUrl": ".",
-    "paths": {
-    }
   }
 }

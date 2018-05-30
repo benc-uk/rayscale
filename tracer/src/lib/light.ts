@@ -3,10 +3,13 @@
 // (C) Ben Coleman 2018
 //
 
-import { Object3D } from './object3d';
+import { Colour } from './colour';
 import { vec3 } from 'gl-matrix';
 
-export class Sphere implements Object3D {
+export class Light {
   pos: vec3;
-  size: number;
+  colour: Colour;
+
+  brightness: number;
+  falloff: number;
 }
