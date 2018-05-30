@@ -33,23 +33,27 @@ export class Raytracer {
       for (var y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y++) {
         for (var x = 0; x < this.task.imageWidth; x++) {
 
-          // Calculate starting camera rays, to begin tracing process
-          // See https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-generating-camera-rays/generating-camera-rays
+          // Field of view scaling factor
           let fovScale = Math.tan(Utils.degreeToRad(this.scene.cameraFov * 0.5)); 
+          // This converts from raster space (output image) -> normalized space -> screen space
           let px: number = (2 * (x + 0.5) / this.task.imageWidth - 1) * fovScale  * aspectRatio; 
           let py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
+
+          // Create camera ray
           let origin: vec3 = vec3.fromValues(0.0, 0.0, 0.0);
           let dir: vec3 = vec3.fromValues(px, py, -1.0);
           //vec3.sub(dir, origin, dir); // Not required, when origin=[0,0,0] 
-
           let ray: Ray = new Ray(origin, dir);
           
+          // Top of raytracing process, will recurse into the scene casting more rays
           let outPixel: Colour = this.shadeRay(ray);
+          // Write resulting colour into output buffer
           outPixel.writePixeltoBuffer(this.image, this.task.imageWidth, x, bufferY);
         }
         bufferY++;
       }
       
+      // Resolve the promise with the rendered image buffer
       resolve(this.image);
     })
 
@@ -57,8 +61,6 @@ export class Raytracer {
   }
 
   private shadeRay(ray: Ray): Colour {
-    //console.log(ray.toString());
-    
     let f = 0.3;
     if(ray.dir[0] > -f && ray.dir[0] < f && ray.dir[1] > -f && ray.dir[1] < f) {
       //console.log(ray.toString());
