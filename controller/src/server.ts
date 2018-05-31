@@ -30,8 +30,8 @@ console.log(`### Node environment mode is '${app.get('env')}'`);
 // Routing here!
 const api = new API();
 app.get ('/api/status',      api.getStatus);    // Stub
-app.get ('/api/jobs',        api.listJobs);     // Stub
-app.post('/api/jobs',        api.startJob);
+app.get ('/api/job/:id',     api.listJobs);     // Stub
+app.post('/api/job',         api.startJob);
 app.get ('/api/tracers',     api.listTracers);  // Stub
 app.post('/api/tracers',     api.addTracer);
 app.post('/api/tasks/:id',   api.taskComplete);
