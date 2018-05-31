@@ -15,7 +15,7 @@ In computer graphics, ray tracing is a rendering technique for generating an ima
 ## Tracers
 
 # Basic System Architecture
-https://user-images.githubusercontent.com/14982936/40764441-fbed1ee0-64a0-11e8-86e8-b861c13f11b4.png
+![diagram](https://user-images.githubusercontent.com/14982936/40764441-fbed1ee0-64a0-11e8-86e8-b861c13f11b4.png)
 
 # APIs
 ## Controller API
@@ -31,3 +31,19 @@ https://user-images.githubusercontent.com/14982936/40764441-fbed1ee0-64a0-11e8-8
 
 
 # Models
+
+## Job Input
+```typescript
+name:   string;     // Job name, no spaces
+width:  number;     // Output image width
+height: number;     // Output image height
+scene:  Scene;      // Scene to be rendered  
+```
+
+## Job
+```
+```
+
+## Scene
+## Tracer
+## Task

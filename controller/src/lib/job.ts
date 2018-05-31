@@ -1,5 +1,6 @@
 import { Task } from './task';
 import { Scene } from '../../../tracer/src/lib/scene';
+import * as PNG from 'pngjs';
 
 export class Job {
   name: string;             // Job name, no spaces!
@@ -13,7 +14,7 @@ export class Job {
   taskCount: number;        // Total tasks in the job, e.g. number of tracers 
   tasksComplete: number;    // Tasks completed
 
-  png: any;                 // Weakly typed, should be pngjs.PNG
+  png: PNG.PNG;             // Output PNG image
 
-  tasks: Task[];
+  tasks: Task[];    
 }
