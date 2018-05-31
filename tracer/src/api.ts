@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import request from 'request-promise-native';
 import { Raytracer } from './raytracer';
 import { Task } from '../../controller/src/lib/task';
+import { Scene } from './lib/scene';
 
 // =======================================================================================================
 
@@ -24,10 +25,18 @@ export class API {
   public newTask = (req: Request, res: Response) => {
     // All starts here!
     let task: Task = req.body.task;
-    let scene = req.body.scene;
-    console.dir(task);
-  
+    let scene = null;
+
     console.log(`### Starting task...`);
+
+    // Parse scene
+    scene = Scene.parseScene(req.body.scene);
+    if(!scene) {
+      console.error(`### ERROR! Scene did not parse correctly, task rejected`);
+      res.status(500).send({ error: "Scene did not parse correctly, task rejected" });
+      return; 
+    }
+
     res.status(200).send({ msg: "OK" });
 
     let rt: Raytracer = new Raytracer(task, scene);

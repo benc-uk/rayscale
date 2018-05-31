@@ -25,14 +25,30 @@
 
     <textarea id="jobInput">{
   "name": "testJob",
-  "width": 1920,
-  "height": 1080,
+  "width": 800,
+  "height": 600,
   "scene": {
     "name": "testScene",
-    "backgroundColour": [2,3,4],
-    "cameraPos": [0,0,0],
-    "cameraDir": [0,0,0],
-    "cameraFov": 60
+    "backgroundColour": [20, 20, 60],
+    "ambientLevel": 0.2,
+    "cameraFov": 30,
+    "lights": [{"pos": [5,5,-23]}],
+    "objects": [
+      {
+        "type": "sphere",
+        "name": "sphere1",
+        "pos": [3,0.5,-20],
+        "size": 1.8,
+        "colour": [200, 100, 50]
+      },
+      {
+        "type": "sphere",
+        "name": "sphere2",
+        "pos": [1,-0.8,-20],
+        "size": 1.9,
+        "colour": [20, 10, 250]
+      }
+    ]
   }
 }</textarea><br/>
     <button onclick="jobSubmitter()">Start Job</button>
@@ -52,6 +68,7 @@
   <script>
   function jobSubmitter() {
     let job = document.getElementById('jobInput').value;
+    console.log(job);
     fetch("/api/job",
     {
         headers: {

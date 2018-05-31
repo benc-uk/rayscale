@@ -25,4 +25,16 @@ export class Ray {
                            this.pos[1] + t * this.dir[1], 
                            this.pos[2] + t * this.dir[2]);
   }
+
+  public reflect(norm: vec3): vec3 {
+    let ref: vec3 = vec3.create();
+    
+    let k: number = - vec3.dot(this.dir, norm);
+    ref[0] = this.dir[0] + 2 * norm[0] * k;
+    ref[1] = this.dir[1] + 2 * norm[1] * k;
+    ref[2] = this.dir[2] + 2 * norm[2] * k;
+    vec3.normalize(ref, ref);
+    
+    return ref;
+  }
 }

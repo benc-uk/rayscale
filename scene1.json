@@ -1,0 +1,22 @@
+{
+  "name": "testScene",
+  "backgroundColour": [30, 30, 60],
+  "ambientLevel": 0.2,
+  "cameraFov": 30,
+  "objects": [
+    {
+      "type": "sphere",
+      "name": "sphere1",
+      "pos": [1,0,0],
+      "size": 0.8,
+      "colour": [200, 100, 50]
+    },
+    {
+      "type": "sphere",
+      "name": "sphere2",
+      "pos": [-1,0,0],
+      "size": 0.8,
+      "colour": [20, 10, 250]
+    }
+  ]
+}

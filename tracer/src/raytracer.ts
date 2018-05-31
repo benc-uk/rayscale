@@ -10,7 +10,6 @@ import { Scene } from './lib/scene'
 import { Object3D } from './lib/object3d'
 import { Task } from '../../controller/src/lib/task'
 import { Utils } from './lib/utils'
-import { SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG } from 'constants';
 import { Sphere } from './lib/sphere';
 import { Hit } from './lib/hit';
 
@@ -19,18 +18,13 @@ export class Raytracer {
   task: Task;
   scene: Scene;
   
-  constructor(task: Task, scene: any) {
+  constructor(task: Task, scene: Scene) {
     this.task = task
     this.scene = scene;
-
-    // HACK HARDCODE SCENE HERE ARGH
-    this.scene.objects = [];
-    let sphere1: Sphere = new Sphere(vec3.fromValues(0, 0, -20), 1.0, 'sphere1');
-    this.scene.objects.push(sphere1);
     
-    console.log(`### New Raytracer...`)
-    console.dir(this.task);
-    console.dir(this.scene);
+    console.log(`### New Raytracer for slice ${this.task.index}...`)
+    //console.dir(this.task);
+    //console.dir(this.scene);
     this.image = Buffer.alloc(this.task.imageWidth * this.task.imageHeight * 3);
   }
 
@@ -70,14 +64,14 @@ export class Raytracer {
   }
 
   private shadeRay(ray: Ray): Colour {
-
     let t: number = Number.MAX_VALUE;
     let hitObject = null;
 
-    // Check all objects
+    // Check all objects for ray intersection t
     for(let obj of this.scene.objects) {
       let objT: number = obj.calcT(ray);
 
+      // Find closest hit only as that's how reality works
       if (objT > 0.0 && objT < t) {
         t = objT;
         hitObject = obj;
@@ -88,26 +82,27 @@ export class Raytracer {
     if(t > 0.0 && t < Number.MAX_VALUE) {
       let hit: Hit = hitObject.getHitPoint(t, ray);
 
+      // !TODO! Loop here for all lights!
+
+      let hitColour: Colour = hitObject.colour.copy();
+
       let lv: vec3 = vec3.create();
-      let lightPos: vec3 = vec3.fromValues(0, 2.1, -22);
+      let lightPos: vec3 = this.scene.lights[0].pos;
       vec3.subtract(lv, lightPos, hit.intersection);
       let lightDist: number = vec3.length(lv);
       vec3.normalize(lv, lv);
       let intens: number = Math.max(0.001, vec3.dot(lv, hit.normal));
-      //console.log(hit.intersection);
-      return new Colour(255*intens, 0, 0);
+
+      hitColour.mult(intens);
+
+      let rv: number = Math.max(0.0, vec3.dot(hit.reflected, lv));  // angle between light and reflected ray
+      let phong: number = Math.pow(rv, 20) * 1.2; // calc the Phong specular term
+      
+      hitColour.blend(phong);
+
+      return hitColour;
     }
 
-    return new Colour(30, 30, 60);
-
-    // let f = 0.3;
-    // if(ray.dir[0] > -f && ray.dir[0] < f && ray.dir[1] > -f && ray.dir[1] < f) {
-    //   //console.log(ray.toString());
-    //   return new Colour(50, Math.floor(this.task.index*15), 20);
-    // }
-
-    // let c = new Colour(0, 0, 40);
-    // if(Math.random() < 0.01) { let i = (Math.random()*200)+55; c = new Colour(i,i,i) }
-    // return c;
+    return this.scene.backgroundColour;
   }
 }

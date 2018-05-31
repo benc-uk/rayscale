@@ -12,4 +12,8 @@ export class Light {
 
   brightness: number;
   falloff: number;
+
+  constructor(pos: vec3) {
+    this.pos = pos;
+  }
 }

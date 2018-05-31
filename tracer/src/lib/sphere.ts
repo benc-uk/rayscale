@@ -7,25 +7,26 @@ import { Object3D } from './object3d';
 import { Ray } from './ray';
 import { vec3, mat4 } from 'gl-matrix';
 import { Hit } from './hit';
+import { Colour } from './colour';
 
 export class Sphere implements Object3D {
   trans: mat4;
+  pos: vec3;
   size: number;
   r2: number;
   name: string;
+  colour: Colour;
   static THRES: number = 0.001;
 
-  constructor(pos: vec3, s: number, name: string) {
-    this.size = s;
-    this.r2 = s * s;
+  constructor(pos: vec3, r: number, name: string) {
+    this.size = r;
+    this.r2 = r * r;
     this.name = name;
 
     this.trans = mat4.create();
-    console.log(`SPHERE POS ${pos.toString()}`);
     mat4.fromTranslation(this.trans, pos);
-    console.log(`SPHERE TRANSFORM ${this.trans.toString()}`);
     mat4.invert(this.trans, this.trans);
-    console.log(`SPHERE TRANSFORM INVERT ${this.trans.toString()}`);
+    this.pos = pos;
   }
 
   public calcT(ray: Ray): number {
@@ -62,10 +63,13 @@ export class Sphere implements Object3D {
 
   public getHitPoint(t: number, ray: Ray): Hit {
     let i: vec3 = ray.getPoint(t);
-    let n: vec3 = vec3.clone(i);
-    let r: vec3 = vec3.clone(i);
+
+    // Normal is pointing from center of sphere (pos) to intersect (i)
+    let n: vec3 = vec3.sub(vec3.create(), i, this.pos);
     vec3.normalize(n, n);
 
+    let r: vec3 = ray.reflect(n);
+    
     let hit: Hit = new Hit(i, n, r);
     return hit;
   }

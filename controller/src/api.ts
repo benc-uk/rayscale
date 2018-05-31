@@ -4,6 +4,7 @@ import uuidv4 from 'uuid/v4';
 import * as PNG from 'pngjs';
 import fs from 'fs';
 import { Job } from './lib/job';
+import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
 import { Scene } from '../../tracer/src/lib/scene';
@@ -92,7 +93,6 @@ export class API {
 
     if(this.job.tasksComplete == this.job.taskCount) {
       // We're DONE!
-
       this.completeJob();
     }
     
@@ -122,13 +122,14 @@ export class API {
   //
   // Create a new render job, with sub tasks fired off to tracers
   //
-  public createJob(jobInput: any) {
+  public createJob(jobInput: JobInput) {
     // Basic job info supplied to us
     this.job = new Job();
+    this.job.startDate = new Date();
+    this.job.startTime = process.hrtime()[0];
     this.job.name = jobInput.name;
     this.job.width = jobInput.width;
     this.job.height = jobInput.height;
-    this.job.scene = new Scene();
 
     // Add extra properties and objects we need
     this.job.id = uuidv4();
@@ -179,6 +180,11 @@ export class API {
     if(this.job.status != "RUNNING") {
       return;
     }
+
+    this.job.endDate = new Date();
+    this.job.durationTime = process.hrtime()[0] - this.job.startTime;
+    console.log(`### Job time ${this.job.startDate} -> ${this.job.endDate}`);
+    console.log(`### Job completed in ${this.job.durationTime} seconds`);
 
     let outDir = `${this.jobOutDir}/${this.job.name}`;
     if (!fs.existsSync(outDir)){
