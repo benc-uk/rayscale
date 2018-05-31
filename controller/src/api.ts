@@ -12,10 +12,12 @@ export class API {
 
   private tracers: { [id: string]: Tracer };
   private job: Job;
+  private jobOutDir: string;
 
-  constructor() {
+  constructor(outDir: string) {
     // Tracers starts as empty dict  
     this.tracers = {};
+    this.jobOutDir = outDir;
   }
 
   //
@@ -39,13 +41,15 @@ export class API {
   // API: Start a new job, POST data is inital job data
   //
   public startJob = (req: Request, res: Response) => {
+    res.type('application/json');
+    console.log(`### New job request received`);
     if(Object.keys(this.tracers).length <= 0) {
+      console.log(`### No tracers online, unable to start job`);
       res.status(400).send({title: "No tracers online"}); return;
     }
   
     // Create complete job object and kick everything off
     this.createJob(req.body)
-  
     res.status(200).send({msg: "Job started", id: this.job.id});
   }
 
@@ -176,8 +180,13 @@ export class API {
       return;
     }
 
+    let outDir = `${this.jobOutDir}/${this.job.name}`;
+    if (!fs.existsSync(outDir)){
+      fs.mkdirSync(outDir);
+    }
+
     this.job.png.pack()
-    .pipe(fs.createWriteStream('outfile.png'))
+    .pipe(fs.createWriteStream(`${outDir}/render.png`))
     .on('finish', () => {
       console.log('### PNG Written!');
       this.job.status = "COMPLETE";

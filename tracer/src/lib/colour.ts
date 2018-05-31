@@ -22,4 +22,12 @@ export class Colour {
     img[idx + 1] = this.g;
     img[idx + 2] = this.b;
   }
+
+  static BLACK   = new Colour(0,   0,   0);
+  static WHITE   = new Colour(255, 255, 255);
+  static RED     = new Colour(255, 0,   0);
+  static GREEN   = new Colour(0,   255, 0);
+  static BLUE    = new Colour(0,   0,   255);
+  static PURPLE  = new Colour(255, 0,   255);
+  static YELLOW  = new Colour(255, 255, 0);
 }

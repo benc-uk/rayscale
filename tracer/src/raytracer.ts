@@ -7,8 +7,12 @@ import { vec3 } from 'gl-matrix'
 import { Colour } from './lib/colour'
 import { Ray } from './lib/ray'
 import { Scene } from './lib/scene'
+import { Object3D } from './lib/object3d'
 import { Task } from '../../controller/src/lib/task'
 import { Utils } from './lib/utils'
+import { SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG } from 'constants';
+import { Sphere } from './lib/sphere';
+import { Hit } from './lib/hit';
 
 export class Raytracer {
   image: Buffer;
@@ -18,6 +22,11 @@ export class Raytracer {
   constructor(task: Task, scene: any) {
     this.task = task
     this.scene = scene;
+
+    // HACK HARDCODE SCENE HERE ARGH
+    this.scene.objects = [];
+    let sphere1: Sphere = new Sphere(vec3.fromValues(0, 0, -20), 1.0, 'sphere1');
+    this.scene.objects.push(sphere1);
     
     console.log(`### New Raytracer...`)
     console.dir(this.task);
@@ -61,14 +70,44 @@ export class Raytracer {
   }
 
   private shadeRay(ray: Ray): Colour {
-    let f = 0.3;
-    if(ray.dir[0] > -f && ray.dir[0] < f && ray.dir[1] > -f && ray.dir[1] < f) {
-      //console.log(ray.toString());
-      return new Colour(50, Math.floor(this.task.index*15), 20);
+
+    let t: number = Number.MAX_VALUE;
+    let hitObject = null;
+
+    // Check all objects
+    for(let obj of this.scene.objects) {
+      let objT: number = obj.calcT(ray);
+
+      if (objT > 0.0 && objT < t) {
+        t = objT;
+        hitObject = obj;
+      }
     }
 
-    let c = new Colour(0, 0, 40);
-    if(Math.random() < 0.01) { let i = (Math.random()*200)+55; c = new Colour(i,i,i) }
-    return c;
+    // We have an object hit! Time to do more work 
+    if(t > 0.0 && t < Number.MAX_VALUE) {
+      let hit: Hit = hitObject.getHitPoint(t, ray);
+
+      let lv: vec3 = vec3.create();
+      let lightPos: vec3 = vec3.fromValues(0, 2.1, -22);
+      vec3.subtract(lv, lightPos, hit.intersection);
+      let lightDist: number = vec3.length(lv);
+      vec3.normalize(lv, lv);
+      let intens: number = Math.max(0.001, vec3.dot(lv, hit.normal));
+      //console.log(hit.intersection);
+      return new Colour(255*intens, 0, 0);
+    }
+
+    return new Colour(30, 30, 60);
+
+    // let f = 0.3;
+    // if(ray.dir[0] > -f && ray.dir[0] < f && ray.dir[1] > -f && ray.dir[1] < f) {
+    //   //console.log(ray.toString());
+    //   return new Colour(50, Math.floor(this.task.index*15), 20);
+    // }
+
+    // let c = new Colour(0, 0, 40);
+    // if(Math.random() < 0.01) { let i = (Math.random()*200)+55; c = new Colour(i,i,i) }
+    // return c;
   }
 }

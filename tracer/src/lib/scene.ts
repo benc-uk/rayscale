@@ -12,4 +12,6 @@ export class Scene {
   cameraPos: vec3;    // Not used yet
   cameraDir: vec3;    // Not used yet
   cameraFov: number;  // Camera field of view in radians
+
+  objects: Object3D[];
 }

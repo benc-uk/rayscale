@@ -26,7 +26,7 @@ In computer graphics, ray tracing is a rendering technique for generating an ima
 |/api/job/{jobId}|GET|getJob()|*stub*|
 |/api/job|POST|startJob()|Start a new job|
 |/api/tracers|GET|listTracers()|*stub*|
-|/api/tracers|POST|addTracer()|When a tracer is started, registers with controller via this call|
+|/api/tracers|POST|addTracer()|When a tracer is started, it registers with the controller using this|
 |/api/tasks/{taskId}|POST|taskComplete()|Completion of a task, normally binary image data|
 
 

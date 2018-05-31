@@ -5,7 +5,11 @@ import * as PNG from 'pngjs';
 export class Job {
   name: string;             // Job name, no spaces!
   scene: Scene;             // Scene to be rendered
-
+  startDate: Date;
+  endDate: Date;
+  startMillsecs: number;
+  durationMillsecs: number;
+  
   id: string;               // GUID (NOT USED)
   width: number;
   height: number;
