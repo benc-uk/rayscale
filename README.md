@@ -45,6 +45,7 @@ Renders and ray traces images given to it via the **Controller**
 |/api/tasks/{taskId}|POST|taskComplete()|Completion of a task, normally binary image data|
 
 ## Tracer API
+
 |Route|Method|Calls|Notes|
 |---|---|---|---|
 |/api/ping|GET|healthPing()|Used by controller to check which tracers are online|
