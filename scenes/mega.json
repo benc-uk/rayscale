@@ -1,0 +1,598 @@
+{
+  "name": "testJob",
+  "width": 1920,
+  "height": 1080,
+  "scene": {
+    "name": "mega",
+    "backgroundColour": [10, 10, 30],
+    "ambientLevel": 0.2,
+    "cameraFov": 30,
+    "lights": [{"pos": [25,15,0]}],
+    "objects": [
+      {
+        "type": "sphere",
+        "name": "mirror-ball",
+        "pos": [3,0.5,-21],
+        "size": 2.8,
+        "material": {
+          "ka": 0.0, "kd": 0.9,
+          "ks": 1, "hardness": 30,
+          "kr": 0.5,
+          "colour": [15,15, 65]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere1",
+        "pos": [-2.8,2,-17],
+        "size": 1.8,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 1.0, "hardness": 150,
+          "kr": 0.3,
+          "colour": [255, 20, 50]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere2",
+        "pos": [0,2,-17],
+        "size": 0.8,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 0.9, "hardness": 20,
+          "kr": 0,
+          "colour": [20, 20, 255]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere3",
+        "pos": [2.5,2.6,-17],
+        "size": 0.8,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 0.7, "hardness": 8,
+          "kr": 0,
+          "colour": [255,69,0]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sky",
+        "pos": [0,4040,-20],
+        "size": 4000,
+        "material": {
+          "ka": 0.1, "kd": 1,
+          "ks": 0.0, "hardness": 0,
+          "kr": 0,
+          "colour": [10, 250, 20]
+        }
+      },
+
+
+
+
+      {
+        "type": "sphere",
+        "name": "floor-ball",
+        "pos": [-9,-5,-20],
+        "size": 2.0,
+        "material": {
+          "ka": 0.2, "kd": 0.7,
+          "ks": 0.7, "hardness": 10,
+          "kr": 0.5,
+          "colour": [250, 30, 30]
+        }
+      },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-6,-5,-20],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 60, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-3,-5,-20],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 90, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [0,-5,-20],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 120, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [3,-5,-20],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 150, 30]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [6,-5,-20],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 180, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [9,-5,-20],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 210, 30]
+    }
+  },
+
+
+
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-9,-5,-23],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 20]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-6,-5,-23],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 50]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-3,-5,-23],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 90]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [0,-5,-23],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 130]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [3,-5,-23],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 190]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [6,-5,-23],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 240]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [9,-5,-23],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 255]
+    }
+  },
+
+
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-9,-5,-17],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 10]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-6,-5,-17],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 50]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-3,-5,-17],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 90]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [0,-5,-17],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 130]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [3,-5,-17],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 190]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [6,-5,-17],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 240]
+    }
+  },
+  
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [9,-5,-17],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 255]
+    }
+  },
+
+
+
+
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-9,-5,-26],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 30, 30]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-6,-5,-26],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 60, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-3,-5,-26],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 90, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [0,-5,-26],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 120, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [3,-5,-26],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 150, 30]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [6,-5,-26],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 180, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [9,-5,-26],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 210, 30]
+    }
+  },
+
+
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-9,-5,-29],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 10]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-6,-5,-29],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 50]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-3,-5,-29],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 90]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [0,-5,-29],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 130]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [3,-5,-29],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 190]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [6,-5,-29],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 240]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [9,-5,-29],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [20, 80, 255]
+    }
+  },
+
+
+    
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-9,-5,-14],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 30, 30]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-6,-5,-14],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 60, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [-3,-5,-14],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 90, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [0,-5,-14],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 120, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [3,-5,-14],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 150, 30]
+    }
+  },
+    {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [6,-5,-14],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 180, 30]
+    }
+  },
+  {
+    "type": "sphere",
+    "name": "floor-ball",
+    "pos": [9,-5,-14],
+    "size": 2.0,
+    "material": {
+      "ka": 0.2, "kd": 0.7,
+      "ks": 0.7, "hardness": 10,
+      "kr": 0.5,
+      "colour": [250, 210, 30]
+    }
+  }
+
+    ]
+  }
+}

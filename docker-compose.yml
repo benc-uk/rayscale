@@ -1,0 +1,35 @@
+version: '3'
+
+# This file is intended for local testing and development
+# Not for use with Docker Swarm or for scaling to multiple containers per service
+
+services:
+  controller:
+    image: bencuk/rayscale-controller
+    build: 
+      context: .
+      dockerfile: controller/Dockerfile
+    ports: 
+      - 9000:9000
+    networks: 
+      - rayscale-net
+
+  tracer:
+    image: bencuk/rayscale-tracer
+    build: 
+      context: .
+      dockerfile: tracer/Dockerfile
+    ports: 
+      - 8500-8999:8500
+    environment:
+      - CONTROLLER_ENDPOINT=http://controller:9000/api
+    depends_on:
+      - controller     
+    networks: 
+      - rayscale-net
+  
+volumes:
+  render-data:
+
+networks:
+  rayscale-net:

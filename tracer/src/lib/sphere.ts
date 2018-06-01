@@ -8,6 +8,7 @@ import { Ray } from './ray';
 import { vec3, mat4 } from 'gl-matrix';
 import { Hit } from './hit';
 import { Colour } from './colour';
+import { Material } from './material';
 
 export class Sphere implements Object3D {
   trans: mat4;
@@ -15,7 +16,7 @@ export class Sphere implements Object3D {
   size: number;
   r2: number;
   name: string;
-  colour: Colour;
+  material: Material;
   static THRES: number = 0.001;
 
   constructor(pos: vec3, r: number, name: string) {
@@ -62,7 +63,7 @@ export class Sphere implements Object3D {
   }
 
   public getHitPoint(t: number, ray: Ray): Hit {
-    let i: vec3 = ray.getPoint(t);
+    let i: vec3 = ray.getPoint(t - 0.001);
 
     // Normal is pointing from center of sphere (pos) to intersect (i)
     let n: vec3 = vec3.sub(vec3.create(), i, this.pos);

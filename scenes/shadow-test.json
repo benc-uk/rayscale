@@ -1,0 +1,74 @@
+{
+  "name": "testJob",
+  "width": 1920,
+  "height": 1080,
+  "scene": {
+    "name": "shadowTest",
+    "backgroundColour": [10, 10, 30],
+    "ambientLevel": 0.2,
+    "cameraFov": 30,
+    "lights": [{"pos": [-15,15,0]}],
+    "objects": [
+      {
+        "type": "sphere",
+        "name": "o",
+        "pos": [3,0.5,-23],
+        "size": 2.8,
+        "material": {
+          "ka": 0.1, "kd": 0.9,
+          "ks": 0.2, "hardness": 4,
+          "kr": 0,
+          "colour": [220, 140, 20]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere1",
+        "pos": [-2.5,2,-17],
+        "size": 0.8,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 1.0, "hardness": 150,
+          "kr": 0,
+          "colour": [255, 20, 50]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere2",
+        "pos": [0,2,-17],
+        "size": 0.8,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 0.9, "hardness": 20,
+          "kr": 0,
+          "colour": [20, 20, 255]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere3",
+        "pos": [2.5,2,-17],
+        "size": 0.8,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 0.7, "hardness": 8,
+          "kr": 0,
+          "colour": [20, 200, 50]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "f",
+        "pos": [1,-500,-20],
+        "size": 498,
+        "material": {
+          "ka": 0.1, "kd": 1,
+          "ks": 0.0, "hardness": 0,
+          "kr": 0,
+          "colour": [150, 150, 150]
+        }
+      }
+    ]
+  }
+}

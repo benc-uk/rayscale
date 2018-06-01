@@ -35,6 +35,17 @@ export class Colour {
     this.r = this.r * v; this.g = this.g * v; this.b = this.b * v;
   }
 
+  public static add(c1: Colour, c2: Colour): Colour {
+    let c = new Colour;
+    c.r = c1.r+c2.r;
+    c.g = c1.g+c2.g;
+    c.b = c1.b+c2.b;
+    c.r = Math.min(1, c.r);
+    c.g = Math.min(1, c.g);
+    c.b = Math.min(1, c.b);
+    return c;
+  }
+
   public copy(): Colour {
     return new Colour(this.r, this.g, this.b);
   }

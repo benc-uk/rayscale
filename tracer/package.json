@@ -4,7 +4,8 @@
   "description": "Container based distributed raytracer - tracer/worker",
   "main": "dist/server.js",
   "scripts": {
-    "start": "tsc && node dist/tracer/src/server.js",
+    "start": "node dist/tracer/src/server.js",
+    "startdev": "tsc && node dist/tracer/src/server.js",
     "build": "tsc",
     "watch": "tsc -w & nodemon dist/tracer/src/server.js"
   },

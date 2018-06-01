@@ -27,8 +27,8 @@ if (app.get('env') === 'production') {
 }
 console.log(`### Node environment mode is '${app.get('env')}'`);
 
-var webUIDir = process.env.DIR_WEBUI || '/mnt/c/Dev/rayscale/controller/webui';
-var jobOutDir = process.env.DIR_JOBOUT || '/mnt/c/Dev/rayscale/controller/jobs';
+var webUIDir = process.env.DIR_WEBUI || './webui';
+var jobOutDir = process.env.DIR_JOBOUT || './jobs';
 //console.log(`${ __dirname + '/../../../webui'}`);
 
 // Routing here!

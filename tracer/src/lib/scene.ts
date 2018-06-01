@@ -32,12 +32,19 @@ export class Scene {
       // Parse objects
       scene.objects = [];
       for(let rawObj of input.objects) {
-        let obj = null;
+        let obj: Object3D = null;
         switch (rawObj.type) {
           case 'sphere':
             obj = new Sphere(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), rawObj.size, rawObj.name);
-            obj.colour = Colour.fromRGB(rawObj.colour[0], rawObj.colour[1], rawObj.colour[2]);
+            obj.material = new Material();
+            obj.material.colour = Colour.fromRGB(rawObj.material.colour[0], rawObj.material.colour[1], rawObj.material.colour[2]);
+            obj.material.ka = rawObj.material.ka;
+            obj.material.kd = rawObj.material.kd;
+            obj.material.ks = rawObj.material.ks;
+            obj.material.kr = rawObj.material.kr;
+            obj.material.hardness = rawObj.material.hardness;
         }
+        obj
         if(obj) scene.objects.push(obj);
       }
 

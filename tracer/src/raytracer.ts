@@ -22,7 +22,7 @@ export class Raytracer {
     this.task = task
     this.scene = scene;
     
-    console.log(`### New Raytracer for slice ${this.task.index}...`)
+    console.log(`### New Raytracer for task ${this.task.index + 1}...`)
     //console.dir(this.task);
     //console.dir(this.scene);
     this.image = Buffer.alloc(this.task.imageWidth * this.task.imageHeight * 3);
@@ -54,6 +54,8 @@ export class Raytracer {
           outPixel.writePixeltoBuffer(this.image, this.task.imageWidth, x, bufferY);
         }
         bufferY++;
+        let perc: number = (bufferY / this.task.sliceHeight) * 100;
+        if(bufferY % 20 == 0) console.log(`### Percent of task ${this.task.index + 1} rendered ${perc}%`)
       }
       
       // Resolve the promise with the rendered image buffer
@@ -84,7 +86,7 @@ export class Raytracer {
 
       // !TODO! Loop here for all lights!
 
-      let hitColour: Colour = hitObject.colour.copy();
+      let hitColour: Colour = hitObject.material.colour.copy();
 
       let lv: vec3 = vec3.create();
       let lightPos: vec3 = this.scene.lights[0].pos;
@@ -93,16 +95,52 @@ export class Raytracer {
       vec3.normalize(lv, lv);
       let intens: number = Math.max(0.001, vec3.dot(lv, hit.normal));
 
-      hitColour.mult(intens);
+      let shadowRay: Ray = new Ray(hit.intersection, lv);
+      let shadowT: number = Number.MAX_VALUE;
+      let shadow: boolean = false;
+      for(let obj of this.scene.objects) {
+        let shadTestT = obj.calcT(shadowRay);
+        
+        if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
+          shadowT = shadTestT;
+          break;
+        }
+      }
+      if(shadowT > 0.0 && shadowT < Number.MAX_VALUE) {
+        shadow = true;
+      }
 
       let rv: number = Math.max(0.0, vec3.dot(hit.reflected, lv));  // angle between light and reflected ray
-      let phong: number = Math.pow(rv, 20) * 1.2; // calc the Phong specular term
+      let phong: number = Math.pow(rv, hitObject.material.hardness) * hitObject.material.ks; // calc the Phong specular term
       
       hitColour.blend(phong);
+
+      if(!shadow) {
+        let dc = hitColour.multNew(intens * hitObject.material.kd);
+        let ac = hitColour.multNew(hitObject.material.ka);
+        hitColour = Colour.add(dc, ac);
+      } else {
+        hitColour.mult(hitObject.material.ka);
+      }
+
+      // Reflection!
+      if(hitObject.material.kr > 0) {
+        let reflectColour = this.shadeRay(new Ray(hit.intersection, hit.reflected))
+        reflectColour = reflectColour.multNew(hitObject.material.kr);
+        hitColour = Colour.add(hitColour, reflectColour);
+      }
 
       return hitColour;
     }
 
-    return this.scene.backgroundColour;
+    //if(true) {
+      if(Math.random() < 0.002) {
+        let r = (Math.random() * 0.8) + 0.2;
+        return new Colour(r, r, r);
+      }
+      return this.scene.backgroundColour;
+    // } else {
+    //   return this.scene.backgroundColour;
+    // }
   }
 }

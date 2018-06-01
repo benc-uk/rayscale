@@ -1,0 +1,52 @@
+{
+  "name": "testJob",
+  "width": 800,
+  "height": 600,
+  "scene": {
+    "name": "caterpillar",
+    "backgroundColour": [20, 20, 60],
+    "ambientLevel": 0.2,
+    "cameraFov": 30,
+    "lights": [{"pos": [5,5,-3]}],
+    "objects": [
+{ "type": "sphere","name": "s","pos": [-2,-0.8,-20],"size": 1.9,"colour": [20, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-1.8,-0.8,-20],"size": 1.9,"colour": [25, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-1.6,-0.8,-20],"size": 1.9,"colour": [30, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-1.4,-0.8,-20],"size": 1.9,"colour": [35, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-1.2,-0.8,-20],"size": 1.9,"colour": [40, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-1.0,-0.8,-20],"size": 1.9,"colour": [45, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-0.8,-0.8,-20],"size": 1.9,"colour": [50, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-0.6,-0.8,-20],"size": 1.9,"colour": [55, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-0.4,-0.8,-20],"size": 1.9,"colour": [60, 10, 250] },
+{ "type": "sphere","name": "s","pos": [-0.2,-0.8,-20],"size": 1.9,"colour": [65, 10, 250] },
+{ "type": "sphere","name": "s","pos": [0,-0.8,-20],"size": 1.9,"colour": [70, 10, 250] },
+{ "type": "sphere","name": "s","pos": [0.2,-0.8,-20],"size": 1.9,"colour": [75, 10, 250] },
+{ "type": "sphere","name": "s","pos": [0.4,-0.8,-20],"size": 1.9,"colour": [80, 10, 250] },
+{ "type": "sphere","name": "s","pos": [0.6,-0.8,-20],"size": 1.9,"colour": [85, 10, 250] },
+{ "type": "sphere","name": "s","pos": [0.8,-0.8,-20],"size": 1.9,"colour": [95, 10, 250] },
+{ "type": "sphere","name": "s","pos": [1.0,-0.8,-20],"size": 1.9,"colour": [100, 10, 250] },
+{ "type": "sphere","name": "s","pos": [1.2,-0.8,-20],"size": 1.9,"colour": [105, 10, 250] },
+{ "type": "sphere","name": "s","pos": [1.4,-0.8,-20],"size": 1.9,"colour": [110, 10, 250] },
+{ "type": "sphere","name": "s","pos": [1.6,-0.8,-20],"size": 1.9,"colour": [120, 10, 250] },
+{ "type": "sphere","name": "s","pos": [1.8,-0.8,-20],"size": 1.9,"colour": [125, 10, 250] },
+{ "type": "sphere","name": "s","pos": [2.0,-0.8,-20],"size": 1.9,"colour": [130, 10, 250] },
+{ "type": "sphere","name": "s","pos": [2.2,-0.8,-20],"size": 1.9,"colour": [135, 10, 250] },
+{ "type": "sphere","name": "s","pos": [2.4,-0.8,-20],"size": 1.9,"colour": [140, 10, 250] },
+{ "type": "sphere","name": "s","pos": [2.6,-0.8,-20],"size": 1.9,"colour": [145, 10, 250] },
+      {
+        "type": "sphere",
+        "name": "sphere1",
+        "pos": [3.5,0.5,-18.7],
+        "size": 0.4,
+        "colour": [10, 10, 10]
+      },
+      {
+        "type": "sphere",
+        "name": "f",
+        "pos": [1,-500,-20],
+        "size": 498,
+        "colour": [128, 128, 128]
+      }
+    ]
+  }
+}

@@ -6,11 +6,10 @@
 import { Colour } from './colour';
 
 export class Material {
-  color: Colour;  // Base colour
+  colour: Colour;  // Base colour
   ka: number;     // Ambient light coefficient 
   kd: number;     // Diffuse light coefficient 
   ks: number;     // Specular light coefficient 
-  hard: number;   // Hardness for specular highlights
+  hardness: number;   // Hardness for specular highlights
   kr: number;     // Reflection coefficient
-  
 }

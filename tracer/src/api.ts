@@ -15,11 +15,7 @@ export class API {
   }
 
   public healthPing(req: Request, res: Response) {
-    res.status(200).send({ resp: "Hello!" })
-  }
-
-  public getStatus(req: Request, res: Response) {
-    res.status(200).send({ msg: "Hello!" })
+    res.status(200).send({ resp: "Hello! I am alive" })
   }
 
   public newTask = (req: Request, res: Response) => {
@@ -55,6 +51,10 @@ export class API {
         console.log(`### ERROR! Raytracing failed, we're fubar now`);
         console.error(err);
       })
+  }
+
+  public getStatus(req: Request, res: Response) {
+    res.status(200).send({ msg: "Hello!" })
   }
 
   public listTasks(req: Request, res: Response) {
