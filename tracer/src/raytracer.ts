@@ -54,8 +54,8 @@ export class Raytracer {
           outPixel.writePixeltoBuffer(this.image, this.task.imageWidth, x, bufferY);
         }
         bufferY++;
-        let perc: number = (bufferY / this.task.sliceHeight) * 100;
-        if(bufferY % 20 == 0) console.log(`### Percent of task ${this.task.index + 1} rendered ${perc}%`)
+        let perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
+        if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Percent of task ${this.task.index + 1} rendered ${perc}%`);
       }
       
       // Resolve the promise with the rendered image buffer
@@ -73,7 +73,7 @@ export class Raytracer {
     for(let obj of this.scene.objects) {
       let objT: number = obj.calcT(ray);
 
-      // Find closest hit only as that's how reality works
+      // Find closest hit only, as that's how reality works
       if (objT > 0.0 && objT < t) {
         t = objT;
         hitObject = obj;
@@ -116,10 +116,12 @@ export class Raytracer {
       hitColour.blend(phong);
 
       if(!shadow) {
+        // Normal hit in light
         let dc = hitColour.multNew(intens * hitObject.material.kd);
         let ac = hitColour.multNew(hitObject.material.ka);
         hitColour = Colour.add(dc, ac);
       } else {
+        // In shadow hit use matrial ka
         hitColour.mult(hitObject.material.ka);
       }
 
@@ -133,14 +135,11 @@ export class Raytracer {
       return hitColour;
     }
 
-    //if(true) {
-      if(Math.random() < 0.002) {
-        let r = (Math.random() * 0.8) + 0.2;
-        return new Colour(r, r, r);
-      }
-      return this.scene.backgroundColour;
-    // } else {
-    //   return this.scene.backgroundColour;
-    // }
+    // Backgorund stars!
+    if(Math.random() < 0.002) {
+      let r = (Math.random() * 0.8) + 0.2;
+      return new Colour(r, r, r);
+    }
+    return this.scene.backgroundColour;
   }
 }

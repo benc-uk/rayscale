@@ -3,7 +3,7 @@
   "width": 1920,
   "height": 1080,
   "scene": {
-    "name": "mega",
+    "name": "stressTest",
     "backgroundColour": [10, 10, 30],
     "ambientLevel": 0.2,
     "cameraFov": 30,

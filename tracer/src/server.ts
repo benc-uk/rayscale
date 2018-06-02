@@ -72,6 +72,7 @@ const server = app.listen(port, async () => {
   }
 
   // Register with controller
+  api.tracerEndPoint = `http://${hostname}:${port}/api`;
   let regRequest = {
     endPoint: `http://${hostname}:${port}/api`,
     id: uuidv4()

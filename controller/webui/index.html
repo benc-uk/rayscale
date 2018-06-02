@@ -6,75 +6,54 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!--script src="https://unpkg.com/vue@2.5.16/dist/vue.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vuejs-dialog@0.9.0/dist/vuejs-dialog.min.js"></script-->
   <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js"></script>
-
   <link href="https://fonts.googleapis.com/css?family=Questrial" rel="stylesheet">
+  <link href="/ui/jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css">
+  <link rel="shortcut icon" href="favicon.png" type="image/png">
+  <script src="/ui/jsoneditor/jsoneditor.js"></script>
 
-  <title>RayScale WebUI</title>
+  <title>RayScale: Web UI</title>
 
   <link rel="stylesheet" href="css/app.css">
-  <link rel="icon" href="img/favicon.png">
+  <link rel="icon" href="favicon.png">
 </head>
 
 <body>
 
-  <h1>RayScale - Distributed Ray Tracer</h1>
+  <h1><i class="fa fa-eye"></i> RayScale - Distributed Ray Tracer</h1>
+
   <h2><i class="fa fa-code"></i> Job Input</h2>
+  <!-- editor -->
+  <div id="editor" wrap="soft" name="editor"></div><br/>
+  <button onclick="jobSubmitter()" class="button">Start Job</button>
+  <input type="text" id="resp" readonly/>
 
-    <textarea id="jobInput">{
-  "name": "testJob",
-  "width": 800,
-  "height": 600,
-  "scene": {
-    "name": "testScene",
-    "backgroundColour": [20, 20, 60],
-    "ambientLevel": 0.2,
-    "cameraFov": 30,
-    "lights": [{"pos": [5,5,-23]}],
-    "objects": [
-      {
-        "type": "sphere",
-        "name": "sphere1",
-        "pos": [3,0.5,-20],
-        "size": 1.8,
-        "colour": [200, 100, 50]
-      },
-      {
-        "type": "sphere",
-        "name": "sphere2",
-        "pos": [1,-0.8,-20],
-        "size": 1.9,
-        "colour": [20, 10, 250]
-      }
-    ]
-  }
-}</textarea><br/>
-    <button onclick="jobSubmitter()">Start Job</button>
-    <input type="text" id="resp" readonly style="width: 300px"/>
-  <hr/>
+  <br/><br/><br/>
 
-  <h2><i class="fa fa-coffee"></i> Job Output</h2>
-  <ul>
-    <li><i class="fa fa-image"></i>  <a href="/jobs/testJob/render.png">testJob/render.png</a></li>
-  </ul>
+  <h2><i class="fa fa-cubes"></i> Completed Jobs</h2>
+  <!-- job table -->
+  <table class="jobs">
+    <thead class="jobs">
+      <tr><th>Job Name</th><th>Render</th><th>Result Data</th><th>Scene JSON</th></tr>
+    </thead>
+    <tbody id="jobList"></tbody>
+  </table>
+  <br/>
+  <button onclick="jobRefresh()" class="button">Refresh Jobs</button>
 
-  <!--<div id="app">
-  </div>
-  <script src="js/app.js"></script>
-  -->
+  <!-- ######################################################################### -->
 
   <script>
+
+  //
+  //
+  //
   function jobSubmitter() {
-    let job = document.getElementById('jobInput').value;
-    console.log(job);
-    fetch("/api/job",
+    let job = editor.getText();
+    window.localStorage.setItem('rayScaleJob', job);
+    fetch("/api/jobs",
     {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         method: "POST",
         body: job
     })
@@ -82,9 +61,56 @@
       res.json().then(j => {document.getElementById('resp').value=JSON.stringify(j)});
      })
     .catch(err => {
-      err.json().then(j => {document.getElementById('resp').value=("r"+JSON.stringify(j))});
+      err.json().then(j => {document.getElementById('resp').value=("err "+JSON.stringify(j))});
     })
   }
+
+  //
+  //
+  //
+  function jobRefresh() {
+    let table = document.getElementById('jobList');
+    table.innerHTML = "";
+    fetch("/api/jobs",
+    {
+        headers: {'Accept': 'application/json'},
+        method: "GET",
+    })
+    .then(res => { 
+      res.json().then(data => {
+        for(let job of data.jobs) {
+          let row = table.insertRow(0);
+          var cell1 = row.insertCell(0);
+          cell1.innerHTML = `<b>${job}</b>&nbsp;&nbsp;&nbsp;`;
+          var cell2 = row.insertCell(1);
+          let r = Math.random();
+          cell2.innerHTML = `<a href='/jobs/${job}/render.png' target='${job}_render'><img src='/jobs/${job}/render.png?r=${r}' width='200px'></a>`;
+          var cell3 = row.insertCell(2);
+          cell3.innerHTML = `<a href='/jobs/${job}/result.json' target='${job}_result'>Results (JSON)</a>`;
+          var cell4 = row.insertCell(3);
+          cell4.innerHTML = `<a href='/jobs/${job}/scene.json' target='${job}_scene'>Scene (JSON)</a>`;
+        }
+      });
+     })
+    .catch(err => {
+      err.json().then(j => {document.getElementById('resp').value=("err "+JSON.stringify(j))});
+    })
+  }
+
+  //
+  // On page load
+  //
+  jobRefresh();
+  var container = document.getElementById("editor");
+  var options = { 
+    modes:['code', 'tree']
+
+  };
+  var editor = new JSONEditor(container, options);
+  // Load old job
+  let job = window.localStorage.getItem('rayScaleJob');
+  editor.setText(job);
+
   </script>
 </body>
 

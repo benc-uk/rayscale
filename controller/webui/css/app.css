@@ -1,13 +1,10 @@
-* {
-  font-family: 'Questrial', Arial, Helvetica, sans-serif;
-}
-
 html, body {
+  font-family: 'Questrial', Arial, Helvetica, sans-serif;
   font-size: 1.1em;
   width: 100%;
   height: 100%;
-  margin: 30;
-  padding: 30;
+  margin: 5px;
+  padding: 5px;
   background-color: #222;
   color: #ccc;
 }
@@ -16,14 +13,66 @@ a {
   color: #ccc;
 }
 
-textarea {
-  font-family: monospace; 
-  height: 250px; 
-  width: 400px;
-  background-color: black;
-  color: orange;
+h1 {
+  color: rgb(228, 127, 11);
 }
 
-button {
-  font-size: 28px;
+#editor {
+  font-family: 'Consolas', monospace; 
+  font-size: 150% !important;
+  max-height: 91vh;
+  height: 40vh;
+  width: 97%;
+  resize: both;
+  overflow: auto;
 }
+
+.ace_editor {
+  font-size: 16px !important;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 20px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: rgb(228, 127, 11);
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 9px #555;
+}
+
+.button:hover {background-color: rgb(241, 147, 40);}
+
+.button:active {
+  background-color: rgb(182, 102, 11);
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+#resp {
+  width: 500px;
+  height: 30px;
+  font-size: 18px;
+  background-color: #888;
+  color: #222;
+  border: 2px solid #111;
+}
+
+table.jobs  { 
+  border-spacing: 0px;
+  border-collapse: separate;
+  border: 2px solid rgb(228, 127, 11)
+}
+
+thead.jobs  {
+  background-color: rgb(117, 67, 9);
+  padding: 17px;
+}
+td, th {
+  padding: 17px;
+}
+
+#jobList tr:nth-child(even) {background-color: #333;}
+#jobList tr:hover {background-color: #444;}

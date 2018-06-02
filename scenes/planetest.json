@@ -1,0 +1,46 @@
+{
+  "name": "testJob",
+  "width": 800,
+  "height": 600,
+  "scene": {
+    "name": "Plane Test Scene",
+    "backgroundColour": [10, 10, 30],
+    "ambientLevel": 0.2,
+    "cameraFov": 30,
+    "lights": [{"pos": [0, 2, -9]}],
+    "objects": [
+      {
+        "type": "plane",
+        "name": "floor",
+        "pos": [0,-1,0],
+        "norm": [0,1,0],
+        "size": 0,
+        "material": {
+          "ka": 0.4, "kd": 0.6, "ks": 0.0, "hardness": 1, "kr": 0.0, 
+          "colour": [50, 50, 50]
+        }
+      },
+
+      {
+        "type": "sphere",
+        "name": "floor",
+        "pos": [0,0,-10],
+        "size": 1,
+        "material": {
+          "ka": 0.3, "kd": 0.7, "ks": 0.0, "hardness": 1, "kr": 0.0, 
+          "colour": [255, 20, 50]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "floor",
+        "pos": [2,0,-10],
+        "size": 1,
+        "material": {
+          "ka": 0.3, "kd": 0.7, "ks": 0.0, "hardness": 1, "kr": 0.0, 
+          "colour": [5, 255, 50]
+        }
+      }
+    ]
+  }
+}

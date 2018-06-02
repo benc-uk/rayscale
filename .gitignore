@@ -65,3 +65,6 @@ typings/
 
 # Compiled TS output
 **/dist
+
+# Jobs
+**/jobs/**

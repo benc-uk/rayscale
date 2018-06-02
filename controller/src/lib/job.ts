@@ -1,13 +1,13 @@
 import { Task } from './task';
-import { Scene } from '../../../tracer/src/lib/scene';
+//import { Scene } from '../../../tracer/src/lib/scene';
 import * as PNG from 'pngjs';
 
 export class Job {
   name: string;             // Job name, no spaces!
-  //scene: Scene;             // Scene to be rendered
+  //scene: any;               // Scene to be rendered, replace with 
   startDate: Date;
   endDate: Date;
-  startTime: number;
+  startTime: any;
   durationTime: number;
   
   id: string;               // GUID (NOT USED)

@@ -54,7 +54,6 @@ Renders and ray traces images given to it via the **Controller**
 |/api/tasks|POST|newTask()|Start a new task on this tracer|
 
 
-
 # Models
 
 ## Job Input

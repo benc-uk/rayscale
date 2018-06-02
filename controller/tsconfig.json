@@ -9,5 +9,11 @@
     "outDir": "./dist",
     "rootDirs": ["."],
     "baseUrl": ".",
-  }
+  },
+  "exclude": [
+    "**/node_modules",
+    "dist",
+    "jobs",
+    "webui"
+  ]
 }

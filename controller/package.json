@@ -4,10 +4,10 @@
   "description": "Container based distributed raytracer - controller",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/controller/src/server.js",
-    "startdev": "tsc && node dist/controller/src/server.js",
+    "start": "node dist/server.js",
+    "startdev": "tsc && node dist/server.js",
     "build": "tsc",
-    "watch": "tsc -w & nodemon dist/controller/src/server.js"
+    "watch": "tsc -w & nodemon dist/server.js --ignore jobs"
   },
   "repository": {
     "url": "git+https://github.com/benc-uk/rayscale.git"

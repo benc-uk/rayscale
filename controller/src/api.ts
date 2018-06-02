@@ -7,13 +7,14 @@ import { Job } from './lib/job';
 import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
-import { Scene } from '../../tracer/src/lib/scene';
 
 export class API {
 
   private tracers: { [id: string]: Tracer };
   private job: Job;
   private jobOutDir: string;
+  private rawScene: string;
+  private j: string;
 
   constructor(outDir: string) {
     // Tracers starts as empty dict  
@@ -59,6 +60,8 @@ export class API {
   //
   public taskComplete = (req: Request, res: Response) => {
     let taskId = req.params.id;
+    let taskIndex = req.headers['x-task-index'];
+    let taskTracer = req.headers['x-tracer'];
     
     // If we get anything other than binary data, that's a failure
     if(req.headers['content-type'] != 'application/octet-stream') {
@@ -72,9 +75,10 @@ export class API {
 
     // !TODO! - Check for no active job
 
-    console.log(`### Image buffer received for task: ${taskId}`);
+    console.log(`### Image buffer received from ${taskTracer} for task: ${taskIndex}`);
 
     this.job.tasksComplete++;
+    console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.taskCount}`);
 
     for (var x = 0; x < this.job.width; x++) {
       let yBuff = 0;
@@ -126,7 +130,7 @@ export class API {
     // Basic job info supplied to us
     this.job = new Job();
     this.job.startDate = new Date();
-    this.job.startTime = process.hrtime()[0];
+    this.job.startTime = new Date().getTime();
     this.job.name = jobInput.name;
     this.job.width = jobInput.width;
     this.job.height = jobInput.height;
@@ -157,6 +161,8 @@ export class API {
 
       this.job.tasks.push(task); 
 
+      this.rawScene = jobInput.scene;
+      console.log(`### Sending task ${task.index} to ${tracer.endPoint}`);
       request.post({
         uri: `${tracer.endPoint}/tasks`,
         body: JSON.stringify({ task: task, scene: jobInput.scene }),
@@ -180,10 +186,8 @@ export class API {
     if(this.job.status != "RUNNING") {
       return;
     }
-
     this.job.endDate = new Date();
-    this.job.durationTime = process.hrtime()[0] - this.job.startTime;
-    console.log(`### Job time ${this.job.startDate} -> ${this.job.endDate}`);
+    this.job.durationTime = (new Date().getTime() - this.job.startTime) / 1000;
     console.log(`### Job completed in ${this.job.durationTime} seconds`);
 
     let outDir = `${this.jobOutDir}/${this.job.name}`;
@@ -194,9 +198,23 @@ export class API {
     this.job.png.pack()
     .pipe(fs.createWriteStream(`${outDir}/render.png`))
     .on('finish', () => {
-      console.log('### PNG Written!');
+      console.log(`### Render complete, ${outDir}/render.png saved`);
       this.job.status = "COMPLETE";
+      let stats: any = {
+        status: this.job.status,
+        start: this.job.startDate,
+        end: this.job.endDate,
+        durationTime: this.job.durationTime,
+        totalRays: 0,
+        imageHeight: this.job.width,
+        imageWidth: this.job.width,
+        pixels: this.job.width * this.job.height
+      };
+  
+      fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(stats, null, 2));
+      fs.writeFileSync(`${outDir}/scene.json`, JSON.stringify(this.rawScene, null, 2));      
     });
+
   }
 
   //
@@ -206,8 +224,17 @@ export class API {
     res.status(200).send({msg:"API stub"})
   }
   
+  //
+  // List out the jobs directory, used by the UI
+  //
   public listJobs = (req: Request, res: Response) => {
-    res.status(200).send({msg:"API stub"})
+    let jobData: any = {jobs:[]};
+    fs.readdirSync(this.jobOutDir).forEach(file => {
+      jobData.jobs.push(file);
+    })
+
+    res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.status(200).send(jobData)
   }
   
   public listTracers = (req: Request, res: Response) => {

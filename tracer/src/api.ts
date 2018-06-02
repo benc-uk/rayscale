@@ -9,6 +9,7 @@ import { Scene } from './lib/scene';
 export class API {
 
   ctrlEndPoint: string;
+  tracerEndPoint: string;
 
   constructor(ep: string) {
     this.ctrlEndPoint = ep;
@@ -42,7 +43,12 @@ export class API {
         request.post({
           url: `${this.ctrlEndPoint}/tasks/${task.id}`,
           body: imgbuffer,
-          headers: { 'content-type': 'application/octet-stream' }
+          headers: { 
+            'content-type': 'application/octet-stream',
+            'x-tracer': this.tracerEndPoint,
+            'x-task-id': task.id,
+            'x-task-index': task.index
+          }
         })
         .then(res => {})
         .catch(err => { console.log(err) })
