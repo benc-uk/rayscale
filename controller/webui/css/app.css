@@ -23,8 +23,6 @@ h1 {
   max-height: 91vh;
   height: 40vh;
   width: 97%;
-  resize: both;
-  overflow: auto;
 }
 
 .ace_editor {
