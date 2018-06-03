@@ -8,6 +8,7 @@ import { vec4, mat4 } from 'gl-matrix'
 export class Ray {
   pos: vec4;
   dir: vec4;
+  depth: number;
 
   constructor(pos: vec4, dir: vec4) {
     this.pos = pos;
@@ -36,9 +37,9 @@ export class Ray {
   }
 
   public getPoint(t: number): vec4 {
-    return vec4.fromValues(this.pos[0] + t * this.dir[0], 
-                           this.pos[1] + t * this.dir[1], 
-                           this.pos[2] + t * this.dir[2], 1);
+    return vec4.fromValues(this.pos[0] + (t * this.dir[0]), 
+                           this.pos[1] + (t * this.dir[1]), 
+                           this.pos[2] + (t * this.dir[2]), 1);
   }
 
   public reflect(norm: vec4): vec4 {

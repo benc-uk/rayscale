@@ -22,10 +22,13 @@ export class Raytracer {
     this.task = task
     this.scene = scene;
     
-    console.log(`### New Raytracer for task ${this.task.index + 1}...`)
+    console.log(`### New ray tracer for task ${this.task.index + 1}...`)
     this.image = Buffer.alloc(this.task.imageWidth * this.task.imageHeight * 3);
   }
 
+  //
+  //
+  //
   public startTrace() {
     var myPromise = new Promise((resolve, reject) => {
       let aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height 
@@ -50,6 +53,7 @@ export class Raytracer {
           //vec4.sub(dir, origin, dir); // Not required, when origin=[0,0,0] 
           let ray: Ray = new Ray(origin, dir);
           ray.transform(camTrans);
+          ray.depth = 1;
           
           // Top of raytracing process, will recurse into the scene casting more rays
           let outPixel: Colour = this.shadeRay(ray);
@@ -68,6 +72,9 @@ export class Raytracer {
     return myPromise;
   }
 
+  //
+  //
+  //
   private shadeRay(ray: Ray): Colour {
     let t: number = Number.MAX_VALUE;
     let tRay = null;
@@ -134,7 +141,9 @@ export class Raytracer {
 
       // Reflection!
       if(hitObject.material.kr > 0) {
-        let reflectColour = this.shadeRay(new Ray(hit.intersection, hit.reflected))
+        let rRay = new Ray(hit.intersection, hit.reflected);
+        rRay.depth = ray.depth + 1;
+        let reflectColour = this.shadeRay(rRay);
         reflectColour = reflectColour.multNew(hitObject.material.kr);
         hitColour = Colour.add(hitColour, reflectColour);
       }
@@ -143,10 +152,11 @@ export class Raytracer {
     }
 
     // Backgorund stars!
-    if(Math.random() < 0.002) {
+    if(Math.random() < 0.002 && ray.depth <= 1) {
       let r = (Math.random() * 0.8) + 0.2;
       return new Colour(r, r, r);
+    } else {
+      return this.scene.backgroundColour;
     }
-    return this.scene.backgroundColour;
   }
 }

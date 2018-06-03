@@ -4,7 +4,7 @@ import { Sphere } from './sphere';
 import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
-import { Plane } from './plane';
+//import { Plane } from './plane';
 
 export class Scene {
   name: string;
@@ -91,7 +91,7 @@ export class Scene {
         scene.objects.push(s);
       }
     }*/
-    
+
     return scene;
   }
 }
