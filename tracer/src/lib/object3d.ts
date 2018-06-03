@@ -11,6 +11,7 @@ import { Material } from './material';
 
 export interface Object3D {
   trans: mat4;          // Inverse transform matrix to move rays into object space
+  transFwd: mat4;       // Forward transform matrix to move rays from object to world space
   size: number;         // Size, not used for all objects
   name: string;         // Name, not used yet
   material: Material;   // Material; color and other surface coefficients 

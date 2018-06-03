@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec4 } from 'gl-matrix'
+import { vec4, mat4 } from 'gl-matrix'
 
 export class Ray {
   pos: vec4;
@@ -19,6 +19,14 @@ export class Ray {
 
   public toString(): string  {
     return `pos: [${this.pos[0]}, ${this.pos[1]}, ${this.pos[2]}], dir: [${this.dir[0]}, ${this.dir[1]}, ${this.dir[2]}]`;
+  }
+
+  public transformNewRay(trans: mat4): Ray {
+    let newRay: Ray = new Ray(vec4.create(), vec4.create());
+    vec4.transformMat4(newRay.pos, this.pos, trans);
+    vec4.transformMat4(newRay.dir, this.dir, trans);
+    vec4.normalize(newRay.dir, newRay.dir);
+    return newRay;
   }
 
   public getPoint(t: number): vec4 {

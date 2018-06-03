@@ -5,39 +5,39 @@
 
 import { Object3D } from './object3d';
 import { Ray } from './ray';
-import { vec3, vec4, mat4 } from 'gl-matrix';
+import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
 import { Colour } from './colour';
 import { Material } from './material';
 
 export class Sphere implements Object3D {
   trans: mat4;
-  pos: vec4;
+  transFwd: mat4;
   size: number;
-  r2: number;
   name: string;
   material: Material;
   static THRES: number = 0.001;
+  static FUDGE: number  = 0.000001;
 
-  constructor(pos: vec4, r: number, name: string) {
-    //this.size = r;
-    this.r2 = r * r;
+  constructor(pos: vec4, radius: number, name: string) {
+    this.size = radius;
     this.name = name;
 
-    this.trans = mat4.create();
-    mat4.fromTranslation(this.trans, [pos[0], pos[1], pos[2]]);
-    mat4.invert(this.trans, this.trans);
-    this.pos = pos;
+    this.transFwd = mat4.identity(mat4.create());
+    this.trans = mat4.identity(mat4.create());
+    let rot: quat = quat.create();
+    mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [radius, radius, radius])
+    mat4.invert(this.trans, this.transFwd);
   }
 
   public calcT(ray: Ray): number {
-    let rPos: vec4 = vec4.clone(ray.pos);
-    let rDir: vec4 = vec4.clone(ray.dir);
+    let tRay: Ray = ray.transformNewRay(this.trans);
 
-    vec4.transformMat4(rPos, ray.pos, this.trans);
-    let b: number = 2.0 * vec4.dot(rPos, rDir);
-    //let c: number = vec4.dot(rPos, rPos) - this.r2;
-    let c: number = vec3.dot([rPos[0], rPos[1], rPos[2]], [rPos[0], rPos[1], rPos[2]]) - this.r2;
+    // Sphere at origin (0,0,0) so L simply becomes tRay.pos, but with w=0
+    //let L: vec4 = vec4.sub(vec4.create(), tRay.pos, vec4.fromValues(0, 0, 0, 1));
+    let L: vec4 = vec4.fromValues(tRay.pos[0], tRay.pos[1], tRay.pos[2], 0);
+    let b: number = 2.0 * vec4.dot(tRay.pos, tRay.dir);
+    let c: number = vec4.dot(L, L) - 1; // 
     let d: number = b*b - 4.0 * c;
 
     // Miss
@@ -60,17 +60,30 @@ export class Sphere implements Object3D {
       return t1;
     }
     
+    // Don't like this, but we scale our t values by the sphere r
+    t1 = t1 * this.size;
+    t2 = t2 * this.size;
+    
     return (t1 < t2) ? t1 : t2;
   }
 
   public getHitPoint(t: number, ray: Ray): Hit {
-    let i: vec4 = ray.getPoint(t - 0.001);
+    // Don't like this, but we scale BACK our t values by the sphere r
+    t = t / this.size;
 
-    // Normal is pointing from center of sphere (pos) to intersect (i)
-    let n: vec4 = vec4.sub(vec4.create(), i, this.pos);
+    // Transform ray into object space
+    let tRay: Ray = ray.transformNewRay(this.trans);
+    let i: vec4 = tRay.getPoint(t - Sphere.FUDGE);
+
+    // Normal is pointing from center of sphere (0,0,0) to intersect (i)
+    let n: vec4 = vec4.sub(vec4.create(), i, [0, 0, 0, 1]);
     vec4.normalize(n, n);
 
-    let r: vec4 = ray.reflect(n);
+    // calc reflected ray about the normal
+    let r: vec4 = tRay.reflect(n);
+
+    // move i back to world space
+    vec4.transformMat4(i, i, this.transFwd);
     
     let hit: Hit = new Hit(i, n, r);
     return hit;
