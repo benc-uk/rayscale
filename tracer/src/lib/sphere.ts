@@ -5,38 +5,39 @@
 
 import { Object3D } from './object3d';
 import { Ray } from './ray';
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3, vec4, mat4 } from 'gl-matrix';
 import { Hit } from './hit';
 import { Colour } from './colour';
 import { Material } from './material';
 
 export class Sphere implements Object3D {
   trans: mat4;
-  pos: vec3;
+  pos: vec4;
   size: number;
   r2: number;
   name: string;
   material: Material;
   static THRES: number = 0.001;
 
-  constructor(pos: vec3, r: number, name: string) {
-    this.size = r;
+  constructor(pos: vec4, r: number, name: string) {
+    //this.size = r;
     this.r2 = r * r;
     this.name = name;
 
     this.trans = mat4.create();
-    mat4.fromTranslation(this.trans, pos);
+    mat4.fromTranslation(this.trans, [pos[0], pos[1], pos[2]]);
     mat4.invert(this.trans, this.trans);
     this.pos = pos;
   }
 
   public calcT(ray: Ray): number {
-    let rPos: vec3 = vec3.clone(ray.pos);
-    let rDir: vec3 = vec3.clone(ray.dir);
+    let rPos: vec4 = vec4.clone(ray.pos);
+    let rDir: vec4 = vec4.clone(ray.dir);
 
-    vec3.transformMat4(rPos, ray.pos, this.trans);
-    let b: number = 2.0 * vec3.dot(rPos, rDir);
-    let c: number = vec3.dot(rPos, rPos) - this.r2;
+    vec4.transformMat4(rPos, ray.pos, this.trans);
+    let b: number = 2.0 * vec4.dot(rPos, rDir);
+    //let c: number = vec4.dot(rPos, rPos) - this.r2;
+    let c: number = vec3.dot([rPos[0], rPos[1], rPos[2]], [rPos[0], rPos[1], rPos[2]]) - this.r2;
     let d: number = b*b - 4.0 * c;
 
     // Miss
@@ -63,13 +64,13 @@ export class Sphere implements Object3D {
   }
 
   public getHitPoint(t: number, ray: Ray): Hit {
-    let i: vec3 = ray.getPoint(t - 0.001);
+    let i: vec4 = ray.getPoint(t - 0.001);
 
     // Normal is pointing from center of sphere (pos) to intersect (i)
-    let n: vec3 = vec3.sub(vec3.create(), i, this.pos);
-    vec3.normalize(n, n);
+    let n: vec4 = vec4.sub(vec4.create(), i, this.pos);
+    vec4.normalize(n, n);
 
-    let r: vec3 = ray.reflect(n);
+    let r: vec4 = ray.reflect(n);
     
     let hit: Hit = new Hit(i, n, r);
     return hit;

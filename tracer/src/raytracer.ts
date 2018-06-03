@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec3 } from 'gl-matrix'
+import { vec3, vec4 } from 'gl-matrix'
 import { Colour } from './lib/colour'
 import { Ray } from './lib/ray'
 import { Scene } from './lib/scene'
@@ -43,9 +43,9 @@ export class Raytracer {
           let py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
 
           // Create camera ray
-          let origin: vec3 = vec3.fromValues(0.0, 0.0, 0.0);
-          let dir: vec3 = vec3.fromValues(px, py, -1.0);
-          //vec3.sub(dir, origin, dir); // Not required, when origin=[0,0,0] 
+          let origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
+          let dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
+          //vec4.sub(dir, origin, dir); // Not required, when origin=[0,0,0] 
           let ray: Ray = new Ray(origin, dir);
           
           // Top of raytracing process, will recurse into the scene casting more rays
@@ -88,12 +88,12 @@ export class Raytracer {
 
       let hitColour: Colour = hitObject.material.colour.copy();
 
-      let lv: vec3 = vec3.create();
-      let lightPos: vec3 = this.scene.lights[0].pos;
-      vec3.subtract(lv, lightPos, hit.intersection);
-      let lightDist: number = vec3.length(lv);
-      vec3.normalize(lv, lv);
-      let intens: number = Math.max(0.001, vec3.dot(lv, hit.normal));
+      let lv: vec4 = vec4.create();
+      let lightPos: vec4 = this.scene.lights[0].pos;
+      vec4.subtract(lv, lightPos, hit.intersection);
+      let lightDist: number = vec4.length(lv);
+      vec4.normalize(lv, lv);
+      let intens: number = Math.max(0.001, vec4.dot(lv, hit.normal));
 
       let shadowRay: Ray = new Ray(hit.intersection, lv);
       let shadowT: number = Number.MAX_VALUE;
@@ -110,7 +110,7 @@ export class Raytracer {
         shadow = true;
       }
 
-      let rv: number = Math.max(0.0, vec3.dot(hit.reflected, lv));  // angle between light and reflected ray
+      let rv: number = Math.max(0.0, vec4.dot(hit.reflected, lv));  // angle between light and reflected ray
       let phong: number = Math.pow(rv, hitObject.material.hardness) * hitObject.material.ks; // calc the Phong specular term
       
       hitColour.blend(phong);

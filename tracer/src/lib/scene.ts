@@ -3,7 +3,7 @@ import { Object3D } from './object3d';
 import { Sphere } from './sphere';
 import { Light } from './light';
 import { Material } from './material';
-import { vec3 } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { Plane } from './plane';
 
 export class Scene {
@@ -36,11 +36,11 @@ export class Scene {
         let obj: Object3D = null;
         switch (rawObj.type.toLowerCase()) {
           case 'sphere':
-            obj = new Sphere(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), rawObj.size, rawObj.name);
+            obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.size, rawObj.name);
             break;
           case 'plane':
             console.dir(rawObj);
-            obj = new Plane(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), vec3.fromValues(rawObj.norm[0], rawObj.norm[1], rawObj.norm[2]), rawObj.name);
+            //obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), vec3.fromValues(rawObj.norm[0], rawObj.norm[1], rawObj.norm[2]), rawObj.name);
             break;
           default:
             throw `Object type '${rawObj.type}' is invalid`
@@ -61,7 +61,7 @@ export class Scene {
       // Parse lights
       scene.lights = [];
       for(let rawLight of input.lights) {
-        let light = new Light(vec3.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2]));
+        let light = new Light(vec4.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2], 1));
         
         if(light) scene.lights.push(light);
       }      

@@ -3,7 +3,6 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec3 } from 'gl-matrix';
 import { mat4 } from 'gl-matrix';
 import { Ray } from './ray';
 import { Hit } from './hit';

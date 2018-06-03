@@ -4,16 +4,16 @@
 //
 
 import { Colour } from './colour';
-import { vec3 } from 'gl-matrix';
+import { vec4 } from 'gl-matrix';
 
 export class Light {
-  pos: vec3;
+  pos: vec4;
   colour: Colour;
 
   brightness: number;
   falloff: number;
 
-  constructor(pos: vec3) {
+  constructor(pos: vec4) {
     this.pos = pos;
   }
 }
