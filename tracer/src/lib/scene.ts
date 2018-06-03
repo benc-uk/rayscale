@@ -73,11 +73,7 @@ export class Scene {
     }
 
     //
-    //
-    //
-
-
-    for(let z = -40; z <= 10; z+= 3) {
+    /*for(let z = -40; z <= 10; z+= 3) {
       for(let x = -13; x <= 28; x+= 3) {
         let m = new Material();
         m.colour = Colour.fromRGB(0, 0, 0);
@@ -94,7 +90,8 @@ export class Scene {
         s.material = m;
         scene.objects.push(s);
       }
-    }
+    }*/
+    
     return scene;
   }
 }

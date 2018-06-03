@@ -12,7 +12,7 @@ In computer graphics, ray tracing is a rendering technique for generating an ima
 
 ### Sample Images
 ![render 1](https://user-images.githubusercontent.com/14982936/40837744-627bab34-6593-11e8-981f-4df7685ba76c.png)
-![render 2](https://user-images.githubusercontent.com/14982936/40837745-628f91b2-6593-11e8-9917-f05a2ac277bd.png)
+![render 2](https://user-images.githubusercontent.com/14982936/40886157-0178fb40-672b-11e8-95a7-d900d0447600.png)
 
 
 
