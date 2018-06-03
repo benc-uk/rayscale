@@ -22,11 +22,17 @@ export class Ray {
   }
 
   public transformNewRay(trans: mat4): Ray {
-    let newRay: Ray = new Ray(vec4.create(), vec4.create());
-    vec4.transformMat4(newRay.pos, this.pos, trans);
-    vec4.transformMat4(newRay.dir, this.dir, trans);
-    vec4.normalize(newRay.dir, newRay.dir);
-    return newRay;
+    //let newRay: Ray = new Ray(vec4.create(), vec4.create());
+    let p = vec4.transformMat4(vec4.create(), this.pos, trans);
+    let d = vec4.transformMat4(vec4.create(), this.dir, trans);
+    vec4.normalize(d, d);
+    return new Ray(p, d);
+  }
+
+  public transform(trans: mat4) {
+    vec4.transformMat4(this.pos, this.pos, trans);
+    vec4.transformMat4(this.dir, this.dir, trans);
+    vec4.normalize(this.dir, this.dir);
   }
 
   public getPoint(t: number): vec4 {

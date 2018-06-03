@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec3, vec4 } from 'gl-matrix'
+import { vec3, vec4, mat4, quat } from 'gl-matrix'
 import { Colour } from './lib/colour'
 import { Ray } from './lib/ray'
 import { Scene } from './lib/scene'
@@ -23,14 +23,16 @@ export class Raytracer {
     this.scene = scene;
     
     console.log(`### New Raytracer for task ${this.task.index + 1}...`)
-    //console.dir(this.task);
-    //console.dir(this.scene);
     this.image = Buffer.alloc(this.task.imageWidth * this.task.imageHeight * 3);
   }
 
   public startTrace() {
     var myPromise = new Promise((resolve, reject) => {
       let aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height 
+
+      let camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0,1,0]);
+      mat4.invert(camTrans, camTrans);
+      //camTrans = mat4.fromRotationTranslationScale(camTrans, rot, [-13, 1, 0], [1, 1, 1]);
 
       let bufferY = 0
       for (var y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y++) {
@@ -47,6 +49,7 @@ export class Raytracer {
           let dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
           //vec4.sub(dir, origin, dir); // Not required, when origin=[0,0,0] 
           let ray: Ray = new Ray(origin, dir);
+          ray.transform(camTrans);
           
           // Top of raytracing process, will recurse into the scene casting more rays
           let outPixel: Colour = this.shadeRay(ray);
@@ -67,22 +70,25 @@ export class Raytracer {
 
   private shadeRay(ray: Ray): Colour {
     let t: number = Number.MAX_VALUE;
+    let tRay = null;
     let hitObject = null;
 
     // Check all objects for ray intersection t
     for(let obj of this.scene.objects) {
-      let objT: number = obj.calcT(ray);
+      let tResult = obj.calcT(ray);
+      let objT = tResult.t;
 
       // Find closest hit only, as that's how reality works
       if (objT > 0.0 && objT < t) {
         t = objT;
+        tRay = tResult.tRay;
         hitObject = obj;
       }
     }
 
     // We have an object hit! Time to do more work 
     if(t > 0.0 && t < Number.MAX_VALUE) {
-      let hit: Hit = hitObject.getHitPoint(t, ray);
+      let hit: Hit = hitObject.getHitPoint(t, tRay);
 
       // !TODO! Loop here for all lights!
 
@@ -99,7 +105,8 @@ export class Raytracer {
       let shadowT: number = Number.MAX_VALUE;
       let shadow: boolean = false;
       for(let obj of this.scene.objects) {
-        let shadTestT = obj.calcT(shadowRay);
+        //let shadtResult = obj.calcT(shadowRay);
+        let shadTestT = obj.calcT(shadowRay).t;
         
         if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
           shadowT = shadTestT;
@@ -122,7 +129,7 @@ export class Raytracer {
         hitColour = Colour.add(dc, ac);
       } else {
         // In shadow hit use matrial ka
-        hitColour.mult(hitObject.material.ka);
+        hitColour.mult(hitObject.material.ka * this.scene.ambientLevel);
       }
 
       // Reflection!

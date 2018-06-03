@@ -1,12 +1,14 @@
 {
   "name": "testJob",
-  "width": 1920,
-  "height": 1080,
+  "width": 400,
+  "height": 300,
   "scene": {
     "name": "stressTest",
     "backgroundColour": [10, 10, 30],
-    "ambientLevel": 0.2,
+    "ambientLevel": 0.5,
     "cameraFov": 30,
+    "cameraPos": [0, 0, 0],
+    "cameraLookAt": [3,0.5,-21],    
     "lights": [{"pos": [25,15,0]}],
     "objects": [
       {

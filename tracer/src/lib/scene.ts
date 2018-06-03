@@ -11,9 +11,9 @@ export class Scene {
   backgroundColour: Colour;
   ambientLevel: number;
 
-  cameraPos: vec3;    // Not used yet
-  cameraDir: vec3;    // Not used yet
-  cameraFov: number;  // Camera field of view in radians
+  cameraPos: vec3;      // Camera position in world
+  cameraLookAt: vec3;   // Camera look at point
+  cameraFov: number;    // Camera field of view in radians
 
   objects: Object3D[];
   lights: Light[];
@@ -29,6 +29,8 @@ export class Scene {
       scene.backgroundColour = Colour.fromRGB(input.backgroundColour[0], input.backgroundColour[1], input.backgroundColour[2]);
       scene.ambientLevel = input.ambientLevel;
       scene.cameraFov = input.cameraFov;
+      scene.cameraPos = vec3.fromValues(input.cameraPos[0], input.cameraPos[1], input.cameraPos[2]);
+      scene.cameraLookAt = vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]);
 
       // Parse objects
       scene.objects = [];
@@ -68,6 +70,30 @@ export class Scene {
     } catch(e) {
       console.log(`### ERROR! Scene parse failed, ${e}`);
       return null;
+    }
+
+    //
+    //
+    //
+
+
+    for(let z = -40; z <= 10; z+= 3) {
+      for(let x = -13; x <= 28; x+= 3) {
+        let m = new Material();
+        m.colour = Colour.fromRGB(0, 0, 0);
+        m.ka = 0.5;
+        m.kd = 0.9;
+        m.ks = 1.3;
+        m.kr = 0.0;
+        m.hardness = 70;
+
+        let s = new Sphere(vec4.fromValues(x, -2, z, 1), 2, `sphere,${z}, ${x}`);
+        let r = ((z+40)*5)+0;
+        let g = ((x+20)*3)+0;
+        m.colour = Colour.fromRGB(r, g, 0);
+        s.material = m;
+        scene.objects.push(s);
+      }
     }
     return scene;
   }

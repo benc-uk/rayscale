@@ -26,11 +26,12 @@ export class Sphere implements Object3D {
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());
     let rot: quat = quat.create();
+    //quat.rotateZ(rot, rot, 2.8);
     mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [radius, radius, radius])
     mat4.invert(this.trans, this.transFwd);
   }
 
-  public calcT(ray: Ray): number {
+  public calcT(ray: Ray): any {
     let tRay: Ray = ray.transformNewRay(this.trans);
 
     // Sphere at origin (0,0,0) so L simply becomes tRay.pos, but with w=0
@@ -64,23 +65,26 @@ export class Sphere implements Object3D {
     t1 = t1 * this.size;
     t2 = t2 * this.size;
     
-    return (t1 < t2) ? t1 : t2;
+    return (t1 < t2) ? {t: t1, tRay: tRay} : {t: t2, tRay: tRay};
   }
 
+  //
+  // Note. Ray must be in OBJECT SPACE
+  //
   public getHitPoint(t: number, ray: Ray): Hit {
     // Don't like this, but we scale BACK our t values by the sphere r
     t = t / this.size;
 
     // Transform ray into object space
-    let tRay: Ray = ray.transformNewRay(this.trans);
-    let i: vec4 = tRay.getPoint(t - Sphere.FUDGE);
+    //let tRay: Ray = ray.transformNewRay(this.trans);
+    let i: vec4 = ray.getPoint(t - Sphere.FUDGE);
 
     // Normal is pointing from center of sphere (0,0,0) to intersect (i)
     let n: vec4 = vec4.sub(vec4.create(), i, [0, 0, 0, 1]);
     vec4.normalize(n, n);
 
     // calc reflected ray about the normal
-    let r: vec4 = tRay.reflect(n);
+    let r: vec4 = ray.reflect(n);
 
     // move i back to world space
     vec4.transformMat4(i, i, this.transFwd);

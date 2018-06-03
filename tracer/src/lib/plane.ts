@@ -11,7 +11,7 @@ import { Colour } from './colour';
 import { Material } from './material';
 
 export class Plane implements Object3D {
-  trans: mat4; transr: mat4;
+  trans: mat4; transFwd: mat4;
   pos: vec4;
   norm: vec4;
   size: number;

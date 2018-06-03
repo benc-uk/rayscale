@@ -16,6 +16,6 @@ export interface Object3D {
   name: string;         // Name, not used yet
   material: Material;   // Material; color and other surface coefficients 
 
-  calcT(ray: Ray): number;
+  calcT(ray: Ray): any;
   getHitPoint(t: number, ray: Ray): Hit;
 }

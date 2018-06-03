@@ -5,27 +5,29 @@
   "scene": {
     "name": "basic",
     "backgroundColour": [10, 10, 30],
-    "ambientLevel": 0.2,
+    "ambientLevel": 0.5,
     "cameraFov": 30,
-    "lights": [{"pos": [5,5,-6]}],
+    "cameraPos": [-9, 10, -12],
+    "cameraLookAt": [-2,-1.0,-15],
+    "lights": [{"pos": [15,9,-2]}],
     "objects": [
       {
         "type": "sphere",
         "name": "sphere1",
-        "pos": [-2.3,-0.3,-12],
-        "size": 1.8,
+        "pos": [2,-1.0,-15],
+        "size": 2,
         "material": {
-          "ka": 0.05, "kd": 0.9, "ks": 1.0, "hardness": 150, "kr": 0.2, 
-          "colour": [255, 20, 50]
+          "ka": 0.05, "kd": 0.9, "ks": 2.0, "hardness": 100, "kr": 0.6, 
+          "colour": [25, 20, 50]
         }
       },
       {
         "type": "sphere",
         "name": "sphere2",
-        "pos": [0,-1.0,-17],
-        "size": 1.1,
+        "pos": [-2,-1.0,-15],
+        "size": 2,
         "material": {
-          "ka": 0.05, "kd": 0.9, "ks": 0.9, "hardness": 20, "kr": 0,
+          "ka": 0.1, "kd": 0.9, "ks": 1.4, "hardness": 90, "kr": 0,
           "colour": [20, 20, 255]
         }
       },
