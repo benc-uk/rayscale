@@ -4,7 +4,7 @@ import { Sphere } from './sphere';
 import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
-//import { Plane } from './plane';
+import { Plane } from './plane';
 
 export class Scene {
   name: string;
@@ -41,8 +41,7 @@ export class Scene {
             obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.size, rawObj.name);
             break;
           case 'plane':
-            console.dir(rawObj);
-            //obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), vec3.fromValues(rawObj.norm[0], rawObj.norm[1], rawObj.norm[2]), rawObj.name);
+            obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 1, rawObj.name);
             break;
           default:
             throw `Object type '${rawObj.type}' is invalid`
@@ -72,7 +71,9 @@ export class Scene {
       return null;
     }
 
-    //
+    // - SEA OF SPHERES - 
+    // Add a floor of coloured spheres to the scene, 
+    // ** TEST CODE **
     /*for(let z = -40; z <= 10; z+= 3) {
       for(let x = -13; x <= 28; x+= 3) {
         let m = new Material();

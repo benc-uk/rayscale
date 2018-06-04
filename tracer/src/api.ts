@@ -3,6 +3,7 @@ import request from 'request-promise-native';
 import { Raytracer } from './raytracer';
 import { Task } from '../../controller/src/lib/task';
 import { Scene } from './lib/scene';
+import { Stats } from './lib/stats';
 
 // =======================================================================================================
 
@@ -40,6 +41,7 @@ export class API {
     rt.startTrace()
       .then(imgbuffer => {
         console.log(`### Task complete, sending image fragment back to controller`);
+        console.log(Stats)
         request.post({
           url: `${this.ctrlEndPoint}/tasks/${task.id}`,
           body: imgbuffer,

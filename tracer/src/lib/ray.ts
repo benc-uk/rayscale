@@ -4,6 +4,7 @@
 //
 
 import { vec4, mat4 } from 'gl-matrix'
+import { Stats } from './stats';
 
 export class Ray {
   pos: vec4;
@@ -15,7 +16,8 @@ export class Ray {
     this.dir = vec4.create();
     this.dir[3] = 0;
     vec4.normalize(this.dir, dir);
-    //console.log(this.dir);
+    
+    Stats.raysCreated++;
   }
 
   public toString(): string  {
@@ -26,8 +28,9 @@ export class Ray {
     //let newRay: Ray = new Ray(vec4.create(), vec4.create());
     let p = vec4.transformMat4(vec4.create(), this.pos, trans);
     let d = vec4.transformMat4(vec4.create(), this.dir, trans);
-    vec4.normalize(d, d);
-    return new Ray(p, d);
+    //vec4.normalize(d, d);
+    let newRay: Ray = new Ray(p, d);
+    return newRay;
   }
 
   public transform(trans: mat4) {

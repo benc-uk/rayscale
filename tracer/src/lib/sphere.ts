@@ -10,6 +10,7 @@ import { Hit } from './hit';
 import { Colour } from './colour';
 import { Material } from './material';
 import { Utils } from './utils';
+import { Stats } from './stats';
 
 export class Sphere implements Object3D {
   pos: vec4;
@@ -39,6 +40,7 @@ export class Sphere implements Object3D {
   }
 
   public calcT(ray: Ray): any {
+    Stats.objectTests++;
     let tRay: Ray = ray.transformNewRay(this.trans);
 
     // Sphere at origin (0,0,0) so L simply becomes tRay.pos, but with w=0

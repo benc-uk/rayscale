@@ -12,11 +12,14 @@ import { Task } from '../../controller/src/lib/task'
 import { Utils } from './lib/utils'
 import { Sphere } from './lib/sphere';
 import { Hit } from './lib/hit';
+import { Stats } from './lib/stats';
 
 export class Raytracer {
   image: Buffer;
   task: Task;
   scene: Scene;
+  static MAX_DEPTH = 3;
+
   
   constructor(task: Task, scene: Scene) {
     this.task = task
@@ -79,6 +82,7 @@ export class Raytracer {
     let t: number = Number.MAX_VALUE;
     let tRay = null;
     let hitObject = null;
+    Stats.raysCast++;
 
     // Check all objects for ray intersection t
     for(let obj of this.scene.objects) {
@@ -108,12 +112,16 @@ export class Raytracer {
       vec4.normalize(lv, lv);
       let intens: number = Math.max(0.001, vec4.dot(lv, hit.normal));
 
+      let ld = lightDist / 72;
+      intens *= 1/Math.pow(ld, 4);
+
       let shadowRay: Ray = new Ray(hit.intersection, lv);
       let shadowT: number = Number.MAX_VALUE;
       let shadow: boolean = false;
       for(let obj of this.scene.objects) {
         //let shadtResult = obj.calcT(shadowRay);
         let shadTestT = obj.calcT(shadowRay).t;
+        Stats.shadowRays++;
         
         if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
           shadowT = shadTestT;
@@ -140,7 +148,8 @@ export class Raytracer {
       }
 
       // Reflection!
-      if(hitObject.material.kr > 0) {
+      if(hitObject.material.kr > 0 && ray.depth < Raytracer.MAX_DEPTH) {        
+
         let rRay = new Ray(hit.intersection, hit.reflected);
         rRay.depth = ray.depth + 1;
         let reflectColour = this.shadeRay(rRay);
