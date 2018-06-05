@@ -22,7 +22,7 @@ export class Sphere implements Object3D {
   name: string;
   material: Material;
   static THRES: number = 0.001;
-  static FUDGE: number  = 0.1;
+  static FUDGE: number  = 0.00001;
 
   constructor(pos: vec4, radius: number, name: string) {
     this.size = radius;

@@ -5,7 +5,10 @@ import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
 import { Plane } from './plane';
+import { Texture } from './texture';
 import { TextureBasic } from './texture-basic';
+import { TextureCheck } from './texture-check';
+import { TextureImage } from './texture-image';
 
 export class Scene {
   name: string;
@@ -61,22 +64,46 @@ export class Scene {
           default:
             obj.material = new Material(0.1, 0.9, 0, 0, 0);
         }
+
         // Type of texture check here
-        obj.material.texture = TextureBasic.fromRGB(rawObj.material.colour[0], rawObj.material.colour[1], rawObj.material.colour[2])
+        let texture: Texture = null;
+        switch(rawObj.material.texture.type) {
+          case 'basic':
+            var c: any = rawObj.material.texture.colour;
+            console.log(c);
+            texture = TextureBasic.fromRGB(c[0], c[1], c[2])
+            break;
+          case 'check':
+            var c1: any = rawObj.material.texture.colour1;
+            var c2: any = rawObj.material.texture.colour2; 
+            texture = new TextureCheck(Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]));
+            break;
+          default:
+            var c = rawObj.material.texture.colour;
+            texture = TextureBasic.fromRGB(c[0], c[1], c[2])
+            break;
+        }
+
+        if(rawObj.material.texture.u) texture.scaleU = rawObj.material.texture.u;
+        if(rawObj.material.texture.v) texture.scaleV = rawObj.material.texture.v;
+
+        // Other material properties, override the preset if set
+        obj.material.texture = texture;     
         if(rawObj.material.ka) obj.material.ka = rawObj.material.ka;
         if(rawObj.material.kd) obj.material.kd = rawObj.material.kd;
         if(rawObj.material.ks) obj.material.ks = rawObj.material.ks;
         if(rawObj.material.kr) obj.material.kr = rawObj.material.kr;
         if(rawObj.material.hardness) obj.material.hardness = rawObj.material.hardness;
         
+        // Done with object
         if(obj) scene.objects.push(obj);
       }
 
       // Parse lights
       scene.lights = [];
       for(let rawLight of input.lights) {
-        let b = 5;
-        let r = 10;
+        let b = 1;
+        let r = 200;
         if(rawLight.brightness) b = rawLight.brightness;
         if(rawLight.radius) r = rawLight.radius;
         let light = new Light(vec4.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2], 1), b, r);

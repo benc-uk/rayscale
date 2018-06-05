@@ -21,7 +21,7 @@ export class Plane implements Object3D {
   material: Material;
   norm: vec4;
   static THRES: number = 0.0001;
-  static FUDGE: number = 0.1;
+  static FUDGE: number = 0.0001;
 
   constructor(pos: vec4, rotation: vec3, size: number, name: string) {
     this.size = 0;

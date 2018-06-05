@@ -156,7 +156,7 @@ export class Raytracer {
       if(!shadow) {
         // Normal hit in light
         let diffuseColour = hitColour.multNew(lightIntensity * lightAtten * hitObject.material.kd);
-        let ambientColour = hitColour.multNew(hitObject.material.ka);
+        let ambientColour = hitColour.multNew(hitObject.material.ka * this.scene.ambientLevel);
         hitColour = Colour.add(diffuseColour, ambientColour);
       } else {
         // In shadow hit use matrial ka
