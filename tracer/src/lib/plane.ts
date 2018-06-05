@@ -11,6 +11,7 @@ import { Colour } from './colour';
 import { Material } from './material';
 import { Utils } from './utils';
 import { Stats } from './stats';
+import { TResult } from './t-result';
 
 export class Plane implements Object3D {
   trans: mat4; 
@@ -20,6 +21,7 @@ export class Plane implements Object3D {
   material: Material;
   norm: vec4;
   static THRES: number = 0.0001;
+  static FUDGE: number = 0.001;
 
   constructor(pos: vec4, rotation: vec3, size: number, name: string) {
     this.size = 0;
@@ -38,7 +40,7 @@ export class Plane implements Object3D {
     mat4.invert(this.trans, this.transFwd);
   }
 
-  public calcT(ray: Ray): any {
+  public calcT(ray: Ray): TResult {
     Stats.objectTests++;
     let tRay: Ray = ray.transformNewRay(this.trans);
     //let p = vec4.transformMat4(vec4.create(), ray.pos, this.trans);
@@ -50,15 +52,23 @@ export class Plane implements Object3D {
         let l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], tRay.pos);
         let t: number = vec4.dot(l0, this.norm) / denom;
         if (t >= 0)  {
-          return {t: t, tRay: tRay}; 
+          return new TResult(t, tRay); //{t: t, tRay: tRay}; 
         }
     }
-    return {t: 0, tRay: tRay};
+    return new TResult(0.0, tRay); //{t: 0, tRay: tRay};
   }
 
   public getHitPoint(t: number, ray: Ray): Hit {
-    let i: vec4 = ray.getPoint(t - 0.0001);
+    let i: vec4 = ray.getPoint(t - Plane.FUDGE);
 
+    let tscale = 10;
+    if(this.name == "wall white") { tscale = 20 }
+
+    let u = Math.abs((i[0] % tscale)/tscale);
+    if(i[0] < 0) u = 1 - u;
+    let v = Math.abs((i[2] % tscale)/tscale);
+    if(i[2] < 0) v = 1 - v;
+    
     // move i back to world space
     vec4.transformMat4(i, i, this.transFwd);
 
@@ -72,7 +82,7 @@ export class Plane implements Object3D {
     vec4.transformMat4(n, this.norm, this.transFwd);
     vec4.normalize(n, this.norm);
     
-    let hit: Hit = new Hit(i, this.norm, r);
+    let hit: Hit = new Hit(i, this.norm, r, u, v);
     return hit;
   }
 }

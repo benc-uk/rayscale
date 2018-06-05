@@ -11,7 +11,8 @@ RayScale is a network distributed ray tracer written in Node.js designed for sca
 In computer graphics, ray tracing is a rendering technique for generating an image by tracing the path of light as pixels in an image plane and simulating the effects of its encounters with virtual objects. The technique is capable of producing a very high degree of visual realism, usually higher than that of typical polygon based scanline rendering methods, but at a greater computational cost.
 
 ### Sample Images
-![render 1](https://user-images.githubusercontent.com/14982936/40837744-627bab34-6593-11e8-981f-4df7685ba76c.png)
+These are some sample images created with RayScale
+![render 1](https://user-images.githubusercontent.com/14982936/40931790-3f2dd1dc-6824-11e8-96ae-47550f4846ca.png)
 ![render 2](https://user-images.githubusercontent.com/14982936/40886157-0178fb40-672b-11e8-95a7-d900d0447600.png)
 
 
@@ -30,6 +31,12 @@ Renders and ray traces images given to it via the **Controller**
 # Basic System Architecture
 ![diagram](https://user-images.githubusercontent.com/14982936/40764441-fbed1ee0-64a0-11e8-86e8-b861c13f11b4.png)
 
+
+
+# Limitations and Design Constraints
+ - Single job
+ - Single task
+ - No controller check
 
 
 # APIs

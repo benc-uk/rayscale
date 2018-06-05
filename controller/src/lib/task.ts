@@ -1,3 +1,7 @@
+//
+// Shared definition
+//
+
 export class Task {
   
   id: string;             // GUID

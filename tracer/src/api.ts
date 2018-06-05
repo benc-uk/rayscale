@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import request from 'request-promise-native';
 import { Raytracer } from './raytracer';
-import { Task } from '../../controller/src/lib/task';
+import { Task } from './lib/task';
 import { Scene } from './lib/scene';
 import { Stats } from './lib/stats';
 

@@ -5,6 +5,7 @@ import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
 import { Plane } from './plane';
+import { TextureBasic } from './texture-basic';
 
 export class Scene {
   name: string;
@@ -49,7 +50,10 @@ export class Scene {
 
         // Material properties
         obj.material = new Material();
-        obj.material.colour = Colour.fromRGB(rawObj.material.colour[0], rawObj.material.colour[1], rawObj.material.colour[2]);
+
+        // Type of texture check here
+        obj.material.texture = TextureBasic.fromRGB(rawObj.material.colour[0], rawObj.material.colour[1], rawObj.material.colour[2])
+ 
         obj.material.ka = rawObj.material.ka;
         obj.material.kd = rawObj.material.kd;
         obj.material.ks = rawObj.material.ks;

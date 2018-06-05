@@ -4,10 +4,10 @@
   "description": "Container based distributed raytracer - tracer/worker",
   "main": "dist/server.js",
   "scripts": {
-    "start": "node dist/tracer/src/server.js",
-    "startdev": "tsc && node dist/tracer/src/server.js",
+    "start": "node dist/server.js",
+    "startdev": "tsc && node dist/server.js",
     "build": "tsc",
-    "watch": "tsc -w & nodemon dist/tracer/src/server.js"
+    "watch": "tsc -w & nodemon dist/server.js"
   },
   "repository": {
     "url": "git+https://github.com/benc-uk/rayscale.git"
@@ -24,6 +24,7 @@
     "express": "^4.16.3",
     "gl-matrix": "^2.6.1",
     "morgan": "^1.9.0",
+    "pngjs": "^3.3.3",
     "request-promise-native": "^1.0.5",
     "request": "2.87.0",
     "uuid": "^3.2.1"
@@ -36,6 +37,7 @@
     "@types/express": "4.11.1",
     "@types/gl-matrix": "^2.4.0",
     "@types/morgan": "^1.7.35",
+    "@types/pngjs": "^3.3.1",
     "@types/request-promise-native": "^1.0.14",
     "@types/uuid": "^3.4.3"
   }
