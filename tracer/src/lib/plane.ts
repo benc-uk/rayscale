@@ -21,7 +21,7 @@ export class Plane implements Object3D {
   material: Material;
   norm: vec4;
   static THRES: number = 0.0001;
-  static FUDGE: number = 0.001;
+  static FUDGE: number = 0.1;
 
   constructor(pos: vec4, rotation: vec3, size: number, name: string) {
     this.size = 0;
@@ -43,9 +43,6 @@ export class Plane implements Object3D {
   public calcT(ray: Ray): TResult {
     Stats.objectTests++;
     let tRay: Ray = ray.transformNewRay(this.trans);
-    //let p = vec4.transformMat4(vec4.create(), ray.pos, this.trans);
-    //let d = vec4.transformMat4(vec4.create(), ray.dir, this.trans);
-    //vec4.normalize(d, d);
 
     let denom: number = vec4.dot(this.norm, tRay.dir);
     if (Math.abs(denom) > Plane.THRES) {

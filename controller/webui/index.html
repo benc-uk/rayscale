@@ -5,12 +5,14 @@
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="shortcut icon" href="favicon.png" type="image/png">
 
   <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Questrial" rel="stylesheet">
-  <link href="/ui/jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css">
-  <link rel="shortcut icon" href="favicon.png" type="image/png">
-  <script src="/ui/jsoneditor/jsoneditor.js"></script>
+  <!--link href="/ui/jsoneditor/jsoneditor.css" rel="stylesheet" type="text/css"-->
+  <!--script src="/ui/jsoneditor/jsoneditor.js"></script-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/ace.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.3/theme-tomorrow_night.js"></script>
 
   <title>RayScale: Web UI</title>
 
@@ -22,15 +24,16 @@
 
   <h1><i class="fa fa-eye"></i> RayScale - Distributed Ray Tracer</h1>
 
-  <h2><i class="fa fa-code"></i> Job Input</h2>
+  <!--h2><i class="fa fa-code"></i> Job Input</h2-->
   <!-- editor -->
   <div id="editor" wrap="soft" name="editor"></div><br/>
   <button onclick="jobSubmitter()" class="button">Start Job</button>
-  <input type="text" id="resp" readonly/>
+  <button onclick="jobRefresh()" class="button">Refresh Jobs</button> &nbsp; 
+  <div id="resp">-</div>
 
-  <br/><br/><br/>
+  <br/><br/>
 
-  <h2><i class="fa fa-cubes"></i> Completed Jobs</h2>
+  <!--h2><i class="fa fa-cubes"></i> Completed Jobs</h2-->
   <!-- job table -->
   <table class="jobs">
     <thead class="jobs">
@@ -39,7 +42,6 @@
     <tbody id="jobList"></tbody>
   </table>
   <br/>
-  <button onclick="jobRefresh()" class="button">Refresh Jobs</button>
 
   <!-- ######################################################################### -->
 
@@ -49,19 +51,19 @@
   //
   //
   function jobSubmitter() {
-    let job = editor.getText();
+    let job = editor.getValue();
     window.localStorage.setItem('rayScaleJob', job);
     fetch("/api/jobs",
     {
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-yaml' },
         method: "POST",
         body: job
     })
     .then(res => { 
-      res.json().then(j => {document.getElementById('resp').value=JSON.stringify(j)});
+      res.json().then(j => { document.getElementById('resp').innerHTML = JSON.stringify(j) });
      })
     .catch(err => {
-      err.json().then(j => {document.getElementById('resp').value=("err "+JSON.stringify(j))});
+      err.json().then(j => { document.getElementById('resp').innerHTML = "err "+JSON.stringify(j)  });
     })
   }
 
@@ -101,15 +103,17 @@
   // On page load
   //
   jobRefresh();
-  var container = document.getElementById("editor");
-  var options = { 
-    modes:['code', 'tree']
 
-  };
-  var editor = new JSONEditor(container, options);
-  // Load old job
+  // pass options to ace.edit
+  var editor = ace.edit(document.getElementById('editor'), {
+      mode: "ace/mode/yaml",
+      selectionStyle: "text",
+      theme: "ace/theme/tomorrow_night",
+      fontSize: "19px"
+  })
+
   let job = window.localStorage.getItem('rayScaleJob');
-  editor.setText(job);
+  editor.setValue(job)
 
   </script>
 </body>

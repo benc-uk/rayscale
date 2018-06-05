@@ -42,13 +42,6 @@ export class Raytracer {
     
     var myPromise = new Promise((resolve, reject) => {
 
-      //// REMOVE THIS LATER
-      ///////////////////////////
-      let f = fs.readFileSync('./textures/st.png');
-      this.txttemp = PNG.PNG.sync.read(f).data;
-      let f2 = fs.readFileSync('./textures/wood.png');
-      this.txttemp2 = PNG.PNG.sync.read(f2).data;
-
       let aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height 
 
       // Create our camera transform and invert
@@ -123,26 +116,6 @@ export class Raytracer {
       // !TODO! Loop here for all lights!
 
       let hitColour: Colour = hitObject.material.texture.getColourAt(hit.u, hit.v).copy();
-      //Colour = hitObject.material.colour.copy(); 
-      
-      // REMOVE THIS HACK
-      /*
-      if(hitObject.name == "wall white" || hitObject.name == "wood") {
-
-        let tx = Math.floor(hit.u * 512);
-        let ty = Math.floor(hit.v * 512);
-        var idx = (512 * ty + tx) << 2;
-
-        if(hitObject.name == "wood") {
-          hitColour = Colour.fromRGB(this.txttemp2[idx], this.txttemp2[idx+1], this.txttemp2[idx+2]);
-        } else {
-          hitColour = Colour.fromRGB(this.txttemp[idx], this.txttemp[idx+1], this.txttemp[idx+2]);
-        }
-
-      } else if(hitObject instanceof Plane) {
-        if(hit.u > 0.5 && hit.v > 0.5) hitColour = Colour.BLACK.copy();
-        if(hit.u < 0.5 && hit.v < 0.5) hitColour = Colour.BLACK.copy();
-      }*/
 
       // Lighting calculations
       let lv: vec4 = vec4.create();
@@ -150,11 +123,12 @@ export class Raytracer {
       vec4.subtract(lv, lightPos, hit.intersection);
       let lightDist: number = vec4.length(lv);
       vec4.normalize(lv, lv);
-      let intens: number = Math.max(0.001, vec4.dot(lv, hit.normal));
+      //console.log(this.scene.lights[0].brightness);
+      
+      let lightIntensity: number = Math.max(0.001, vec4.dot(lv, hit.normal)) * this.scene.lights[0].brightness ;
 
       // Light attenuation code here
-      //let ld = lightDist / 72;
-      //intens *= 1/Math.pow(ld, 4);
+      let lightAtten: number = 1 / (1 + (this.scene.lights[0].kl * lightDist) + (this.scene.lights[0].kq * (lightDist * lightDist)));
 
       // Are we in shadow?
       let shadowRay: Ray = new Ray(hit.intersection, lv);
@@ -181,9 +155,9 @@ export class Raytracer {
       // Diffuse, ambient and shadow shading
       if(!shadow) {
         // Normal hit in light
-        let dc = hitColour.multNew(intens * hitObject.material.kd);
-        let ac = hitColour.multNew(hitObject.material.ka);
-        hitColour = Colour.add(dc, ac);
+        let diffuseColour = hitColour.multNew(lightIntensity * lightAtten * hitObject.material.kd);
+        let ambientColour = hitColour.multNew(hitObject.material.ka);
+        hitColour = Colour.add(diffuseColour, ambientColour);
       } else {
         // In shadow hit use matrial ka
         hitColour.mult(hitObject.material.ka * this.scene.ambientLevel);

@@ -19,6 +19,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json())
 app.use(bodyParser.raw({ limit: '100mb', type: 'application/octet-stream' }));
+app.use(bodyParser.raw({ limit: '10mb', type: 'application/x-yaml' }));
 
 // Set up logging
 // if (app.get('env') === 'production') {

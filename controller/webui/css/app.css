@@ -18,15 +18,10 @@ h1 {
 }
 
 #editor {
-  font-family: 'Consolas', monospace; 
-  font-size: 150% !important;
   max-height: 91vh;
   height: 40vh;
   width: 97%;
-}
-
-.ace_editor {
-  font-size: 16px !important;
+  border: 2px solid rgb(228, 127, 11);
 }
 
 .button {
@@ -49,13 +44,16 @@ h1 {
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
+
 #resp {
-  width: 500px;
+  display: inline-block;
+  width: 70%;
   height: 30px;
   font-size: 18px;
-  background-color: #888;
-  color: #222;
-  border: 2px solid #111;
+  background-color: rgb(19, 19, 19);
+  color: #888;
+  padding-top: 10px;
+  padding-left: 10px;
 }
 
 table.jobs  { 

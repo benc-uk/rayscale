@@ -13,4 +13,11 @@ export class Material {
   hardness: number;   // Hardness for specular highlights
   kr: number;         // Reflection coefficient
 
+  constructor (ka: number, kd: number, ks: number, hardness: number, kr: number) {
+    this.ka = ka;
+    this.kd = kd;
+    this.ks = ks;
+    this.hardness = hardness;
+    this.kr = kr;
+  }
 }

@@ -49,29 +49,42 @@ export class Scene {
         }
 
         // Material properties
-        obj.material = new Material();
-
+        switch(rawObj.material.preset) {
+          case 'none':
+            obj.material = new Material(0, 0, 0, 0, 0); break;
+          case 'matte':
+            obj.material = new Material(0.1, 0.9, 0, 0, 0); break;
+          case 'shiny':
+            obj.material = new Material(0.2, 0.9, 0.9, 20, 0); break;
+          case 'vshiny':
+            obj.material = new Material(0.1, 0.9, 1.5, 80, 0); break;
+          default:
+            obj.material = new Material(0.1, 0.9, 0, 0, 0);
+        }
         // Type of texture check here
         obj.material.texture = TextureBasic.fromRGB(rawObj.material.colour[0], rawObj.material.colour[1], rawObj.material.colour[2])
- 
-        obj.material.ka = rawObj.material.ka;
-        obj.material.kd = rawObj.material.kd;
-        obj.material.ks = rawObj.material.ks;
-        obj.material.kr = rawObj.material.kr;
-        obj.material.hardness = rawObj.material.hardness;
-
+        if(rawObj.material.ka) obj.material.ka = rawObj.material.ka;
+        if(rawObj.material.kd) obj.material.kd = rawObj.material.kd;
+        if(rawObj.material.ks) obj.material.ks = rawObj.material.ks;
+        if(rawObj.material.kr) obj.material.kr = rawObj.material.kr;
+        if(rawObj.material.hardness) obj.material.hardness = rawObj.material.hardness;
+        
         if(obj) scene.objects.push(obj);
       }
 
       // Parse lights
       scene.lights = [];
       for(let rawLight of input.lights) {
-        let light = new Light(vec4.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2], 1));
+        let b = 5;
+        let r = 10;
+        if(rawLight.brightness) b = rawLight.brightness;
+        if(rawLight.radius) r = rawLight.radius;
+        let light = new Light(vec4.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2], 1), b, r);
         
         if(light) scene.lights.push(light);
       }      
     } catch(e) {
-      console.log(`### ERROR! Scene parse failed, ${e}`);
+      console.log(`### ERROR! Scene parse failed, ${e.message}`);
       return null;
     }
 

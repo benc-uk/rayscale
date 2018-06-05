@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import request from 'request-promise-native';
 import uuidv4 from 'uuid/v4';
 import * as PNG from 'pngjs';
+import * as yaml from 'js-yaml';
 import fs from 'fs';
 import { Job } from './lib/job';
 import { JobInput } from './lib/job-input';
@@ -45,13 +46,31 @@ export class API {
   public startJob = (req: Request, res: Response) => {
     res.type('application/json');
     console.log(`### New job request received`);
+
+    // Check active job
+    // !TODO! Removed temporary
+    // if(this.job && this.job.status == "RUNNING") {
+    //   console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
+    //   res.status(400).send({mgs: "Rejected. There is currently an active job"}); return;
+    // }
+
+    // Check if we have any tracers
     if(Object.keys(this.tracers).length <= 0) {
-      console.log(`### No tracers online, unable to start job`);
-      res.status(400).send({title: "No tracers online"}); return;
+      console.log(`### Job rejected. No tracers online, unable to start job`);
+      res.status(400).send({msg: "No tracers online"}); return;
     }
-  
+
+    // Convert YAML to JSON
+    let jobInput: any = null;
+    try {
+      jobInput = yaml.safeLoad(req.body.toString());
+    } catch(err) {
+      console.error(`### ERROR! YAML conversion failed ${err.message}`);
+      res.status(500).send({msg: `YAML conversion failed ${err.message}`}); return;
+    }
+
     // Create complete job object and kick everything off
-    this.createJob(req.body)
+    this.createJob(jobInput)
     res.status(200).send({msg: "Job started", id: this.job.id});
   }
 
