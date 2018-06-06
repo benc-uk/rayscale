@@ -115,25 +115,24 @@ export class Scene {
       return null;
     }
 
-    // - SEA OF SPHERES - 
+    // - CUBE OF SPHERES - 
     // Add a floor of coloured spheres to the scene, 
     // ** TEST CODE **
-    /*for(let z = -40; z <= 10; z+= 3) {
-      for(let x = -13; x <= 28; x+= 3) {
-        let m = new Material();
-        m.colour = Colour.fromRGB(0, 0, 0);
-        m.ka = 0.5;
-        m.kd = 0.9;
-        m.ks = 1.3;
-        m.kr = 0.0;
-        m.hardness = 70;
+    /*for(let z = -10; z <= 10; z+= 4) {
+      for(let x = -10; x <= 10; x+= 4) {
+        for(let y = 0; y <= 20; y+= 6) {
+          let m = new Material(0.05, 0.9, 1.5, 50, 0.5);
+          
+          let s = new Sphere(vec4.fromValues(x, y, z, 1), 2, `sphere,${z}, ${x}`);
+          let r = ((z+40)*5) - ((y+10)*2);
+          let g = ((x+20)*2.5) - ((y+10)*5);
+          let b = ((y+10)*3)+0;
 
-        let s = new Sphere(vec4.fromValues(x, -2, z, 1), 2, `sphere,${z}, ${x}`);
-        let r = ((z+40)*5)+0;
-        let g = ((x+20)*3)+0;
-        m.colour = Colour.fromRGB(r, g, 0);
-        s.material = m;
-        scene.objects.push(s);
+          m.texture = new TextureBasic(Colour.fromRGB(r, g, b));
+
+          s.material = m;
+          scene.objects.push(s);
+        }
       }
     }*/
 
