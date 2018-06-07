@@ -12,7 +12,7 @@ export class Colour {
     this.b = Math.min(Math.max(b, 0), 1);
   }
 
-  static fromRGB(r: number, g: number, b: number): Colour {
+  public static fromRGB(r: number, g: number, b: number): Colour {
     return new Colour(r / 255, g / 255, b / 255);
   }
 
@@ -20,11 +20,16 @@ export class Colour {
     return `r:${this.r}, g:${this.g}, b:${this.b}`
   }
 
-  writePixeltoBuffer(img: Buffer, width: number, x: number, y: number) {
+  public writePixeltoBuffer(img: Buffer, width: number, x: number, y: number) {
     let idx = (width * y + x) * 3;
     img[idx + 0] = this.r * 255;
     img[idx + 1] = this.g * 255;
     img[idx + 2] = this.b * 255;
+  }
+
+  public static fromPNGBuffer(img: Buffer, width: number, x: number, y: number): Colour {
+    let idx = (width * y + x) << 2;
+    return Colour.fromRGB(img[idx], img[idx+1], img[idx+2]);
   }
 
   public multNew(v: number): Colour {

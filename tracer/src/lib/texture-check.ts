@@ -17,7 +17,7 @@ export class TextureCheck implements Texture {
     this.colour2 = c2;
   }
 
-  // This texture is just a flat colour, same all over
+  // This texture is alternating square checks of two colours 
   getColourAt(u: number, v: number): Colour {
     if((u > 0.5 && v > 0.5) || (u < 0.5 && v < 0.5)) return this.colour2;
     return this.colour1;

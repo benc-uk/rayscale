@@ -32,6 +32,7 @@ console.log(`### Node environment mode is '${app.get('env')}'`);
 var webUIDir = process.env.DIR_WEBUI || './webui';
 var jobOutDir = process.env.DIR_JOBOUT || './jobs';
 
+// Creat job dir
 if (!fs.existsSync(jobOutDir)){
   fs.mkdirSync(jobOutDir);
 }

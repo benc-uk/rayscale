@@ -58,12 +58,9 @@ export class Plane implements Object3D {
   public getHitPoint(t: number, ray: Ray): Hit {
     let i: vec4 = ray.getPoint(t - Plane.FUDGE);
 
-    let tscale = 10;
-    if(this.name == "wall white") { tscale = 20 }
-
-    let u = Math.abs((i[0] % tscale)/tscale);
+    let u = Math.abs((i[0] % this.material.texture.scaleU)/this.material.texture.scaleU);
     if(i[0] < 0) u = 1 - u;
-    let v = Math.abs((i[2] % tscale)/tscale);
+    let v = Math.abs((i[2] % this.material.texture.scaleV)/this.material.texture.scaleV);
     if(i[2] < 0) v = 1 - v;
     
     // move i back to world space

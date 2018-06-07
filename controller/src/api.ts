@@ -14,8 +14,7 @@ export class API {
   private tracers: { [id: string]: Tracer };
   private job: Job;
   private jobOutDir: string;
-  private rawScene: string;
-  private j: string;
+  private rawJob: any;
 
   constructor(outDir: string) {
     // Tracers starts as empty dict  
@@ -86,6 +85,7 @@ export class API {
     if(req.headers['content-type'] != 'application/octet-stream') {
       console.error(`### ERROR! Task ${taskId} has failed, job will not complete`);
       this.job.status = "FAILED";
+      res.status(200).send({msg: "OK, you failed"});
       return;
     }
 
@@ -119,7 +119,7 @@ export class API {
       this.completeJob();
     }
     
-    res.send({})
+    res.status(200).send({msg: "OK, slice buffer stored in PNG"});
   }
   
   //
@@ -133,7 +133,7 @@ export class API {
   
       // Call health ping API on tracer, expect 200 and nothing more
       // !TODO! Further validation, check id etc
-      let resp = request(`${endPoint}/ping`)
+      request(`${endPoint}/ping`)
       .catch(err => {
         console.log(`### Health check failed for ${endPoint}. Unregistering tracer`);
         delete this.tracers[tid];
@@ -180,7 +180,7 @@ export class API {
 
       this.job.tasks.push(task); 
 
-      this.rawScene = jobInput.scene;
+      this.rawJob = jobInput;
       console.log(`### Sending task ${task.index} to ${tracer.endPoint}`);
       request.post({
         uri: `${tracer.endPoint}/tasks`,
@@ -230,8 +230,9 @@ export class API {
         pixels: this.job.width * this.job.height
       };
   
+      let yamlOut: string = yaml.safeDump(this.rawJob, {});
       fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(stats, null, 2));
-      fs.writeFileSync(`${outDir}/scene.json`, JSON.stringify(this.rawScene, null, 2));      
+      fs.writeFileSync(`${outDir}/job.yaml`, yamlOut);      
     });
 
   }

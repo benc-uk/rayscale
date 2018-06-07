@@ -5,9 +5,9 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
-    "startdev": "tsc && node dist/server.js",
-    "build": "tsc",
-    "watch": "tsc -w & nodemon dist/server.js"
+    "buildstart": "npm run build && node dist/server.js",
+    "build": "node node_modules/typescript/bin/tsc",
+    "watch": "node node_modules/typescript/bin/tsc -w & nodemon dist/server.js"
   },
   "repository": {
     "url": "git+https://github.com/benc-uk/rayscale.git"

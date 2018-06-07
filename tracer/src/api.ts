@@ -4,6 +4,7 @@ import { Raytracer } from './raytracer';
 import { Task } from './lib/task';
 import { Scene } from './lib/scene';
 import { Stats } from './lib/stats';
+import { Utils } from './lib/utils';
 
 // =======================================================================================================
 
@@ -20,45 +21,60 @@ export class API {
     res.status(200).send({ resp: "Hello! I am alive" })
   }
 
-  public newTask = (req: Request, res: Response) => {
+  public newTask = async (req: Request, res: Response) => {
     // All starts here!
     let task: Task = req.body.task;
-    let scene = null;
+    let scene: Scene = null;
 
     console.log(`### Starting task...`);
+    Stats.reset();
 
     // Parse scene
-    scene = Scene.parseScene(req.body.scene);
+    scene = await Scene.parseScene(req.body.scene)
+    .catch(err => {
+      console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
+      res.contentType('application/json');
+      res.status(500).send(JSON.stringify({ error: `Scene did not parse correctly. ${err}. Task rejected` }));
+    });
     if(!scene) {
-      console.error(`### ERROR! Scene did not parse correctly, task rejected`);
-      res.status(500).send({ error: "Scene did not parse correctly, task rejected" });
-      return; 
+       return; 
     }
 
-    res.status(200).send({ msg: "OK" });
+    // Send OK back before starting tracing
+    res.status(200).send({ msg: "Task accepted" });
 
-    let rt: Raytracer = new Raytracer(task, scene);
-    rt.startTrace()
-      .then(imgbuffer => {
-        console.log(`### Task complete, sending image fragment back to controller`);
-        console.log(Stats)
-        request.post({
-          url: `${this.ctrlEndPoint}/tasks/${task.id}`,
-          body: imgbuffer,
-          headers: { 
-            'content-type': 'application/octet-stream',
-            'x-tracer': this.tracerEndPoint,
-            'x-task-id': task.id,
-            'x-task-index': task.index
-          }
-        })
-        .then(res => {})
-        .catch(err => { console.log(err) })
+    // Start the ray tracer for the give task & scene
+    try { 
+      // GOOOOOOoooooo!
+      let imgSlice = new Raytracer(task, scene).startTrace();
+
+      // Log stats
+      console.log(`### Task complete, sending image fragment back to controller`);
+      console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
+      console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
+      console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
+      console.log(`### Object tests: ${Utils.numberWithCommas(Stats.objectTests)}`);
+
+      // Send image buffer to controller as binary (octet-stream)
+      request.post({
+        url: `${this.ctrlEndPoint}/tasks/${task.id}`,
+        body: imgSlice,
+        headers: { 
+          'content-type': 'application/octet-stream',
+          'x-tracer': this.tracerEndPoint,
+          'x-task-id': task.id,
+          'x-task-index': task.index,
+          'x-stats-rayscreated': Stats.raysCreated,
+          'x-stats-rayscast': Stats.raysCast,
+          'x-stats-shadowrays': Stats.shadowRays,
+          'x-stats-objtests': Stats.objectTests
+        }
       })
-      .catch(err => {
-        console.log(`### ERROR! Raytracing failed, we're fubar now`);
-        console.error(err);
-      })
+      .then()
+      .catch(err => { throw(err) })
+    } catch(e) {
+      console.log(`### ERROR! ${e}. Ray tracing failed, task & job have failed`);
+    }
   }
 
   public getStatus(req: Request, res: Response) {

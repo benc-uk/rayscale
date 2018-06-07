@@ -15,7 +15,6 @@ import request from 'request-promise-native';
 import os from 'os';
 import { Utils } from './lib/utils'
 import { API } from './api';
-import { Raytracer } from './raytracer';
 
 dotenv.config();
 

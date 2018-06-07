@@ -6,6 +6,14 @@ export class Utils {
     return deg * (Math.PI/180);
   }
 
+  static clamp(v: number, min: number, max: number) {
+    return Math.min(Math.max(v, min), max);
+  }
+
+  static numberWithCommas = (x: number) => {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
   static getNetInterfaceIP() {
     let addr = null;
     for(let iface in os.networkInterfaces()) {
