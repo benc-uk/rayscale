@@ -80,7 +80,11 @@ export class API {
     let taskId = req.params.id;
     let taskIndex = req.headers['x-task-index'];
     let taskTracer = req.headers['x-tracer'];
-    
+    this.job.stats.raysCreated += parseInt(req.headers['x-stats-rayscreated'].toString());
+    this.job.stats.raysCast += parseInt(req.headers['x-stats-rayscast'].toString());
+    this.job.stats.shadowRays += parseInt(req.headers['x-stats-shadowrays'].toString());
+    this.job.stats.objectTests += parseInt(req.headers['x-stats-objtests'].toString());
+
     // If we get anything other than binary data, that's a failure
     if(req.headers['content-type'] != 'application/octet-stream') {
       console.error(`### ERROR! Task ${taskId} has failed, job will not complete`);
@@ -88,13 +92,10 @@ export class API {
       res.status(200).send({msg: "OK, you failed"});
       return;
     }
+    console.log(`### Image buffer received from ${taskTracer} for task: ${taskIndex}`);
 
     let buff = req.body;
     let task = this.job.tasks.find(t => t.id == taskId);
-
-    // !TODO! - Check for no active job
-
-    console.log(`### Image buffer received from ${taskTracer} for task: ${taskIndex}`);
 
     this.job.tasksComplete++;
     console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.taskCount}`);
@@ -117,9 +118,9 @@ export class API {
     if(this.job.tasksComplete == this.job.taskCount) {
       // We're DONE!
       this.completeJob();
-    }
+    } 
     
-    res.status(200).send({msg: "OK, slice buffer stored in PNG"});
+    res.status(200).send({msg: "OK, slice buffer stored"});
   }
   
   //
@@ -137,6 +138,7 @@ export class API {
       .catch(err => {
         console.log(`### Health check failed for ${endPoint}. Unregistering tracer`);
         delete this.tracers[tid];
+        console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
       });
     }
     //console.log(`### Tracers online: ${Object.keys(tracers).length}`);
@@ -160,6 +162,12 @@ export class API {
     this.job.taskCount = Object.keys(this.tracers).length; 
     this.job.tasksComplete = 0;
     this.job.png = new PNG.PNG({width:this.job.width, height:this.job.height});
+    this.job.stats = {
+      raysCreated: 0,
+      raysCast: 0,
+      shadowRays: 0,
+      objectTests: 0
+    };
   
     // Create tasks and send to tracers
     // Logic to slice image into sub-regions is here
@@ -224,10 +232,10 @@ export class API {
         start: this.job.startDate,
         end: this.job.endDate,
         durationTime: this.job.durationTime,
-        totalRays: 0,
         imageHeight: this.job.width,
         imageWidth: this.job.width,
-        pixels: this.job.width * this.job.height
+        pixels: this.job.width * this.job.height,
+        stats: this.job.stats
       };
   
       let yamlOut: string = yaml.safeDump(this.rawJob, {});
@@ -259,5 +267,10 @@ export class API {
   
   public listTracers = (req: Request, res: Response) => {
     res.status(200).send({msg:"API stub"})
+  }
+
+  private savePNG(outDir: string) {
+    this.job.png.pack()
+    .pipe(fs.createWriteStream(`${outDir}/render.png`))
   }
 }

@@ -49,6 +49,11 @@ export class Scene {
         scene.objects = [];
         for(let rawObj of input.objects) {
           let obj: Object3D = null;
+
+          if(Object.keys(rawObj).indexOf('type') < 0) throw(`Object type missing ${JSON.stringify(rawObj)}`);
+          if(Object.keys(rawObj).indexOf('name') < 0) throw(`Object name missing ${JSON.stringify(rawObj)}`);
+          if(Object.keys(rawObj).indexOf('pos') < 0) throw(`Object pos missing ${JSON.stringify(rawObj)}`);
+
           switch (rawObj.type.toLowerCase()) {
             case 'sphere':
               obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.size, rawObj.name);

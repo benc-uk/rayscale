@@ -89,9 +89,10 @@ export class Sphere implements Object3D {
 
     // Calc u, v coords on sphere (polar cordinates) and scale/wrap
     let u = Math.atan2(n[0], n[2]) / (2*Math.PI) + 0.5;
-    u = (u % this.material.texture.scaleU) / this.material.texture.scaleU
+    u = (u % this.material.texture.scaleU) / this.material.texture.scaleU;
     let v = n[1] * 0.5 + 0.5;
-    v = (v % this.material.texture.scaleV) / this.material.texture.scaleV
+    v = 1 - ((v % this.material.texture.scaleV) / this.material.texture.scaleV);
+
 
     // Move i back to world space
     vec4.transformMat4(i, i, this.transFwd);

@@ -24,7 +24,7 @@ export class TextureImage implements Texture {
 
     // Tiny fudge factor here is not ideal, but it prevents seems
     let ui = (u * this.png.width * 0.99);
-    let vi = ((1 - v) * this.png.height * 0.99);
+    let vi = (v * this.png.height * 0.99);
     let x = Math.floor(ui);
     let y = Math.floor(vi);
     let u_ratio = ui - x;

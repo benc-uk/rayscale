@@ -1,0 +1,34 @@
+{
+  "name": "testJob2",
+  "width": 800,
+  "height": 600,
+  "scene": {
+    "name": "Simple Scene",
+    "backgroundColour": [15, 10, 30],
+    "ambientLevel": 0.2,
+    "cameraFov": 30,
+    "lights": [{"pos": [20,10,0]}],
+    "objects": [
+      {
+        "type": "sphere",
+        "name": "sphere-red",
+        "pos": [0,0,-15],
+        "size": 1.0,
+        "material": {
+          "ka": 0.05, "kd": 0.9, "ks": 1.0, "hardness": 150, "kr": 0.0, 
+          "colour": [255, 20, 50]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere-green",
+        "pos": [2,2,-12],
+        "size": 1.0,
+        "material": {
+          "ka": 0.15, "kd": 0.95, "ks": 0.0, "hardness": 150, "kr": 0.0, 
+          "colour": [0, 170, 80]
+        }
+      }      
+    ]
+  }
+}

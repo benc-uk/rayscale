@@ -19,4 +19,6 @@ export class Job {
   png: PNG.PNG;             // Output PNG image
 
   tasks: Task[];    
+
+  stats: any;
 }
