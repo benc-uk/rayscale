@@ -10,6 +10,7 @@ import { TextureBasic } from './texture-basic';
 import { TextureCheck } from './texture-check';
 import { TextureImage } from './texture-image';
 import { TextureManager } from './texture-manager';
+import { Cube } from './cube';
 
 export class Scene {
   name: string;
@@ -59,7 +60,11 @@ export class Scene {
               obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.size, rawObj.name);
               break;
             case 'plane':
-              obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 1, rawObj.name);
+              obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
+              break;
+            case 'cube':
+              obj = new Cube(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
+              //obj = new Cube(vec4.fromValues(0, 0, 0, 1), vec3.fromValues(0, 0, 0), rawObj.name)
               break;
             default:
               throw `Object type '${rawObj.type}' is invalid`

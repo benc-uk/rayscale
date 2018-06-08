@@ -268,9 +268,4 @@ export class API {
   public listTracers = (req: Request, res: Response) => {
     res.status(200).send({msg:"API stub"})
   }
-
-  private savePNG(outDir: string) {
-    this.job.png.pack()
-    .pipe(fs.createWriteStream(`${outDir}/render.png`))
-  }
 }

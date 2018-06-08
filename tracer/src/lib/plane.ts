@@ -7,7 +7,6 @@ import { Object3D } from './object3d';
 import { Ray } from './ray';
 import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
-import { Colour } from './colour';
 import { Material } from './material';
 import { Utils } from './utils';
 import { Stats } from './stats';
@@ -23,8 +22,7 @@ export class Plane implements Object3D {
   static THRES: number = 0.0001;
   static FUDGE: number = 0.0001;
 
-  constructor(pos: vec4, rotation: vec3, size: number, name: string) {
-    this.size = 0;
+  constructor(pos: vec4, rotation: vec3, name: string) {
     this.name = name;
 
     // pointing up

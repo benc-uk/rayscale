@@ -5,11 +5,9 @@
 
 import { Object3D } from './object3d';
 import { Ray } from './ray';
-import { vec3, vec4, mat4, quat } from 'gl-matrix';
+import { vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
-import { Colour } from './colour';
 import { Material } from './material';
-import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 
@@ -92,7 +90,6 @@ export class Sphere implements Object3D {
     u = (u % this.material.texture.scaleU) / this.material.texture.scaleU;
     let v = n[1] * 0.5 + 0.5;
     v = 1 - ((v % this.material.texture.scaleV) / this.material.texture.scaleV);
-
 
     // Move i back to world space
     vec4.transformMat4(i, i, this.transFwd);

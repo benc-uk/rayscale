@@ -10,6 +10,12 @@ export class Utils {
     return Math.min(Math.max(v, min), max);
   }
 
+  static swap(a: number, b: number) {
+    let tmp: number = a;
+    a = b;
+    b = tmp;
+  }
+
   static numberWithCommas = (x: number) => {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
