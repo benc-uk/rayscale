@@ -252,11 +252,12 @@ export class API {
       this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
       let stats: any = {
         status: this.job.status,
+        reason: this.job.reason,
         start: this.job.startDate,
         end: this.job.endDate,
         durationTime: this.job.durationTime,
-        imageHeight: this.job.width,
         imageWidth: this.job.width,
+        imageHeight: this.job.height,
         pixels: this.job.width * this.job.height,
         tracersUsed: Object.keys(this.tracers).length,
         stats: this.job.stats
