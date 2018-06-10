@@ -1,7 +1,9 @@
 # RayScale
-RayScale is a network distributed ray tracer written in Node.js designed for scaling out using containers. The objective of RayScale is to demonstrate several points:
+RayScale is a network distributed 3D graphics renderer based on ray tracing. Written in Node.js RayScale is designed for scaling out using containers. The objective of RayScale as a project is to demonstrate several points:
+
  - Parallel batch processing to break a slow & complex operation into smaller chunks, to gain performance benefits
  - How containers can be scaled extremely easily 
+ - Microservices architecture
  - Scaling containers over a cluster such as Kubernetes
  - Use of Azure services such as Azure Container Instances to serverlessly provide massive scale
  - RESTful APIs
@@ -10,68 +12,76 @@ RayScale is a network distributed ray tracer written in Node.js designed for sca
 ### What Is Ray Tracing
 In computer graphics, ray tracing is a rendering technique for generating an image by tracing the path of light as pixels in an image plane and simulating the effects of its encounters with virtual objects. The technique is capable of producing a very high degree of visual realism, usually higher than that of typical polygon based scanline rendering methods, but at a greater computational cost.
 
-### Sample Images
-These are some sample images created with RayScale
-![render 1](https://user-images.githubusercontent.com/14982936/40931790-3f2dd1dc-6824-11e8-96ae-47550f4846ca.png)
-![render 2](https://user-images.githubusercontent.com/14982936/40886157-0178fb40-672b-11e8-95a7-d900d0447600.png)
+### Ray Tracing Features
+It is not the goal of this project to create a completely fully featured ray tracer, as the scope of that is almost limitless. 
+RayScale currently provides:
+- Primitive objects: Spheres, planes, cubeboids & cylinders
+- Texture mapping; images (PNG) and checkerboard
+- [Phong illumination model](https://en.wikipedia.org/wiki/Phong_reflection_model) with per object surface properties
+- Single light source *(TODO - multiple lights)*
+- Positionable camera, FOV and image output at any resolution
+- Job & scene definition language (YAML) 
 
+### Sample Images
+These are some sample images rendered with RayScale
+
+<a href="examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
+<a href="examples/renders/best.png"><img src="examples/renders/best.png"></a>
+<a href="examples/renders/earth.png"><img src="examples/renders/earth.png"></a>
 
 
 # Core Components (Microservices)
-## Controller
-Carries out job coordination & orchestration of tasks to tracers  
-(Todo - more info)
 
-## Tracers
-Renders and ray traces images given to it via the **Controller**  
-(Todo - more info)
+RayScale is comprised of two independent microservices, both written in Node.js using TypeScript. All interaction to/from these services is via REST API
 
+- **Controller.**  
+Acts as control point and main interface with RayScale. It provides the API and Web UI for submitting jobs. It also coordinates the *Tracers*, keeps tracks on which tracers are online etc. The *Controller* splits up jobs into tasks and sends them to *Tracers*, and also reassembles & saves the results as they are sent back
+- **Tracer.**  
+Renders and ray traces tasks given to it via the *Controller*. Each *Tracer* registers itself with the *Controller* on startup. The *Tracer* carries out scene parsing and also the work of actually computing the ray tracing algorithm of the task it has been given. Once completed, the results are POSTed back to the controller as a binary buffer of image data
 
-
-# Basic System Architecture
+## Basic System Architecture
 ![diagram](https://user-images.githubusercontent.com/14982936/40764441-fbed1ee0-64a0-11e8-86e8-b861c13f11b4.png)
 
+## Controller
+### [:blue_book: Controller documentation: API, config etc](controller/readme.md)
+
+## Tracer
+### [:blue_book: Tracer documentation: API, config etc](tracer/readme.md)
+
+# Web UI
+The *Controller* provides a simple web UI, available at `http://<controler-addres>:<port>/ui`. The UI allows for:
+- Job YAML editing and submission
+- Viewing job results, rendered images and other outputs
+- Viewing list of tracers online
+
+<a href="https://user-images.githubusercontent.com/14982936/41202056-91deb0b8-6cbb-11e8-9cfd-0c46bcb55732.png"><img src="https://user-images.githubusercontent.com/14982936/41202056-91deb0b8-6cbb-11e8-9cfd-0c46bcb55732.png" width="300"></a> <a href="https://user-images.githubusercontent.com/14982936/41202057-91f49540-6cbb-11e8-8a89-6ee26b5772a6.png"><img src="https://user-images.githubusercontent.com/14982936/41202057-91f49540-6cbb-11e8-8a89-6ee26b5772a6.png" width="300"></a> 
+
+
+# Objects & Terms 
+!TODO!
+- Job
+- Tasks
+- Tracer
+- Scene
+
+# Running RayScale
+There are several ways you can run RayScale, a few have been tested:
+- Locally - Without Docker
+- Locally - With Docker
+- In Kubernetes
+- In [Azure Container Instances](https://azure.microsoft.com/en-gb/services/container-instances/)
+
+### [:blue_book: Full Docs - Running & Deploying RayScale](docs/deployment.md)
+
+# Scene Definition Language
+
+### [:blue_book: Full Docs - Job & Scene Definition Reference](docs/reference.md)
 
 
 # Limitations and Design Constraints
- - Single job
- - Single task
- - No controller check
+These constraints are either by design or known issues
+ - The system only allows for a single job to be running at any time
+ - Each tracer is given a single task from the job
+ - Failure of any one task, will result in a failed/incomplete job. Job and task recovery is out of scope
+ - Tracers do not check to see if the controller is active, it is assumed the controller is online at all times
 
-
-# APIs
-## Controller API
-
-|Route|Method|Calls|Notes|
-|---|---|---|---|
-|/api/status|GET|getStatus()|*stub*|
-|/api/job/{jobId}|GET|getJob()|*stub*|
-|/api/job|POST|startJob()|Start a new job|
-|/api/tracers|GET|listTracers()|*stub*|
-|/api/tracers|POST|addTracer()|When a tracer is started, it registers with the controller using this|
-|/api/tasks/{taskId}|POST|taskComplete()|Completion of a task, normally binary image data|
-
-## Tracer API
-
-|Route|Method|Calls|Notes|
-|---|---|---|---|
-|/api/ping|GET|healthPing()|Used by controller to check which tracers are online|
-|/api/status|GET|getStatus()|*stub*|
-|/api/tasks|GET|listTasks()|*stub*|
-|/api/tasks|POST|newTask()|Start a new task on this tracer|
-
-
-# Models
-
-## Job Input
-```typescript
-name:   string;     // Job name, no spaces
-width:  number;     // Output image width
-height: number;     // Output image height
-scene:  Scene;      // Scene to be rendered  
-```
-
-## Job
-## Scene
-## Tracer
-## Task
