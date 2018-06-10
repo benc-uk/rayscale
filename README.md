@@ -1,5 +1,5 @@
 # RayScale
-RayScale is a network distributed 3D graphics renderer based on ray tracing. Written in Node.js RayScale is designed for scaling out using containers. The objective of RayScale as a project is to demonstrate several points:
+RayScale is a network distributed 3D graphics renderer based on ray tracing. Written in Node.js, RayScale is designed for scaling out using containers. The objective of RayScale as a project is to demonstrate several points:
 
  - Parallel batch processing to break a slow & complex operation into smaller chunks, to gain performance benefits
  - How containers can be scaled extremely easily 

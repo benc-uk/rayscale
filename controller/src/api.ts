@@ -50,7 +50,7 @@ export class API {
     // !TODO! Removed temporary
     if(this.job && this.job.status == "RUNNING") {
       console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
-      res.status(400).send({mgs: "There is currently an active job"}); return;
+      res.status(400).send({msg: "There is currently an active job"}); return;
     }
 
     // Check if we have any tracers
@@ -145,6 +145,11 @@ export class API {
       .catch(err => {
         console.log(`### Health check failed for ${endPoint}. Unregistering tracer`);
         delete this.tracers[tid];
+
+        // If we had a job in progress we're probably screwed, so fail the job
+        this.job.status = "FAILED";
+        this.job.reason = `One or more tracers went offline while job was running`;
+
         console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
       });
     }
