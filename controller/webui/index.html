@@ -30,17 +30,34 @@
 
 <body onload="pageLoad()">
   <div id="wrapper">
+    <nav class="navbar fixed-bottom navbar-light bg-info">
+      <span class="navbar-text h4" id="status" style="color: #121212">
+        Ready to submit job
+      </span>
+      <span class="navbar-text h5 navbar-right" style="color: #121212">
+        <span id="tracerCount">0</span> tracers
+      </span>      
+    </nav>
+
     <!-- Sidebar -->
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
           <br/>
             <li>
-                <a href="#" onclick="selectPage('jobEdit')"><i id="jobEditButton" class="fas fa-edit active" style="font-size: 40px"></i></a>
+                <a class="action" onclick="selectPage('jobEdit')"><i id="jobEditButton" class="fas fa-edit active" style="font-size: 40px"></i></a>
             </li>
             <br/>
             <li>
-                <a href="#" onclick="selectPage('jobResult')"><i id="jobResultButton" class="fas fa-images" style="font-size: 40px"></i></a>
+                <a class="action" onclick="selectPage('jobResult'); jobRefresh();"><i id="jobResultButton" class="fas fa-images" style="font-size: 40px"></i></a>
             </li>
+            <br/>
+            <li>
+                <a class="action" onclick="selectPage('tracer'); tracerRefresh();"><i id="tracerButton" class="fas fa-cubes" style="font-size: 40px"></i></a>
+            </li>      
+            <br/>
+            <li>
+                <a class="action" onclick="selectPage('about');"><i id="aboutButton" class="fas fas fa-info-circle" style="font-size: 40px"></i></a>
+            </li>                    
         </ul>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -48,21 +65,53 @@
     <!-- Page Content -->
     <div id="page-content-wrapper">
         <div class="container-fluid hidden page" id="jobEditPage">
-          <button onclick="jobSubmitter()" class="btn btn-success btn-lg"><i class="fas fa-play-circle"></i> Start Job</button>
-          <div class="alert alert-dark float-right" role="alert" id="resp">&nbsp;</div>
-
+          <button onclick="jobSubmitter()" class="btn btn-success btn-lg clearfix"><i class="fas fa-play-circle"></i> Start Job</button>
+          <h2 class="float-right"> <i class="fas fa-edit" aria-hidden="true"></i> Job Editor</h2><br/><br>
           <div id="editor" name="editor"></div>
         </div>
 
         <div class="container-fluid page" id="jobResultPage">
           <button onclick="jobRefresh()" class="btn btn-success btn-lg"><i class="fas fa-sync-alt"></i> Refresh</button>
+          <h2 class="float-right"> <i class="fas fa-images"></i> Job Results</h2>
           <table class="table table-hover">
             <thead class="thead-dark">
               <tr><th>Job Name</th><th>Render</th><th>Result Data</th><th>Scene YAML</th></tr>
             </thead>
             <tbody id="jobList"></tbody>
           </table>
-        </div>        
+        </div>      
+
+        <div class="container-fluid page" id="tracerPage">
+          <button onclick="tracerRefresh()" class="btn btn-success btn-lg"><i class="fas fa-sync-alt"></i> Refresh</button>
+          <h2 class="float-right"> <i class="fas fa-cubes"></i> Tracer View</h2>
+          <table class="table table-hover">
+            <thead class="thead-dark">
+              <tr><th>Tracer Endpoint</th><th>Tracer ID</th></tr>
+            </thead>
+            <tbody id="tracerList"></tbody>
+          </table>
+        </div>   
+
+        <div class="container-fluid page" id="aboutPage">
+          <h1>RayScale</h1>
+          <p>
+            RayScale is a network distributed 3D graphics renderer based on ray tracing. Written in Node.js RayScale is designed for scaling out using containers. <br>
+            <a href="http://hub.benco.io/rayscale/" class="btn btn-primary">Read More</a>
+          </p>
+
+          <p>
+            RayScale is open source (MIT license) and more details and source code is available on GitHub <br>
+            <a href="https://github.com/benc-uk/rayscale" class="btn btn-primary"><i class="fab fa-github"></i> Git Hub Project</a>
+          </p>
+          <hr/>
+          <p>
+            Version 0.5, June 2018
+          </p>
+
+          <p>
+            &copy; Ben Coleman 2018
+          </p>
+        </div>           
     </div>
     <!-- /#page-content-wrapper -->
 

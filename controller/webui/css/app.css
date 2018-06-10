@@ -1,6 +1,6 @@
 #editor {
   max-height: 91vh;
-  height: 90vh;
+  height: 83vh;
   width: 97%;
   border: 2px solid rgb(35, 103, 148);
 }
@@ -21,4 +21,8 @@ table {
 
 .table > tbody > tr > td {
   vertical-align: middle;
+}
+
+.action {
+  cursor: pointer;
 }
