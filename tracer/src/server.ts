@@ -34,7 +34,7 @@ app.use(bodyParser.json())
 console.log(`### Node environment mode is '${app.get('env')}'`);
 
 // Initial checks
-let ctrlEndpoint = process.env.CONTROLLER_ENDPOINT;
+let ctrlEndpoint = process.env.CONTROLLER_ENDPOINT || "http://localhost:9000/api";
 if(!ctrlEndpoint) {
   console.error(`### Error! No CONTROLLER_ENDPOINT supplied, exiting!`);
   process.exit(1);
