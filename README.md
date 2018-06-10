@@ -43,10 +43,10 @@ Renders and ray traces tasks given to it via the *Controller*. Each *Tracer* reg
 ![diagram](https://user-images.githubusercontent.com/14982936/40764441-fbed1ee0-64a0-11e8-86e8-b861c13f11b4.png)
 
 ## Controller
-### [:blue_book: Controller documentation: API, config etc](controller/readme.md)
+### [📘 Controller documentation: API, config etc](controller/readme.md)
 
 ## Tracer
-### [:blue_book: Tracer documentation: API, config etc](tracer/readme.md)
+### [📘 Tracer documentation: API, config etc](tracer/readme.md)
 
 # Web UI
 The *Controller* provides a simple web UI, available at `http://<controler-addres>:<port>/ui`. The UI allows for:
@@ -71,11 +71,11 @@ There are several ways you can run RayScale, a few have been tested:
 - In Kubernetes
 - In [Azure Container Instances](https://azure.microsoft.com/en-gb/services/container-instances/)
 
-### [:blue_book: Full Docs - Running & Deploying RayScale](docs/running.md)
+### [📘 Full Docs - Running & Deploying RayScale](docs/running.md)
 
 # Scene Definition Language
 
-### [:blue_book: Full Docs - Job & Scene Definition Reference](docs/reference.md)
+### [📘 Full Docs - Job & Scene Definition Reference](docs/reference.md)
 
 
 # Limitations and Design Constraints
