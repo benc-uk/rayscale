@@ -12,6 +12,7 @@ export class Material {
   ks: number;         // Specular light coefficient 
   hardness: number;   // Hardness for specular highlights
   kr: number;         // Reflection coefficient
+  noShade: boolean
 
   constructor (ka: number, kd: number, ks: number, hardness: number, kr: number) {
     this.ka = ka;
@@ -19,5 +20,10 @@ export class Material {
     this.ks = ks;
     this.hardness = hardness;
     this.kr = kr;
+    this.noShade = false;
+  }
+
+  public copy() {
+    return Object.assign({}, this); 
   }
 }

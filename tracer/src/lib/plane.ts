@@ -15,7 +15,6 @@ import { TResult } from './t-result';
 export class Plane implements Object3D {
   trans: mat4; 
   transFwd: mat4;
-  size: number;
   name: string;
   material: Material;
   norm: vec4;
@@ -56,9 +55,9 @@ export class Plane implements Object3D {
   public getHitPoint(t: number, ray: Ray): Hit {
     let i: vec4 = ray.getPoint(t - Plane.FUDGE);
 
-    let u = Math.abs((i[0] % this.material.texture.scaleU)/this.material.texture.scaleU);
+    let u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
     if(i[0] < 0) u = 1 - u;
-    let v = Math.abs((i[2] % this.material.texture.scaleV)/this.material.texture.scaleV);
+    let v = Math.abs((i[2] % this.material.texture.scaleV) / this.material.texture.scaleV);
     if(i[2] < 0) v = 1 - v;
     
     // move i back to world space

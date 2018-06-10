@@ -9,7 +9,6 @@ import { Utils } from './lib/utils';
 // =======================================================================================================
 
 export class API {
-
   ctrlEndPoint: string;
   tracerEndPoint: string;
 
@@ -17,6 +16,9 @@ export class API {
     this.ctrlEndPoint = ep;
   }
 
+  //
+  // Respond to health pings with HTTP 200 and a simple JSON message
+  //
   public healthPing(req: Request, res: Response) {
     res.status(200).send({ resp: "Hello! I am alive" })
   }
@@ -33,11 +35,12 @@ export class API {
     scene = await Scene.parseScene(req.body.scene)
     .catch(err => {
       console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
-      res.contentType('application/json');
-      res.status(500).send(JSON.stringify({ error: `Scene did not parse correctly. ${err}. Task rejected` }));
+      res.contentType('application/json'); 
+      res.status(460).send({ error: `Scene did not parse correctly: ${err}. Task rejected` });
     });
+
     if(!scene) {
-       return; 
+       return;  
     }
 
     // Send OK back before starting tracing
@@ -45,7 +48,7 @@ export class API {
 
     // Start the ray tracer for the give task & scene
     try { 
-      // GOOOOOOoooooo!
+      // GOOOOoooooo!
       let imgSlice = new Raytracer(task, scene).startTrace();
 
       // Log stats

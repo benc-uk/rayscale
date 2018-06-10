@@ -48,10 +48,10 @@ export class API {
 
     // Check active job
     // !TODO! Removed temporary
-    // if(this.job && this.job.status == "RUNNING") {
-    //   console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
-    //   res.status(400).send({mgs: "Rejected. There is currently an active job"}); return;
-    // }
+    if(this.job && this.job.status == "RUNNING") {
+      console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
+      res.status(400).send({mgs: "There is currently an active job"}); return;
+    }
 
     // Check if we have any tracers
     if(Object.keys(this.tracers).length <= 0) {
@@ -65,11 +65,17 @@ export class API {
       jobInput = yaml.safeLoad(req.body.toString());
     } catch(err) {
       console.error(`### ERROR! YAML conversion failed ${err.message}`);
-      res.status(500).send({msg: `YAML conversion failed ${err.message}`}); return;
+      res.status(400).send({msg: `YAML conversion failed ${err.message}`}); return;
     }
 
     // Create complete job object and kick everything off
-    this.createJob(jobInput)
+    try {
+      this.createJob(jobInput)
+    } catch(e) {
+      console.log("EEEE", e);
+      res.status(400).send({msg: `Job invalid ${e}`});
+      return;
+    }
     res.status(200).send({msg: "Job started", id: this.job.id});
   }
 
@@ -89,6 +95,7 @@ export class API {
     if(req.headers['content-type'] != 'application/octet-stream') {
       console.error(`### ERROR! Task ${taskId} has failed, job will not complete`);
       this.job.status = "FAILED";
+      this.job.reason = `Ray tracing failed, task ${taskIndex} had an error`;
       res.status(200).send({msg: "OK, you failed"});
       return;
     }
@@ -148,6 +155,13 @@ export class API {
   // Create a new render job, with sub tasks fired off to tracers
   //
   public createJob(jobInput: JobInput) {
+
+    // Basic checks
+    if(!jobInput.name) throw('Job must have a name');
+    if(!jobInput.width) throw('Job must have a width');
+    if(!jobInput.height) throw('Job must have a height');
+    if(!jobInput.scene) throw('Job must have a scene');
+
     // Basic job info supplied to us
     this.job = new Job();
     this.job.startDate = new Date();
@@ -159,6 +173,7 @@ export class API {
     // Add extra properties and objects we need
     this.job.id = uuidv4();
     this.job.status = "RUNNING"; 
+    this.job.reason = ""; 
     this.job.taskCount = Object.keys(this.tracers).length; 
     this.job.tasksComplete = 0;
     this.job.png = new PNG.PNG({width:this.job.width, height:this.job.height});
@@ -195,9 +210,11 @@ export class API {
         body: JSON.stringify({ task: task, scene: jobInput.scene }),
         headers: { 'content-type': 'application/json' }
       })
+      .then()
       .catch(err => {
-        console.error(`### ERROR! Unable to send task to tracer ${err.message}`);
+        console.error(`### ERROR! Unable to send task to tracer ${err}`);
         this.job.status = "FAILED";
+        this.job.reason = err.message;
       })
 
       taskIndex++;
@@ -227,6 +244,7 @@ export class API {
     .on('finish', () => {
       console.log(`### Render complete, ${outDir}/render.png saved`);
       this.job.status = "COMPLETE";
+      this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
       let stats: any = {
         status: this.job.status,
         start: this.job.startDate,
@@ -235,6 +253,7 @@ export class API {
         imageHeight: this.job.width,
         imageWidth: this.job.width,
         pixels: this.job.width * this.job.height,
+        tracersUsed: Object.keys(this.tracers).length,
         stats: this.job.stats
       };
   
@@ -242,14 +261,26 @@ export class API {
       fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(stats, null, 2));
       fs.writeFileSync(`${outDir}/job.yaml`, yamlOut);      
     });
-
   }
 
   //
-  // API Stubs
+  // Provide current status
   //
   public getStatus = (req: Request, res: Response) => {
-    res.status(200).send({msg:"API stub"})
+    if(this.job) {
+      res.status(200).send({
+        job: {
+          name: this.job.name,
+          status: this.job.status,
+          reason: this.job.reason,
+          started: this.job.startDate,
+          tasksComplete: this.job.tasksComplete,
+          taskCount: this.job.taskCount
+        }
+      })
+    } else {
+      res.status(200).send({ msg: "Controller has no job, maybe nothing has run yet" });
+    }
   }
   
   //
@@ -264,8 +295,12 @@ export class API {
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
     res.status(200).send(jobData)
   }
-  
+
+  //
+  // List online tracers, used by the UI
+  //
   public listTracers = (req: Request, res: Response) => {
-    res.status(200).send({msg:"API stub"})
+    res.header("Cache-Control", "no-cache, no-store, must-revalidate");
+    res.status(200).send(this.tracers)
   }
 }

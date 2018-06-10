@@ -52,7 +52,6 @@ export class Raytracer {
         // Create camera ray, starting at origin and pointing into -z 
         let origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
         let dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
-        //vec4.sub(dir, origin, dir); // Not required, when origin=[0,0,0] 
         let ray: Ray = new Ray(origin, dir);
 
         // Now move ray with respect to camera transform (into world space)
@@ -102,6 +101,9 @@ export class Raytracer {
       // !TODO! Loop here for all lights!
 
       let hitColour: Colour = hitObject.material.texture.getColourAt(hit.u, hit.v).copy();
+      if(hitObject.material.noShade) {
+        return hitColour;
+      }
 
       // Lighting calculations
       let lv: vec4 = vec4.create();
@@ -109,7 +111,6 @@ export class Raytracer {
       vec4.subtract(lv, lightPos, hit.intersection);
       let lightDist: number = vec4.length(lv);
       vec4.normalize(lv, lv);
-      //console.log(this.scene.lights[0].brightness);
       
       let lightIntensity: number = Math.max(0.001, vec4.dot(lv, hit.normal)) * this.scene.lights[0].brightness ;
 
@@ -133,13 +134,13 @@ export class Raytracer {
         shadow = true;
       }
 
-      // Specular Phong shading
-      let rv: number = Math.max(0.0, vec4.dot(hit.reflected, lv)); 
-      let phong: number = Math.pow(rv, hitObject.material.hardness) * hitObject.material.ks;
-      hitColour.blend(phong);
-
       // Diffuse, ambient and shadow shading
       if(!shadow) {
+        // Specular Phong shading
+        let rv: number = Math.max(0.0, vec4.dot(hit.reflected, lv)); 
+        let phong: number = Math.pow(rv, hitObject.material.hardness) ;
+        hitColour.blend(phong * hitObject.material.ks);
+
         // Normal hit in light
         let diffuseColour = hitColour.multNew(lightIntensity * lightAtten * hitObject.material.kd);
         let ambientColour = hitColour.multNew(hitObject.material.ka * this.scene.ambientLevel);
@@ -155,6 +156,7 @@ export class Raytracer {
         let rRay = new Ray(hit.intersection, hit.reflected);
         rRay.depth = ray.depth + 1;
         let reflectColour = this.shadeRay(rRay);
+        if(!reflectColour) reflectColour = Colour.BLACK.copy();
         reflectColour = reflectColour.multNew(hitObject.material.kr);
         hitColour = Colour.add(hitColour, reflectColour);
       }
@@ -162,13 +164,7 @@ export class Raytracer {
       return hitColour;
     }
 
-    // Background stars!
-    if(Math.random() < 0.002 && ray.depth <= 1) {
-      let r = (Math.random() * 0.8) + 0.2;
-      return new Colour(r, r, r);
-    } else {
-
-      return this.scene.backgroundColour.multNew(ray.dir[1]);
-    }
+    // Missed everything! 
+    return this.scene.backgroundColour;
   }
 }

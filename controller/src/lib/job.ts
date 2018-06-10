@@ -13,6 +13,7 @@ export class Job {
   height: number;
 
   status: string;           // e.g. "RUNNING"; 
+  reason: string;
   taskCount: number;        // Total tasks in the job, e.g. number of tracers 
   tasksComplete: number;    // Tasks completed
 

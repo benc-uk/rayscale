@@ -5,15 +5,18 @@
 
 import * as pngjs from 'pngjs';
 import request from 'request-promise-native';
-export class TextureManager {
 
+export class TextureManager {
+  // Singleton!
   private static _instance: TextureManager;
-  private textures: any;
+  // Dictionary map of PNG images keyed on URL string
+  private textures: { [url: string]: pngjs.PNG };
 
   private constructor() {
     this.textures = {};
   }
 
+  // Return singleton instance
   static getInstance(): TextureManager {
     if(!TextureManager._instance) {
       TextureManager._instance = new TextureManager();
@@ -21,6 +24,7 @@ export class TextureManager {
     return TextureManager._instance;
   }
 
+  // Load a new remote PNG texture into manager
   public loadTexture(url: string): Promise<string> {
     // skip already loaded textures
     if(this.textures[url]) {
@@ -35,8 +39,7 @@ export class TextureManager {
         // Convert to PNG and store
         try {
           // We use the url as object key
-          this.textures[url] = {};
-          this.textures[url].png = pngjs.PNG.sync.read(respData.body); 
+          this.textures[url] = pngjs.PNG.sync.read(respData.body); 
           resolve(respData.statusCode);
         } catch(e) {
           // Important we delete it for future runs, as we are singleton
@@ -52,13 +55,15 @@ export class TextureManager {
     });
   }
 
+  // Wipe out textures
   public clearTextures() {
     console.log(`### TextureManager is clearing cached textures`);
     delete this.textures;
     this.textures = {};
   }
 
+  // Return PNG for given URL string
   public getTexturePNG(url: string): pngjs.PNG {
-    return this.textures[url].png;
+    return this.textures[url];
   }
 }

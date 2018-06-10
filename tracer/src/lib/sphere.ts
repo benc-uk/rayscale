@@ -15,7 +15,7 @@ export class Sphere implements Object3D {
   pos: vec4;
   trans: mat4;
   transFwd: mat4;
-  size: number;
+  radius: number;
   r2: number;
   name: string;
   material: Material;
@@ -23,7 +23,7 @@ export class Sphere implements Object3D {
   static FUDGE: number  = 0.00001;
 
   constructor(pos: vec4, radius: number, name: string) {
-    this.size = radius;
+    this.radius = radius;
     this.r2 = radius * radius;
     this.name = name;
     this.pos = pos;
@@ -82,7 +82,7 @@ export class Sphere implements Object3D {
 
     // Normal is pointing from center of sphere (0,0,0) to intersect (i)
     let n: vec4 = vec4.fromValues(0, 0, 0, 1);  //vec4.sub(vec4.create(), i, [0, 0, 0, 1]);
-    vec4.div(n, i, [this.size, this.size, this.size, 1]);
+    vec4.div(n, i, [this.radius, this.radius, this.radius, 1]);
     n[3] = 0; 
 
     // Calc u, v coords on sphere (polar cordinates) and scale/wrap
