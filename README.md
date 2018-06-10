@@ -71,7 +71,7 @@ There are several ways you can run RayScale, a few have been tested:
 - In Kubernetes
 - In [Azure Container Instances](https://azure.microsoft.com/en-gb/services/container-instances/)
 
-### [:blue_book: Full Docs - Running & Deploying RayScale](docs/deployment.md)
+### [:blue_book: Full Docs - Running & Deploying RayScale](docs/running.md)
 
 # Scene Definition Language
 
