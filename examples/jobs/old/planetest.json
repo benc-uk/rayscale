@@ -1,0 +1,109 @@
+{
+  "name": "mega-simpleP",
+  "width": 800,
+  "height": 600,
+  "scene": {
+    "name": "planeTest",
+    "backgroundColour": [10, 10, 30],
+    "ambientLevel": 0.5,
+    "cameraFov": 30,
+    "cameraPos": [-18, 6, 0],
+    "cameraLookAt": [9,0.5,-27],    
+    "lights": [{"pos": [-50, 45, 0]}],
+    "objects": [
+      {
+        "type": "sphere",
+        "name": "mirror-ball",
+        "pos": [7,1.5,-21],
+        "size": 2.5,
+        "material": {
+          "ka": 0.0, "kd": 0.9,
+          "ks": 1.3, "hardness": 90,
+          "kr": 0.5,
+          "colour": [15,15, 65]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere-redshine",
+        "pos": [-1.2,2,-25],
+        "size": 4,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 1.4, "hardness": 80,
+          "kr": 0.3,
+          "colour": [255, 20, 50]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere-gree",
+        "pos": [0,0,-12],
+        "size": 2,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 0.9, "hardness": 20,
+          "kr": 0,
+          "colour": [20, 200, 25]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere-orange",
+        "pos": [5.3,3.8,-17],
+        "size": 1.2,
+        "material": {
+          "ka": 0.05, "kd": 0.9,
+          "ks": 0.3, "hardness": 4,
+          "kr": 0,
+          "colour": [255,69,0]
+        }
+      },
+
+      {
+        "type": "plane",
+        "name": "wall white",
+        "pos": [0,-2,-39],
+        "rotate": [90, 0, 0],
+        "size": 1,
+        "material": {
+          "ka": 0.3, "kd": 0.9,
+          "ks": 0.0, "hardness": 1,
+          "kr": 0.5,
+          "colour": [190, 190, 190]
+        }
+      },
+      {
+        "type": "plane",
+        "name": "wallpurp",
+        "pos": [27,0,-39],
+        "rotate": [0, 0, 90],
+        "size": 1,
+        "material": {
+          "ka": 0.0, "kd": 1,
+          "ks": 0.9, "hardness": 4,
+          "kr": 0.1,
+          "colour": [190, 20, 240]
+        }
+      },
+      
+      {
+        "type": "plane",
+        "name": "floor-blue",
+        "pos": [0,-2,-40],
+        "rotate": [0, 0, 0],
+        "size": 1,
+        "material": {
+          "ka": 0.2, "kd": 0.7,
+          "ks": 0.7, "hardness": 10,
+          "kr": 0.5,
+          "colour": [20, 80, 255]
+        }
+      }   
+
+      
+   
+
+    ]
+  }
+}

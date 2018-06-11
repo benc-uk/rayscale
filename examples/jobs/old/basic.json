@@ -1,0 +1,86 @@
+{
+  "name": "test-job",
+  "width": 800,
+  "height": 600,
+  "scene": {
+    "name": "basic",
+    "backgroundColour": [10, 10, 30],
+    "ambientLevel": 0.5,
+    "cameraFov": 30,
+    "cameraPos": [-9, 10, -12],
+    "cameraLookAt": [-2,-1.0,-15],
+    "lights": [{"pos": [15,9,-2]}],
+    "objects": [
+      {
+        "type": "sphere",
+        "name": "sphere1",
+        "pos": [2,-1.0,-15],
+        "size": 2,
+        "material": {
+          "ka": 0.05, "kd": 0.9, "ks": 2.0, "hardness": 100, "kr": 0.6, 
+          "colour": [25, 20, 50]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere2",
+        "pos": [-2,-1.0,-15],
+        "size": 2,
+        "material": {
+          "ka": 0.1, "kd": 0.9, "ks": 1.4, "hardness": 90, "kr": 0,
+          "colour": [20, 20, 255]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "sphere3",
+        "pos": [2.5,2.6,-17],
+        "size": 0.8,
+        "material": {
+          "ka": 0.05, "kd": 0.9, "ks": 0.7, "hardness": 8, "kr": 0,
+          "colour": [255,69,0]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "floor",
+        "pos": [1,-500,-20],
+        "size": 498,
+        "material": {
+          "ka": 0.2, "kd": 0.8, "ks": 0.0, "hardness": 2, "kr": 0,
+          "colour": [30, 190, 30]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "small-ball-1",
+        "pos": [0,-2,-11],
+        "size": 0.4,
+        "material": {
+          "ka": 0.05, "kd": 0.95, "ks": 0.0, "hardness": 0, "kr": 0,
+          "colour": [190, 70, 250]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "small-ball-2",
+        "pos": [0.5,-2,-10],
+        "size": 0.4,
+        "material": {
+          "ka": 0.3, "kd": 0.7, "ks": 0.0, "hardness": 0, "kr": 0,
+          "colour": [75,0,130]
+        }
+      },
+      {
+        "type": "sphere",
+        "name": "small-ball-3",
+        "pos": [1,-2,-11],
+        "size": 0.4,
+        "material": {
+          "ka": 0.1, "kd": 0.9, "ks": 0.0, "hardness": 0, "kr": 0,
+          "colour": [139,0,139]
+        }
+      }
+    ]
+  }
+}

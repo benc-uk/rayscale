@@ -67,4 +67,4 @@ typings/
 **/dist
 
 # Jobs
-**/jobs/**
+controller/jobs/**
