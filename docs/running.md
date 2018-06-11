@@ -1,11 +1,11 @@
 # Running & Deploying 
 
 Contents:
-- [Running Locally without Docker](#Running-Locally-without-Docker)
-- [Running Locally with Docker](#Running-Locally-with-Docker)
-- [Running in Kubernetes](#Running-in-Kubernetes)
-- [Running in Azure Container Instance](#Running-in-Azure-Container-Instance)
-- [Quick Start To Using RayScale](#Quick-Start-Guide)
+- [Running Locally without Docker](#running-locally-without-docker)
+- [Running Locally with Docker](#running-locally-with-docker)
+- [Running in Kubernetes](#running-in-kubernetes)
+- [Running in Azure Container Instance](#running-in-azure-container-instance)
+- [Quick Start To Using RayScale](#quick-start-guide)
 
 ## Running Locally without Docker
 You can run both the *Controller* and *Tracer* locally using Node.js. To speed up rendering you can run more than one tracer however running more tracers than you have CPU cores on your machine will probably slow the process down.
@@ -30,7 +30,7 @@ You can run both the *Controller* and *Tracer* locally using Node.js. To speed u
   - Tracer will start on port 8500 and connect to the controller on port 9000
 - To run multiple tracers, a shell script is provided; `run.sh` in the tracer directory. This starts each tracer on a different port (8550, 8551, 8552, etc) Simply run it under bash/WSL and pass the number of tracers you want to start, e.g. `./run.sh 3`
 - Access the Web UI at `http://localhost:9000/`
-- Jump to the [quick start guide](#Quick-Start-Guide)
+- Jump to the [quick start guide](#quick-start-guide)
 
 ---
 
@@ -47,7 +47,7 @@ You can run both the *Controller* and *Tracer* locally using Node.js. To speed u
 - `docker-compose up -d`
 - If you want to add more tracers simply scale them up with: `docker-compose up -d --scale tracer=4`
 - Access the Web UI at `http://localhost:9000/`
-- Jump to the [quick start guide](#QuickStartGuide)
+- Jump to the [quick start guide](#quick-start-guide)
 
 ---
 
@@ -66,7 +66,7 @@ You can run both the *Controller* and *Tracer* locally using Node.js. To speed u
 - `k get svc controller-ui -w` and wait until external IP is assigned
 - If you want to add more tracers simply scale them up with: `kubectl scale deployment tracer --replicas=8`
 - Access the Web UI at `http://<external-ip>/`
-- Jump to the [quick start guide](#QuickStartGuide)
+- Jump to the [quick start guide](#quick-start-guide)
 
 ### Optional Image Build Steps
 - If you want to build the images and push to your own repo or registry follow these steps. Change `<your-registry>` as required. Note. this will require Docker CE installed

@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: controller-pods
-        image: bencuk/rayscale-controller
+        image: bencuk/rayscale-controller:stable
+        imagePullPolicy: Always
         ports:
         - containerPort: 9000
 
@@ -40,7 +41,8 @@ spec:
     spec:
       containers:
       - name: tracer-pods
-        image: bencuk/rayscale-tracer
+        image: bencuk/rayscale-tracer:stable
+        imagePullPolicy: Always
         ports:
         - containerPort: 8500
         env:     

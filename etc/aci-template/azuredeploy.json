@@ -1,0 +1,151 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "tracerCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "Number of tracers to deploy"
+      }       
+    },    
+    "dnsPrefix": {
+      "type": "string",
+      "defaultValue": "rayscale",
+      "metadata": {
+        "description": "String to prefix all DNS names with"
+      }       
+    }    
+  },
+  "variables": {
+    "containerController": "rayscale-controller",
+    "containerTracer": "rayscale-tracer",
+    "imageController": "bencuk/rayscale-controller:stable",
+    "imageTracer": "bencuk/rayscale-tracer:stable",
+    "memory": 1.0,
+    "cpu": 1.0,
+    "dnsLabelController": "[concat(parameters('dnsPrefix'), '-controller')]",
+    "dnsLabelTracer": "[concat(parameters('dnsPrefix'), '-tracer')]"
+  },
+  "resources": [
+    {
+      "name": "[variables('containerController')]",
+      "type": "Microsoft.ContainerInstance/containerGroups",
+      "apiVersion": "2018-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "containers": [
+          {
+            "name": "[variables('containerController')]",
+            "properties": {
+              "image": "[variables('imageController')]",
+              "ports": [
+                {
+                  "port": "80"
+                }
+              ],              
+              "resources": {
+                "requests": {
+                  "cpu": "[variables('cpu')]",
+                  "memoryInGb": "[variables('memory')]"
+                }
+              },
+              "environmentVariables": [
+                {
+                  "name": "PORT",
+                  "value": "80"
+                },
+                {
+                  "name": "HEALTH_CHECK_INTERVAL",
+                  "value": "150"
+                }                   
+              ]
+            }
+          }        
+        ],
+        "osType": "Linux",
+        "ipAddress": {
+          "type": "Public",
+          "dnsNameLabel": "[variables('dnsLabelController')]",
+          "ports": [
+            {
+              "protocol": "tcp",
+              "port": "80"
+            }
+          ]            
+        }
+      }
+    },
+
+
+    {
+      "name": "[concat(variables('containerTracer'), '-', copyIndex())]",
+      "type": "Microsoft.ContainerInstance/containerGroups",
+      "copy": {
+        "name": "tracerCopy",
+        "count": "[parameters('tracerCount')]"
+      },
+      "apiVersion": "2018-04-01",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "containers": [
+          {
+            "name": "[variables('containerTracer')]",
+            "properties": {
+              "image": "[variables('imageTracer')]",
+              "ports": [
+                {
+                  "port": "80"
+                }
+              ],              
+              "resources": {
+                "requests": {
+                  "cpu": "[variables('cpu')]",
+                  "memoryInGb": "[variables('memory')]"
+                }
+              },
+              "environmentVariables": [
+                {
+                  "name": "RESTART",
+                  "value": "0"
+                },
+                {
+                  "name": "CONTROLLER_ENDPOINT",
+                  "value": "[concat('http://', variables('dnsLabelController'), '.', resourceGroup().location, '.azurecontainer.io/api')]"
+                },
+                {
+                  "name": "PORT",
+                  "value": "80"
+                },
+                {
+                  "name": "HOSTNAME",
+                  "value": "[concat(variables('dnsLabelTracer'), '-', copyIndex(), '.', resourceGroup().location, '.azurecontainer.io')]"
+                }           
+              ]
+            }
+          }
+        ],
+        "osType": "Linux",
+        "ipAddress": {
+          "type": "Public",
+          "dnsNameLabel": "[concat(variables('dnsLabelTracer'), '-', copyIndex())]",
+          "ports": [
+            {
+              "protocol": "tcp",
+              "port": "80"
+            }
+          ]          
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ContainerInstance/containerGroups', variables('containerController'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "controllerURL": {
+      "value": "[concat('http://', variables('dnsLabelController'), '.', resourceGroup().location, '.azurecontainer.io')]",
+      "type": "string"
+    }
+  }
+}
