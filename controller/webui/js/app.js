@@ -4,23 +4,7 @@ var editor;
 // This is run on page load
 //
 function pageLoad() {
-  // pass options to create ace editor
-  editor = ace.edit(document.getElementById('editor'), {
-      mode: "ace/mode/yaml",
-      selectionStyle: "text",
-      theme: "ace/theme/tomorrow_night",
-      fontSize: "19px",
-      tabSize: 2,
-      useSoftTabe: true
-  })
-
-  // Restore old job YAML
-  let oldjob = window.localStorage.getItem('rayScaleJob');
-  editor.setValue(oldjob);
-  // And update tables
-  jobRefresh();
-  tracerRefresh();
-
+  // Fake SPA routing
   var url = window.location.href; 
   hashIndex = url.indexOf('#')
   if(hashIndex > 0) {
@@ -30,6 +14,24 @@ function pageLoad() {
     // Select starting page
     selectPage('jobEdit');
   }
+
+  // pass options to create ace editor
+  editor = ace.edit(document.getElementById('editor'), {
+    mode: "ace/mode/yaml",
+    selectionStyle: "text",
+    theme: "ace/theme/tomorrow_night",
+    fontSize: "19px",
+    tabSize: 2,
+    useSoftTabe: true
+  })
+
+  // Restore old job YAML
+  let oldjob = window.localStorage.getItem('rayScaleJob');
+  editor.setValue(oldjob);
+  
+  // And update tables
+  jobRefresh();
+  tracerRefresh();
 }
 
 //
@@ -85,7 +87,7 @@ function statusBarUpdate() {
     clearTimeout(updaterId);
   })
 
-  updaterId = setTimeout(statusBarUpdate, 1000);
+  updaterId = setTimeout(statusBarUpdate, 2000);
 }
 
 //
@@ -104,9 +106,12 @@ function jobRefresh() {
       for(let job of data.jobs) {
         let row = $('<tr/>');
         row.append(`<td><b>${job}</b></td>`);
-        row.append(`<td><a href='/jobs/${job}/render.png' target='${job}_render'><img class='minirender' src='/jobs/${job}/render.png?r=${Math.random()}'></a></td>`);
-        row.append(`<td><a class='btn btn-primary btn-lg' href='/jobs/${job}/result.json' target='${job}_result'>&nbsp;&nbsp; <i class="fas fa-info-circle"></i> &nbsp;&nbsp;</a></td>`);
-        row.append(`<td><a class='btn btn-primary btn-lg' href='/jobs/${job}/job.yaml' target='${job}_scene'>&nbsp;&nbsp; <i class="fas fa-cubes"></i> &nbsp;&nbsp;</a></td>`);
+        row.append(`<td><a href='/jobs/${job}/render.png' 
+          target='${job}_render'><img class='minirender' src='/jobs/${job}/render.png?r=${Math.random()}'></a></td>`);
+        row.append(`<td><a class='btn btn-primary btn-lg' href='/jobs/${job}/result.json' 
+          target='${job}_result'>&nbsp;<i class="fas fa-info-circle"></i> &nbsp; INFO &nbsp;</a></td>`);
+        row.append(`<td><a class='btn btn-primary btn-lg' href='/jobs/${job}/job.yaml' 
+          target='${job}_scene'>&nbsp;<i class="fas fa-cubes"></i> &nbsp; JOB &nbsp;</a></td>`);
         table.append(row);
       }
     });
@@ -144,10 +149,10 @@ function tracerRefresh() {
 }
 
 function selectPage(page) {
+  // Fake SPA routing
   var url = window.location.href; 
   url = url.substring(0, url.indexOf('#'));
   window.location.href = (url + '#' + page);
-  console.log(window.location.href)
 
   $('.page').each((i, e) => {
     $(e).hide();

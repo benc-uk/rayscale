@@ -31,10 +31,10 @@
 <body onload="pageLoad()">
   <div id="wrapper">
     <nav class="navbar fixed-bottom navbar-light bg-info">
-      <span class="navbar-text h4" id="status" style="color: #121212">
+      <span class="navbar-text status-bar-left" id="status">
         Ready to submit job
       </span>
-      <span class="navbar-text h5 navbar-right" style="color: #121212">
+      <span class="navbar-text navbar-right status-bar-right">
         <span id="tracerCount">0</span> tracers
       </span>      
     </nav>
@@ -44,19 +44,16 @@
         <ul class="sidebar-nav">
           <br/>
             <li>
-                <a class="action" onclick="selectPage('jobEdit')"><i id="jobEditButton" class="fas fa-edit active" style="font-size: 40px"></i></a>
+                <a class="action" onclick="selectPage('jobEdit')"><i id="jobEditButton" class="fas fa-edit active"></i></a>
             </li>
-            <br/>
             <li>
-                <a class="action" onclick="selectPage('jobResult'); jobRefresh();"><i id="jobResultButton" class="fas fa-images" style="font-size: 40px"></i></a>
+                <a class="action" onclick="selectPage('jobResult'); jobRefresh();"><i id="jobResultButton" class="fas fa-images"></i></a>
             </li>
-            <br/>
             <li>
-                <a class="action" onclick="selectPage('tracer'); tracerRefresh();"><i id="tracerButton" class="fas fa-cubes" style="font-size: 40px"></i></a>
+                <a class="action" onclick="selectPage('tracer'); tracerRefresh();"><i id="tracerButton" class="fas fa-cubes"></i></a>
             </li>      
-            <br/>
             <li>
-                <a class="action" onclick="selectPage('about');"><i id="aboutButton" class="fas fas fa-info-circle" style="font-size: 40px"></i></a>
+                <a class="action" onclick="selectPage('about');"><i id="aboutButton" class="fas fas fa-info-circle"></i></a>
             </li>                    
         </ul>
     </div>
@@ -75,7 +72,7 @@
           <h2 class="float-right"> <i class="fas fa-images"></i> Job Results</h2>
           <table class="table table-hover">
             <thead class="thead-dark">
-              <tr><th>Job Name</th><th>Render</th><th>Result Data</th><th>Scene YAML</th></tr>
+              <tr><th>Job Name</th><th>Rendered Image</th><th>Result Data</th><th>Job YAML</th></tr>
             </thead>
             <tbody id="jobList"></tbody>
           </table>

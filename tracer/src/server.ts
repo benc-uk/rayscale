@@ -56,18 +56,22 @@ let port = process.env.PORT || 8500;
 const server = app.listen(port, async () => {
   console.log(`### Tracer server listening on ${port}`);
 
-  // Get hostname / IP address info
-  let hostname = null;
-  if(process.env.USE_IPADDRESS == 'true') {
-    hostname = Utils.getNetInterfaceIP();
+  // Get hostname / IP address or used fixed name
+  let hostname = process.env.HOSTNAME || null;
+  if(!hostname){
+    if(process.env.USE_IPADDRESS == 'true') {
+      hostname = Utils.getNetInterfaceIP();
+    } else {
+      hostname = os.hostname()
+    } 
+    if(hostname) {
+      console.log(`### Detected hostname: ${hostname}`);     
+    } else {
+      console.error(`### ERROR! Unable to get hostname, exiting!`);  
+      process.exit(2);   
+    }
   } else {
-    hostname = os.hostname()
-  }
-  if(hostname) {
-    console.log(`### Detected hostname: ${hostname}`);     
-  } else {
-    console.error(`### ERROR! Unable to get hostname, exiting!`);  
-    process.exit(2);   
+    console.log(`### Using fixed hostname: ${hostname}`);
   }
 
   // Register with controller

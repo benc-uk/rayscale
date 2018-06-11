@@ -141,14 +141,17 @@ export class API {
   
       // Call health ping API on tracer, expect 200 and nothing more
       // !TODO! Further validation, check id etc
-      request(`${endPoint}/ping`)
+      request({uri: `${endPoint}/ping`})
       .catch(err => {
-        console.log(`### Health check failed for ${endPoint}. Unregistering tracer`);
+        console.log(`### Health check failed for ${endPoint} - Unregistering tracer`);
         delete this.tracers[tid];
 
         // If we had a job in progress we're probably screwed, so fail the job
-        this.job.status = "FAILED";
-        this.job.reason = `One or more tracers went offline while job was running`;
+        if(this.job && this.job.status == "RUNNING") {
+          console.log(`### ERROR! One or more tracers went offline while job was running`);
+          this.job.status = "FAILED";
+          this.job.reason = `One or more tracers went offline while job was running`;
+        }
 
         console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
       });

@@ -25,4 +25,23 @@ table {
 
 .action {
   cursor: pointer;
+  font-size: 40px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.action:hover {
+  background-color: #222;
+}
+
+.status-bar-left {
+  color: #111 !important;
+  font-weight: bold;
+  font-size: 150%;
+}
+
+.status-bar-right {
+  color: #229 !important;
+  font-weight: bold;
+  font-size: 150%;
 }
