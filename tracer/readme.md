@@ -5,7 +5,7 @@ All configuration is done via environmental variables. When running locally dote
 
 |Name|Default|Notes|
 |---|---|---|
-|**CONTROLLER_ENDPOINT**|*none*|**Mandatory setting** URL of controller API endpoint, e.g. `http://blahblah:9000/api`|
+|**CONTROLLER_ENDPOINT**|http://localhost:9000/api|URL of controller API endpoint, e.g. `http://blahblah:9000/api` unless running locally you will need to set and override this value|
 |**PORT**|8500|The port the server listens on|
 |**SKIP_TEXTURE_RESET**|false|Skip clearing texture cache. Can speed up re-renders of same scene, but could case memory bloat|
 |**USE_IPADDRESS**|false|Register with controller using detected IP not hostname|

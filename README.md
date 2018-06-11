@@ -30,8 +30,8 @@ These are some sample images rendered with RayScale
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/earth.png"><img src="examples/renders/earth.png"></a>
 
 
-# Core Components (Microservices)
 
+# Core Components (Microservices)
 RayScale is comprised of two independent microservices, both written in Node.js using TypeScript. All interaction to/from these services is via REST API.
 
 RayScale is intended to be run with a single *Controller* and one or more *Tracers* (either on the same machine as the controller (each on different TCP ports) or elsewhere on the network). Tracers can be started & stopped at any point, more added etc. and the *Controller* keeps track of tracers via health checks much like a network load balancer.
@@ -48,6 +48,7 @@ Renders and ray traces tasks given to it via the *Controller*. Each *Tracer* reg
 ### [📘 Tracer documentation](controller/readme.md)
 
 
+
 # Web UI
 The *Controller* provides a simple web UI, available at `http://<controler-addres>:<port>/ui`. The UI allows for:
 - Job YAML editing and submission
@@ -55,6 +56,7 @@ The *Controller* provides a simple web UI, available at `http://<controler-addre
 - Viewing list of tracers online
 
 <a href="https://user-images.githubusercontent.com/14982936/41202056-91deb0b8-6cbb-11e8-9cfd-0c46bcb55732.png"><img src="https://user-images.githubusercontent.com/14982936/41202056-91deb0b8-6cbb-11e8-9cfd-0c46bcb55732.png" width="300"></a> <a href="https://user-images.githubusercontent.com/14982936/41202057-91f49540-6cbb-11e8-8a89-6ee26b5772a6.png"><img src="https://user-images.githubusercontent.com/14982936/41202057-91f49540-6cbb-11e8-8a89-6ee26b5772a6.png" width="300"></a> 
+
 
 
 # Objects & Terms 
@@ -74,9 +76,12 @@ As RayScale uses Node.js and is also containerised there are numerous ways you c
 
 ### [📘 Full Docs - Running & Deploying RayScale](docs/running.md)
 
+
+
 # Scene Definition Language
 The way *Scenes* are defined is in YAML, there's 
 ### [📘 Full Docs - Job & Scene Definition Reference](docs/reference.md)
+
 
 
 # Limitations and Design Constraints
