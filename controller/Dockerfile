@@ -23,13 +23,15 @@ RUN node node_modules/typescript/bin/tsc
 ##############################################################
 
 FROM node:8-alpine
+LABEL org.label-schema.name="RayScale: Controller" \
+      org.label-schema.description="Controller microservice for RayScale app" \    
+      org.label-schema.version="0.5.0" \
+      org.label-schema.vcs-url=https://github.com/benc-uk/rayscale
 
-LABEL version="0.0.1" 
 WORKDIR /app/controller
 ENV PORT 9000
 ENV HEALTH_CHECK_INTERVAL 5
-ENV DIR_WEBUI /app/controller/webui
-ENV DIR_JOBOUT /app/controller/jobs
+ENV JOB_OUTPUT /app/controller/jobs
 
 # NPM install packages
 COPY controller/package*.json ./

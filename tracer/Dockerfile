@@ -23,11 +23,14 @@ RUN node node_modules/typescript/bin/tsc
 ##############################################################
 
 FROM node:8-alpine
+LABEL org.label-schema.name="RayScale: Tracer" \
+      org.label-schema.description="Tracer microservice for RayScale app" \    
+      org.label-schema.version="0.5.0" \
+      org.label-schema.vcs-url=https://github.com/benc-uk/rayscale
 
-LABEL version="0.0.1" 
 WORKDIR /app/tracer
 ENV PORT 8500
-ENV CONTROLLER_ENDPOINT http://changeme:9000/api
+#ENV CONTROLLER_ENDPOINT http://changeme:9000/api
 
 # NPM install packages
 COPY tracer/package*.json ./
