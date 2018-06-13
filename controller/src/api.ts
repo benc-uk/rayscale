@@ -15,11 +15,13 @@ export class API {
   private job: Job;
   private jobOutDir: string;
   private rawJob: any;
+  private checkInterval: number;
 
-  constructor(outDir: string) {
+  constructor(outDir: string, checkInterval: number) {
     // Tracers starts as empty dict  
     this.tracers = {};
     this.jobOutDir = outDir;
+    this.checkInterval = checkInterval;
   }
 
   //
@@ -141,7 +143,7 @@ export class API {
   
       // Call health ping API on tracer, expect 200 and nothing more
       // !TODO! Further validation, check id etc
-      request({uri: `${endPoint}/ping`})
+      request({ uri: `${endPoint}/ping`, timeout: this.checkInterval - 1 })
       .catch(err => {
         console.log(`### Health check failed for ${endPoint} - Unregistering tracer`);
         delete this.tracers[tid];

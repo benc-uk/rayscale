@@ -31,6 +31,7 @@ console.log(`### Node environment mode is '${app.get('env')}'`);
 
 var webUIDir = `${__dirname}/../webui`;
 var jobOutDir = process.env.JOB_OUTPUT || `${__dirname}/../jobs`;
+var checkInterval: number = parseInt(process.env.HEALTH_CHECK_INTERVAL || "80") * 1000
 
 // Creat job dir
 if (!fs.existsSync(jobOutDir)){
@@ -38,7 +39,7 @@ if (!fs.existsSync(jobOutDir)){
 }
 
 // Routing here!
-const api = new API(jobOutDir);
+const api = new API(jobOutDir, checkInterval);
 app.get ('/api/status',      api.getStatus);
 app.get ('/api/jobs',        api.listJobs);  
 app.post('/api/jobs',        api.startJob);
@@ -54,12 +55,11 @@ app.use('/jobs', express.static(jobOutDir));
 
 // Start server
 let port = process.env.PORT || 9000;
-let checkInterval = process.env.HEALTH_CHECK_INTERVAL || "5";
+
 const server = app.listen(port, function () {
   console.log(`### Controller server listening on ${port}`);
   console.log(`### Web UI serving static content from: ${webUIDir}`);
   console.log(`### Web UI URL: http://localhost:${port}/ui`);
-  
   console.log(`### Tracer health checks run every ${checkInterval} seconds`);
-  setInterval(api.tracerHealthCheck, parseInt(checkInterval) * 1000);
+  setInterval(api.tracerHealthCheck, checkInterval);
 });
