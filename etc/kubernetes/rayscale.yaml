@@ -20,6 +20,9 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 9000
+        env:     
+        - name: HEALTH_CHECK_INTERVAL
+          value: "70"
 
 ---
 

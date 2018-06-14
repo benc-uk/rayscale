@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "tracerCount": {
-      "value": 1
+      "value": 6
     },
     "dnsPrefix": {
       "value": "rayscale"

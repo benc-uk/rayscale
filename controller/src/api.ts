@@ -144,6 +144,7 @@ export class API {
       // Call health ping API on tracer, expect 200 and nothing more
       // !TODO! Further validation, check id etc
       request({ uri: `${endPoint}/ping`, timeout: this.checkInterval - 1 })
+      .then(resp => { /* Do nothing */ })
       .catch(err => {
         console.log(`### Health check failed for ${endPoint} - Unregistering tracer`);
         delete this.tracers[tid];

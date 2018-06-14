@@ -15,7 +15,14 @@
       "metadata": {
         "description": "String to prefix all DNS names with"
       }       
-    }    
+    },
+    "tracerRestart": {
+      "type": "string",
+      "defaultValue": "0",
+      "metadata": {
+        "description": "Change this value (to anything!) and redeploy to force tracers to restart"
+      }       
+    }       
   },
   "variables": {
     "containerController": "rayscale-controller",
@@ -25,7 +32,8 @@
     "memory": 1.0,
     "cpu": 1.0,
     "dnsLabelController": "[concat(parameters('dnsPrefix'), '-controller')]",
-    "dnsLabelTracer": "[concat(parameters('dnsPrefix'), '-tracer')]"
+    "dnsLabelTracer": "[concat(parameters('dnsPrefix'), '-tracer')]",
+    "healthCheckTime": "150"
   },
   "resources": [
     {
@@ -57,7 +65,7 @@
                 },
                 {
                   "name": "HEALTH_CHECK_INTERVAL",
-                  "value": "150"
+                  "value": "[variables('healthCheckTime')]"
                 }                   
               ]
             }
@@ -107,7 +115,7 @@
               "environmentVariables": [
                 {
                   "name": "RESTART",
-                  "value": "0"
+                  "value": "[parameters('tracerRestart')]"
                 },
                 {
                   "name": "CONTROLLER_ENDPOINT",
@@ -118,7 +126,7 @@
                   "value": "80"
                 },
                 {
-                  "name": "HOSTNAME",
+                  "name": "OVERRIDE_HOSTNAME",
                   "value": "[concat(variables('dnsLabelTracer'), '-', copyIndex(), '.', resourceGroup().location, '.azurecontainer.io')]"
                 }           
               ]

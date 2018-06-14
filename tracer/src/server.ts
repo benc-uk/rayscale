@@ -57,7 +57,7 @@ const server = app.listen(port, async () => {
   console.log(`### Tracer server listening on ${port}`);
 
   // Get hostname / IP address or used fixed name
-  let hostname = process.env.HOSTNAME || null;
+  let hostname = process.env.OVERRIDE_HOSTNAME || null;
   if(!hostname){
     if(process.env.USE_IPADDRESS == 'true') {
       hostname = Utils.getNetInterfaceIP();
@@ -71,7 +71,7 @@ const server = app.listen(port, async () => {
       process.exit(2);   
     }
   } else {
-    console.log(`### Using fixed hostname: ${hostname}`);
+    console.log(`### Using hostname override: ${hostname}`);
   }
 
   // Register with controller
