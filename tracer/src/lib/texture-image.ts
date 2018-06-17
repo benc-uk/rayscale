@@ -26,8 +26,8 @@ export class TextureImage implements Texture {
   getColourAt(u: number, v: number): Colour {
 
     // Tiny fudge factor here is not ideal, but it prevents seams
-    let ui = (u * this.png.width * 0.99);
-    let vi = (v * this.png.height * 0.99);
+    let ui = (u * this.png.width * 0.999);
+    let vi = (v * this.png.height * 0.999);
 
     // Bilinear filtering from four points
     // Code taken from: https://en.wikipedia.org/wiki/Bilinear_filtering

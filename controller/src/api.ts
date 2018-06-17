@@ -1,3 +1,9 @@
+//
+// API controller for all routes and core app logic
+// ------------------------------------------------
+// Ben C, May 2018
+//
+
 import { Request, Response } from 'express';
 import request from 'request-promise-native';
 import uuidv4 from 'uuid/v4';
@@ -11,6 +17,7 @@ import { Tracer } from './lib/tracer';
 
 export class API {
 
+  // Tracers is a dictionary map of strings -> Tracer
   private tracers: { [id: string]: Tracer };
   private job: Job;
   private jobOutDir: string;
@@ -24,9 +31,9 @@ export class API {
     this.checkInterval = checkInterval;
   }
 
-  //
+  // ====================================================================================
   // API: Register a new tracer/worker
-  // 
+  // ====================================================================================
   public addTracer = (req: Request, res: Response) => {
     let tracer = new Tracer();
     tracer.id = req.body.id;
@@ -41,9 +48,9 @@ export class API {
     console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
   }
   
-  //
+  // ====================================================================================
   // API: Start a new job, POST data is inital job data
-  //
+  // ====================================================================================
   public startJob = (req: Request, res: Response) => {
     res.type('application/json');
     console.log(`### New job request received`);
@@ -81,9 +88,9 @@ export class API {
     res.status(200).send({msg: "Job started", id: this.job.id});
   }
 
-  //
+  // ====================================================================================
   // API: Task results send back from tracer
-  //
+  // ====================================================================================
   public taskComplete = (req: Request, res: Response) => {
     let taskId = req.params.id;
     let taskIndex = req.headers['x-task-index'];
@@ -132,9 +139,9 @@ export class API {
     res.status(200).send({msg: "OK, slice buffer stored"});
   }
   
-  //
+  // ====================================================================================
   // Regular tracer health check, remove tracers that are not contactable 
-  //
+  // ====================================================================================
   public tracerHealthCheck = () => {
     //console.log(`### Running tracer health check...`);
     
@@ -162,10 +169,10 @@ export class API {
     //console.log(`### Tracers online: ${Object.keys(tracers).length}`);
   }
 
-  //
+  // ====================================================================================
   // Create a new render job, with sub tasks fired off to tracers
-  //
-  public createJob(jobInput: JobInput) {
+  // ====================================================================================
+  private createJob(jobInput: JobInput) {
 
     // Basic checks
     if(!jobInput.name) throw('Job must have a name');
@@ -234,10 +241,10 @@ export class API {
     console.log(`### New job created: ${this.job.name} with ${this.job.taskCount} tasks`)
   }
 
-  //
+  // ====================================================================================
   // Job completion, output image, gather stats etc
-  //
-  completeJob() {
+  // ====================================================================================
+  private completeJob() {
     if(this.job.status != "RUNNING") {
       return;
     }
@@ -275,9 +282,9 @@ export class API {
     });
   }
 
-  //
-  // Provide current status
-  //
+  // ====================================================================================
+  // API: Provide current status
+  // ====================================================================================
   public getStatus = (req: Request, res: Response) => {
     if(this.job) {
       res.status(200).send({
@@ -295,9 +302,9 @@ export class API {
     }
   }
   
-  //
+  // ====================================================================================
   // List out the jobs directory, used by the UI
-  //
+  // ====================================================================================
   public listJobs = (req: Request, res: Response) => {
     let jobData: any = {jobs:[]};
     fs.readdirSync(this.jobOutDir).forEach(file => {
@@ -308,9 +315,9 @@ export class API {
     res.status(200).send(jobData)
   }
 
-  //
+  // ====================================================================================
   // List online tracers, used by the UI
-  //
+  // ====================================================================================
   public listTracers = (req: Request, res: Response) => {
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
     res.status(200).send(this.tracers)

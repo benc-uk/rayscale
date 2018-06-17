@@ -52,8 +52,8 @@ export class Plane implements Object3D {
     return new TResult(0.0, tRay); //{t: 0, tRay: tRay};
   }
 
-  public getHitPoint(t: number, ray: Ray): Hit {
-    let i: vec4 = ray.getPoint(t - Plane.FUDGE);
+  public getHitPoint(result: TResult): Hit {
+    let i: vec4 = result.ray.getPoint(result.t - Plane.FUDGE);
 
     let u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
     if(i[0] < 0) u = 1 - u;
@@ -64,7 +64,7 @@ export class Plane implements Object3D {
     vec4.transformMat4(i, i, this.transFwd);
 
     // calc reflected ray about the normal, & move to world
-    let r: vec4 = ray.reflect(this.norm);
+    let r: vec4 = result.ray.reflect(this.norm);
     vec4.transformMat4(r, r, this.transFwd);
     vec4.normalize(r, r);   
 

@@ -77,26 +77,25 @@ export class Raytracer {
   //
   private shadeRay(ray: Ray): Colour {
     let t: number = Number.MAX_VALUE;
-    let tRay = null;
+    let objTResult: TResult;
     let hitObject = null;
     Stats.raysCast++;
 
     // Check all objects for ray intersection t
     for(let obj of this.scene.objects) {
       let tResult: TResult = obj.calcT(ray);
-      let objT = tResult.t;
 
       // Find closest hit only, as that's how reality works
-      if (objT > 0.0 && objT < t) {
-        t = objT;
-        tRay = tResult.ray;
+      if (tResult.t > 0.0 && tResult.t < t) {
+        t = tResult.t;
+        objTResult = tResult;
         hitObject = obj;
       }
     }
 
     // We have an object hit! Time to do more work 
     if(t > 0.0 && t < Number.MAX_VALUE) {
-      let hit: Hit = hitObject.getHitPoint(t, tRay);
+      let hit: Hit = hitObject.getHitPoint(objTResult);
 
       // !TODO! Loop here for all lights!
 

@@ -1,16 +1,17 @@
 import { Colour } from './colour';
 import { Object3D } from './object3d';
-import { Sphere } from './sphere';
 import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
-import { Plane } from './plane';
 import { Texture } from './texture';
 import { TextureBasic } from './texture-basic';
 import { TextureCheck } from './texture-check';
 import { TextureImage } from './texture-image';
 import { TextureManager } from './texture-manager';
+import { Plane } from './plane';
+import { Sphere } from './sphere';
 import { Cube } from './cube';
+import { Cylinder } from './cylinder';
 
 export class Scene {
   name: string;
@@ -71,14 +72,23 @@ export class Scene {
 
           switch (rawObj.type.toLowerCase()) {
             case 'sphere':
-              obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.size, rawObj.name);
+              if(!rawObj.radius) throw(`Sphere radius missing ${JSON.stringify(rawObj)}`);
+              obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.radius, rawObj.name);
               break;
             case 'plane':
               obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
               break;
             case 'cube':
-              obj = new Cube(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
-              //obj = new Cube(vec4.fromValues(0, 0, 0, 1), vec3.fromValues(0, 0, 0), rawObj.name)
+              obj = new Cube(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
+                             vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
+                             vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
+              break;
+            case 'cylinder':
+              if(!rawObj.radius) throw(`Cylinder radius missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.length) throw(`Cylinder length missing ${JSON.stringify(rawObj)}`);
+              obj = new Cylinder(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
+                                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
+                                 rawObj.radius, rawObj.length, rawObj.name);
               break;
             default:
               throw `Object type '${rawObj.type}' is invalid`

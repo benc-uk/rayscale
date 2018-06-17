@@ -18,10 +18,14 @@ export class Sphere implements Object3D {
   radius: number;
   r2: number;
   name: string;
+
   material: Material;
   static THRES: number = 0.001;
   static FUDGE: number  = 0.00001;
 
+  // ====================================================================================
+  // Create a Sphere (called by Scene parser)
+  // ====================================================================================
   constructor(pos: vec4, radius: number, name: string) {
     this.radius = radius;
     this.r2 = radius * radius;
@@ -37,6 +41,9 @@ export class Sphere implements Object3D {
     //mat4.transpose(this.transNormal, this.transFwd);
   }
 
+  // ====================================================================================
+  // Standard find intersection distance t required by all Object3D
+  // ====================================================================================
   public calcT(ray: Ray): TResult {
     Stats.objectTests++;
     let tRay: Ray = ray.transformNewRay(this.trans);
@@ -73,19 +80,20 @@ export class Sphere implements Object3D {
     return tresult;
   }
 
-  //
-  // Note. Ray must be in OBJECT SPACE
-  //
-  public getHitPoint(t: number, ray: Ray): Hit {
-    // Ray is already in object space
-    let i: vec4 = ray.getPoint(t - Sphere.FUDGE);
+  // ====================================================================================
+  // Standard getHitPoint details required by all Object3D
+  // - Important! Input Ray should already be in object space
+  // ====================================================================================
+  public getHitPoint(result: TResult): Hit {
+    // Intersection point
+    let i: vec4 = result.ray.getPoint(result.t - Sphere.FUDGE);
 
     // Normal is pointing from center of sphere (0,0,0) to intersect (i)
     let n: vec4 = vec4.fromValues(0, 0, 0, 1);  //vec4.sub(vec4.create(), i, [0, 0, 0, 1]);
     vec4.div(n, i, [this.radius, this.radius, this.radius, 1]);
     n[3] = 0; 
 
-    // Calc u, v coords on sphere (polar cordinates) and scale/wrap
+    // Calc texture u, v coords on sphere (polar coordinates) and scale/wrap
     let u = Math.atan2(n[0], n[2]) / (2*Math.PI) + 0.5;
     u = (u % this.material.texture.scaleU) / this.material.texture.scaleU;
     let v = n[1] * 0.5 + 0.5;
@@ -95,7 +103,7 @@ export class Sphere implements Object3D {
     vec4.transformMat4(i, i, this.transFwd);
 
     // Calc reflected ray about the normal, & move to world
-    let r: vec4 = ray.reflect(n);
+    let r: vec4 = result.ray.reflect(n);
     vec4.transformMat4(r, r, this.transFwd);
     vec4.normalize(r, r);   
 

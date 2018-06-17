@@ -32,6 +32,15 @@ function pageLoad() {
   // And update tables
   jobRefresh();
   tracerRefresh();
+  setStatus('...');
+
+  // Ctrl+S starts job
+  $(document).keydown(function(event) {
+    if (!( String.fromCharCode(event.which).toLowerCase() == 's' && event.ctrlKey) && !(event.which == 19)) return true;
+    jobSubmitter();
+    event.preventDefault();
+    return false;
+  });
 }
 
 //
@@ -48,14 +57,14 @@ function jobSubmitter() {
   .then(res => {
     if(res.status != 200) {
       res.json().then(data => { 
-        $('#status').html('<i class="fas fa-exclamation-triangle"></i> Job submission failed: '+data.msg)
+        setStatus('<i class="fas fa-exclamation-triangle"></i> Job submission failed: '+data.msg)
       });
     } else {
       statusBarUpdate();
     }
   })
   .catch(err => {
-    $('#status').html('<i class="fas fa-exclamation-triangle"></i> Error occurred submitting job!')
+    setStatusl('<i class="fas fa-exclamation-triangle"></i> Error occurred submitting job!')
   })
 }
 
@@ -72,10 +81,10 @@ function statusBarUpdate() {
     res.json().then(data => { 
       if(data.job) {
         if(data.job.status == "RUNNING") {
-          $('#status').html(`<i class="fa fa-sync fa-spin"></i>&nbsp; Job: ${data.job.name} is running. Completed ${data.job.tasksComplete} of ${data.job.taskCount} tasks...`)
+          setStatus(`<i class="fa fa-sync fa-spin"></i>&nbsp; Job: ${data.job.name} is running. Completed ${data.job.tasksComplete} of ${data.job.taskCount} tasks...`)
         } else {
           clearTimeout(updaterId);
-          $('#status').html(`Job: ${data.job.name} is ${data.job.status}. ${data.job.reason}`)
+          setStatus(`Job: ${data.job.name} is ${data.job.status}. ${data.job.reason}`)
         }
       } else {
         clearTimeout(updaterId);
@@ -83,7 +92,7 @@ function statusBarUpdate() {
     });
   })
   .catch(err => {
-    $('#status').html('<i class="fas fa-exclamation-triangle"></i> Error occurred getting job status!')
+    setStatus('<i class="fas fa-exclamation-triangle"></i> Error occurred getting job status!')
     clearTimeout(updaterId);
   })
 
@@ -117,7 +126,7 @@ function jobRefresh() {
     });
   })
   .catch(err => {
-    $('#status').html('<i class="fas fa-exclamation-triangle"></i> Error with job listing! '+err)
+    setStatus('<i class="fas fa-exclamation-triangle"></i> Error with job listing! '+err)
   })
 }
 
@@ -164,4 +173,9 @@ function selectPage(page) {
 
   $(`#${page}Page`).show();
   $(`#${page}Button`).addClass('active');
+}
+
+function setStatus(msg) {
+  $('#status').attr('title', msg);
+  $('#status').html(msg)
 }

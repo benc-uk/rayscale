@@ -16,7 +16,7 @@ scene:
   - type: sphere
     name: red-ball
     pos: [8, 2, -22]
-    size: 2
+    radius: 2
     material:
       preset: shiny
       kr: 0.0
@@ -30,7 +30,7 @@ scene:
   - type: sphere
     name: blue-ball
     pos: [6, 5, -29]
-    size: 5
+    radius: 5
     material:
       preset: shiny
       kr: 0.2
@@ -44,7 +44,7 @@ scene:
   - type: sphere
     name: chrome1
     pos: [-2, 3, -35]
-    size: 3
+    radius: 3
     material:
       preset: shiny
       kr: 0.9
@@ -58,7 +58,7 @@ scene:
   - type: sphere
     name: woodball
     pos: [-1.6, 2, -20]
-    size: 2
+    radius: 2
     material:
       preset: shiny
       kr: 0.19
@@ -74,7 +74,7 @@ scene:
   - type: sphere
     name: chrome3
     pos: [20, 4, -30]
-    size: 4
+    radius: 4
     material:
       preset: shiny
       kr: 0.9

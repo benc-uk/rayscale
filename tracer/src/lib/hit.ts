@@ -6,17 +6,17 @@
 import { vec4 } from 'gl-matrix'
 
 export class Hit {
-  intersection: vec4;
-  normal: vec4;
-  reflected: vec4;
-  u: number = 1;
-  v: number = 1;
+  public intersection: vec4;  // Intersection point in world space (point with w=1)
+  public normal: vec4;        // Normal at intersection point (normalized vector)
+  public reflected: vec4;     // Reflected ray direction (normalized vector)
+  public u: number = 1;       // Texture coords; u
+  public v: number = 1;       // Texture coords; v
 
-  constructor(i: vec4, n: vec4, r: vec4, u: number, v: number) {
-    this.intersection = i;
-    this.normal = n;
-    this.reflected = r;
-    this.u = u;
-    this.v = v;
+  constructor(int: vec4, norm: vec4, refl: vec4, texu: number, texv: number) {
+    this.intersection = int;
+    this.normal = norm;
+    this.reflected = refl;
+    this.u = texu;
+    this.v = texv;
   }
 }

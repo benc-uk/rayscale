@@ -6,13 +6,13 @@
 import { Texture } from './texture';
 
 export class Material {
-  texture: Texture;   // Texture
+  texture: Texture;   // Texture object
   ka: number;         // Ambient light coefficient 
   kd: number;         // Diffuse light coefficient 
   ks: number;         // Specular light coefficient 
   hardness: number;   // Hardness for specular highlights
   kr: number;         // Reflection coefficient
-  noShade: boolean
+  noShade: boolean    // If true, no lighting calcs will be done
 
   constructor (ka: number, kd: number, ks: number, hardness: number, kr: number) {
     this.ka = ka;

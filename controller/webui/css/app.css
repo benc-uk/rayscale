@@ -38,6 +38,10 @@ table {
   color: #111 !important;
   font-weight: bold;
   font-size: 150%;
+  text-overflow: ellipsis;
+  white-space: nowrap; 
+  overflow: hidden;  
+  width: 90%;
 }
 
 .status-bar-right {

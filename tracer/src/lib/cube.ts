@@ -77,8 +77,8 @@ export class Cube implements Object3D {
     return new TResult(tCube, tRay);
   }
 
-  public getHitPoint(t: number, ray: Ray): Hit {
-    let i: vec4 = ray.getPoint(t - Cube.FUDGE);
+  public getHitPoint(result: TResult): Hit {
+    let i: vec4 = result.ray.getPoint(result.t - Cube.FUDGE);
 
     // Normal 
     // Code stolen from 
@@ -126,7 +126,7 @@ export class Cube implements Object3D {
     vec4.transformMat4(i, i, this.transFwd);
 
     // calc reflected ray about the normal, & move to world
-    let r: vec4 = ray.reflect(n);
+    let r: vec4 = result.ray.reflect(n);
     vec4.transformMat4(r, r, this.transFwd);
     vec4.normalize(r, r);   
 

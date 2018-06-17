@@ -16,7 +16,7 @@ scene:
     - type: sphere
       name: chrome-ball
       pos: [-6, 4, -30]
-      size: 4
+      radius: 4
       material:
         preset: shiny
         kr: 0.8
@@ -30,7 +30,7 @@ scene:
     - type: sphere
       name: earth
       pos: [6, 7, -29]
-      size: 5
+      radius: 5
       material:
         preset: matte
         ka: 0.08
