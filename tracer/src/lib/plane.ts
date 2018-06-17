@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { Object3D } from './object3d';
+import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
 import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
@@ -42,7 +42,7 @@ export class Plane implements Object3D {
     let tRay: Ray = ray.transformNewRay(this.trans);
 
     let denom: number = vec4.dot(this.norm, tRay.dir);
-    if (Math.abs(denom) > Plane.THRES) {
+    if (Math.abs(denom) > ObjectConsts.EPSILON3) {
         let l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], tRay.pos);
         let t: number = vec4.dot(l0, this.norm) / denom;
         if (t >= 0)  {
@@ -53,7 +53,7 @@ export class Plane implements Object3D {
   }
 
   public getHitPoint(result: TResult): Hit {
-    let i: vec4 = result.ray.getPoint(result.t - Plane.FUDGE);
+    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON2);
 
     let u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
     if(i[0] < 0) u = 1 - u;

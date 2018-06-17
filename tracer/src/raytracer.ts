@@ -12,6 +12,7 @@ import { Utils } from './lib/utils'
 import { Hit } from './lib/hit';
 import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
+import { ObjectConsts } from './lib/object3d';
 
 export class Raytracer {
   image: Buffer;

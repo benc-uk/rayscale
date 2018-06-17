@@ -1,26 +1,191 @@
 name: cylindertest
-width: 800
-height: 600
+width: 600
+height: 400
+#width: 3840
+#height: 2160
 scene:
   name: test
   backgroundColour: [4, 22, 53]
   ambientLevel: 1.0
-  cameraFov: 30
-  cameraPos: [0, 0, 10]
-  cameraLookAt: [0, 0, 0]     
+  cameraFov: 28
+  cameraPos: [0, 19, 5]
+  cameraLookAt: [0, 0, -30]     
   lights:
-    - pos: [28, 10, 10]
+    - pos: [12, 30, 3]
       radius: 300
-      brightness: 1.2
+      brightness: 1.6
   objects:
+    - type: plane
+      name: floor
+      pos: [0, 0.0, 0]
+      rotate: [0, 20, 00]
+      material:
+        preset: shiny
+        texture: 
+          type: check
+          scaleV: 10
+          scaleU: 10
+          colour1: [30, 30 ,30]
+          colour2: [220, 220, 200]
+          
     - type: cylinder
-      name: cyl1
-      pos: [0, 0, -10]
+      name: tableleg
+      pos: [0, 0, -20]
       rotate: [0, 0, 0]
-      radius: 1
+      radius: 1.5
+      length: 8
+      material:
+        preset: shiny
+        texture: 
+          type: image
+          scaleV: 10
+          scaleU: 0.5
+          url: https://bcmisc.blob.core.windows.net/textures/wooddark.png
+          
+    - type: cylinder
+      name: tablebase
+      pos: [0, 0, -20]
+      rotate: [0, 0, 0]
+      radius: 3.2
+      length: 0.5
+      material:
+        preset: shiny
+        texture: 
+          type: image
+          scaleV: 8
+          scaleU: 2
+          url: https://bcmisc.blob.core.windows.net/textures/stone.png
+          
+    - type: cylinder
+      name: tabletop
+      pos: [0, 8, -20]
+      rotate: [0, 0, 0]
+      radius: 6
+      length: 0.3
+      material:
+        preset: shiny
+        kr: 0.4
+        texture: 
+          type: image
+          scaleV: 1
+          scaleU: 0.8
+          url: https://bcmisc.blob.core.windows.net/textures/wooddark.png
+          
+    - type: sphere
+      name: ball
+      pos: [1.7, 9.6, -22]
+      rotate: [0, 0, 0]
+      radius: 1.5
+      material:
+        preset: shiny
+        hardness: 5
+        ks: 0.7
+        texture: 
+          type: check
+          scaleU: 0.1         
+          scaleV: 0.2
+          colour1: [10, 30, 200]
+          colour2: [220, 180, 10]
+          
+    - type: cylinder
+      name: cyl
+      pos: [-0.2, 8.9, -20]
+      rotate: [90, 0, 20]
+      radius: 0.6
       length: 4
       material:
         preset: matte
+        hardness: 11
+        ks: 1.5
         texture: 
-          colour: [200, 20, 20]
-
+          type: check
+          scaleU: 1000
+          scaleV: 0.9
+          colour1: [204, 16, 91]
+          colour2: [70, 12, 122]
+          
+    - type: cube
+      name: box
+      pos: [3.2, 8.8, -18]
+      rotate: [0, 42, 0]
+      size: [2, 1, 3.5]
+      material:
+        preset: shiny
+        texture: 
+          type: image
+          scaleU: 4
+          scaleV: 4
+          url: https://bcmisc.blob.core.windows.net/textures/marb-blue.png      
+    - type: sphere
+      name: boxstud
+      pos: [2.5, 9.28, -17.4]
+      radius: 0.15
+      material:
+        preset: shiny
+        hardness: 11
+        ks: 1.5
+        texture: 
+          type: basic
+          colour: [200, 150, 20]
+          
+    - type: cube
+      name: base
+      pos: [-3.5, 7.6, -19.1]
+      rotate: [45, 0, 45]
+      size: [1.5, 1.5, 1.5]
+      material:
+        preset: matte
+        texture: 
+          type: basic
+          colour: [15, 127, 110]
+          
+    - type: cylinder
+      name: stem
+      pos: [-3.5, 8.4, -19]
+      rotate: [0, 0, 0]
+      radius: 0.2
+      length: 4
+      material:
+        preset: shiny
+        texture: 
+          type: basic
+          colour: [107, 188, 145]     
+          
+    - type: sphere
+      name: mirrorball
+      pos: [-3.5, 11.5, -19]
+      rotate: [0, 0, 0]
+      radius: 1.2
+      material:
+        preset: shiny
+        kr: 0.99
+        texture: 
+          type: basic
+          colour: [50, 50, 50]        
+          
+    - type: plane
+      name: wall
+      pos: [15, 0.0, 0]
+      rotate: [0, 20, 90]
+      material:
+        preset: matte
+        texture: 
+          type: image
+          scaleV: 10
+          scaleU: 10
+          swapUV: true
+          flipU: true
+          url: https://bcmisc.blob.core.windows.net/textures/stone-wall.png
+          
+    - type: cube
+      name: mirror
+      pos: [8.1, 11, -19]
+      rotate: [0, 20, 0]
+      size: [0.1, 4, 8]
+      material:
+        preset: shiny
+        kr: 0.99
+        texture: 
+          type: basic
+          colour: [50, 50, 50]      
+                    

@@ -69,7 +69,8 @@ export class Cylinder implements Object3D {
       t1 = (-b + d) / a;
       t2 = (-b - d) / a;
 
-      if (Math.abs(t1) < ObjectConsts.EPSILON3 || Math.abs(t2) < ObjectConsts.EPSILON3)
+      //if (Math.abs(t1) < ObjectConsts.EPSILON || Math.abs(t2) < ObjectConsts.EPSILON3)
+      if (Math.abs(t1) < 0 || Math.abs(t2) < 0)  // Changing to zero has fixed some shadow errors
         return tresult; // return 0
 
       // Sort smallest cylinder intersection
@@ -84,8 +85,8 @@ export class Cylinder implements Object3D {
       }
 
       // Clip cylinder between 0 and length
-      let iNear: vec4 = ray.getPoint(tNear - ObjectConsts.EPSILON3);
-      let iFar: vec4 = ray.getPoint(tFar - ObjectConsts.EPSILON3);
+      let iNear: vec4 = ray.getPoint(tNear); // - ObjectConsts.EPSILON3);
+      let iFar: vec4 = ray.getPoint(tFar);   // - ObjectConsts.EPSILON3);
 
       // Total miss
       if((iNear[1] < 0 && iFar[1] < 0) || (iNear[1] > this.length && iFar[1] > this.length)) { 
@@ -143,7 +144,7 @@ export class Cylinder implements Object3D {
   public getHitPoint(result: TResult): Hit {
     // Intersection point
     if(!result.ray) return;
-    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON3);
+    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON4);
 
     // Normal same as sphere but with y forced to 0
     let n: vec4 = vec4.fromValues(0, 0, 0, 1);
@@ -164,9 +165,9 @@ export class Cylinder implements Object3D {
     let u: number = 0, v: number = 0;
     if(result.flag == TResult.TOP) {
       // Treat the cap as a plane
-      u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
+      u = Math.abs((i[0] % (this.material.texture.scaleU*3)) / (this.material.texture.scaleU*3));
       if(i[0] < 0) u = 1 - u;
-      v = Math.abs((i[2] % this.material.texture.scaleV) / this.material.texture.scaleV);
+      v = Math.abs((i[2] % (this.material.texture.scaleV*3)) / (this.material.texture.scaleV*3));
       if(i[2] < 0) v = 1 - v;
     } else {
       // Treat the sides as a sphere where v = i.y

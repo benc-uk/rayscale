@@ -7,6 +7,9 @@ import { Texture } from './texture';
 import { Colour } from './colour';
 
 export class TextureBasic implements Texture {
+  swapUV: boolean;
+  flipU: boolean;
+  flipV: boolean;
   scaleU: number = 1;
   scaleV: number = 1;
   colour: Colour

@@ -163,8 +163,11 @@ export class Scene {
           break;
       }
             
-      if(input.texture.u) texture.scaleU = input.texture.u;
-      if(input.texture.v) texture.scaleV = input.texture.v;
+      if(input.texture.scaleU) texture.scaleU = input.texture.scaleU;
+      if(input.texture.scaleV) texture.scaleV = input.texture.scaleV;
+      if(input.texture.flipU) texture.flipU = input.texture.flipU;
+      if(input.texture.flipV) texture.flipV = input.texture.flipV;
+      if(input.texture.swapUV) texture.swapUV = input.texture.swapUV;
       m.texture = texture;  
     }
     

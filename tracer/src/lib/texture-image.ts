@@ -7,8 +7,13 @@ import * as pngjs from 'pngjs';
 import { Texture } from './texture';
 import { Colour } from './colour';
 import { TextureManager } from './texture-manager';
+import { vec2, mat2 } from 'gl-matrix';
+import { Utils } from './utils';
 
 export class TextureImage implements Texture {
+  swapUV: boolean;
+  flipU: boolean;
+  flipV: boolean;
   scaleU: number = 1;
   scaleV: number = 1;
   textureUrl: string;
@@ -25,9 +30,18 @@ export class TextureImage implements Texture {
   // Will carry out simple bilinear filter 
   getColourAt(u: number, v: number): Colour {
 
+    if(this.flipU) u = (1 - u)
+    if(this.flipV) v = (1 - v)
+    
     // Tiny fudge factor here is not ideal, but it prevents seams
-    let ui = (u * this.png.width * 0.999);
-    let vi = (v * this.png.height * 0.999);
+    let ui, vi: number;
+    if(this.swapUV) {
+      ui = (v * this.png.width * 0.99);
+      vi = (u * this.png.height * 0.99);
+    } else {
+      ui = (u * this.png.width * 0.99);
+      vi = (v * this.png.height * 0.99);
+    }
 
     // Bilinear filtering from four points
     // Code taken from: https://en.wikipedia.org/wiki/Bilinear_filtering
