@@ -18,7 +18,7 @@ scene:
         type: image
         u: 8
         v: 8
-        url: https://bcmisc.blob.core.windows.net/textures/stone.png        
+        url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png        
   lights:
     - pos: [-28, 18, -3]
       radius: 300
@@ -49,7 +49,7 @@ scene:
           type: image
           u: 13
           v: 13
-          url: https://bcmisc.blob.core.windows.net/textures/stone.png           
+          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png           
     - type: sphere
       name: ball
       pos: [3, 5, -18]
