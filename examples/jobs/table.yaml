@@ -1,31 +1,35 @@
-name: cylindertest
-width: 600
-height: 400
-#width: 3840
-#height: 2160
+name: table
+width: 800
+height: 500
 scene:
-  name: test
+  name: table
   backgroundColour: [4, 22, 53]
-  ambientLevel: 1.0
+  ambientLevel: 0.1
   cameraFov: 28
   cameraPos: [0, 19, 5]
   cameraLookAt: [0, 0, -30]     
   lights:
     - pos: [12, 30, 3]
-      radius: 300
-      brightness: 1.6
+      radius: 190
+      brightness: 1.5
+    - pos: [-20, 50, -70]
+      radius: 190
+      brightness: 0.5
+    - pos: [-50, 20, -20]
+      radius: 90
+      brightness: 1
   objects:
     - type: plane
       name: floor
       pos: [0, 0.0, 0]
-      rotate: [0, 20, 00]
+      rotate: [0, 20, 0]
       material:
-        preset: shiny
+        preset: matte
         texture: 
           type: check
           scaleV: 10
           scaleU: 10
-          colour1: [30, 30 ,30]
+          colour1: [30, 80 ,30]
           colour2: [220, 220, 200]
           
     - type: cylinder
@@ -35,7 +39,7 @@ scene:
       radius: 1.5
       length: 8
       material:
-        preset: shiny
+        preset: matte
         texture: 
           type: image
           scaleV: 10
@@ -49,7 +53,8 @@ scene:
       radius: 3.2
       length: 0.5
       material:
-        preset: shiny
+        preset: matte
+        ks: 0.3
         texture: 
           type: image
           scaleV: 8
@@ -64,7 +69,7 @@ scene:
       length: 0.3
       material:
         preset: shiny
-        kr: 0.4
+        kr: 0.2
         texture: 
           type: image
           scaleV: 1
@@ -72,27 +77,24 @@ scene:
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
           
     - type: sphere
-      name: ball
+      name: checkball
       pos: [1.7, 9.6, -22]
       rotate: [0, 0, 0]
       radius: 1.5
       material:
         preset: shiny
-        hardness: 5
-        ks: 0.7
+        hardness: 90
+        ks: 1.5
+        kr: 0.8
         texture: 
-          type: check
-          scaleU: 0.1         
-          scaleV: 0.2
-          colour1: [10, 30, 200]
-          colour2: [220, 180, 10]
+          colour: [40, 40, 80]
           
     - type: cylinder
-      name: cyl
-      pos: [-0.2, 8.9, -20]
-      rotate: [90, 0, 20]
+      name: cup1
+      pos: [-0.2, 9.9, -17]
+      rotate: [180, 0, 0]
       radius: 0.6
-      length: 4
+      length: 2
       material:
         preset: matte
         hardness: 11
@@ -100,7 +102,23 @@ scene:
         texture: 
           type: check
           scaleU: 1000
-          scaleV: 0.9
+          scaleV: 0.4
+          colour1: [204, 16, 91]
+          colour2: [70, 12, 122]
+    - type: cylinder
+      name: cup2
+      pos: [-2.0, 9.9, -17.5]
+      rotate: [180, 0, 0]
+      radius: 0.6
+      length: 2
+      material:
+        preset: matte
+        hardness: 11
+        ks: 1.5
+        texture: 
+          type: check
+          scaleU: 1000
+          scaleV: 0.4
           colour1: [204, 16, 91]
           colour2: [70, 12, 122]
           
@@ -137,7 +155,7 @@ scene:
         preset: matte
         texture: 
           type: basic
-          colour: [15, 127, 110]
+          colour: [181, 49, 23]
           
     - type: cylinder
       name: stem
@@ -147,21 +165,24 @@ scene:
       length: 4
       material:
         preset: shiny
+        kr: 0.35
         texture: 
           type: basic
-          colour: [107, 188, 145]     
+          colour: [10, 10, 10]     
           
     - type: sphere
-      name: mirrorball
+      name: globe
       pos: [-3.5, 11.5, -19]
       rotate: [0, 0, 0]
       radius: 1.2
       material:
-        preset: shiny
-        kr: 0.99
+        preset: matte
+        kd: 1.1
         texture: 
-          type: basic
-          colour: [50, 50, 50]        
+          type: image
+          scaleV: 1
+          scaleU: 0.8
+          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/earth.png      
           
     - type: plane
       name: wall
@@ -184,8 +205,59 @@ scene:
       size: [0.1, 4, 8]
       material:
         preset: shiny
-        kr: 0.99
+        kr: 0.9
         texture: 
           type: basic
           colour: [50, 50, 50]      
-                    
+          
+    - type: cube
+      name: chairback
+      pos: [-10, 3.5, -19]
+      rotate: [0, 0, 0]
+      size: [0.5, 13, 3.5]
+      material:
+        preset: matte
+        texture: 
+          type: image
+          swapUV: true
+          scaleU: 3
+          scaleV: 5
+          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png  
+    - type: cube
+      name: chairfront
+      pos: [-6, 2.5, -19]
+      rotate: [0, 0, 0]
+      size: [0.5, 5, 3.5]
+      material:
+        preset: matte
+        texture: 
+          type: image
+          swapUV: true
+          scaleU: 3
+          scaleV: 5          
+          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png     
+    - type: cube
+      name: chairbase
+      pos: [-7.9, 4.752, -19]
+      rotate: [0, 0, 0]
+      size: [3.9, 0.5, 3.5]
+      material:
+        preset: matte
+        texture: 
+          type: image
+          scaleU: 3
+          scaleV: 3
+          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png
+    - type: cube
+      name: chaircushion
+      pos: [-7.9, 4.9, -19]
+      rotate: [0, 0, 0]
+      size: [3.5, 0.5, 3.1]
+      material:
+        preset: matte
+        kd: 1
+        texture: 
+          type: image
+          scaleU: 5
+          scaleV: 5
+          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/red-fabric.png

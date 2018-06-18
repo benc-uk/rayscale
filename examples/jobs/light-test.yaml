@@ -1,0 +1,94 @@
+name: light-test
+width: 800
+height: 600
+scene:
+  name: test
+  backgroundColour:
+    - 4
+    - 22
+    - 53
+  ambientLevel: 0.1
+  cameraFov: 30
+  cameraPos:
+    - 0
+    - 20
+    - 0
+  cameraLookAt:
+    - 0
+    - 0
+    - -30
+  lights:
+    - pos:
+        - 20
+        - 30
+        - -10
+      radius: 80
+      brightness: 0.9
+    - pos:
+        - -30
+        - 30
+        - -15
+      radius: 80
+      brightness: 1.9
+    - pos:
+        - -3
+        - 20
+        - -95
+      radius: 80
+      brightness: 0.9
+  objects:
+    - type: plane
+      name: floor
+      pos:
+        - 0
+        - 0
+        - 0
+      rotate:
+        - 0
+        - 0
+        - 0
+      material:
+        preset: matte
+        texture:
+          type: check
+          scaleV: 10
+          scaleU: 10
+          colour1:
+            - 30
+            - 80
+            - 30
+          colour2:
+            - 220
+            - 220
+            - 200
+    - type: sphere
+      name: b1
+      pos:
+        - 3
+        - 3
+        - -25
+      radius: 3
+      material:
+        preset: shiny
+        ks: 2
+        hardness: 90
+        kr: 0.2
+        texture:
+          colour:
+            - 74
+            - 86
+            - 219
+    - type: sphere
+      name: b2
+      pos:
+        - -3
+        - 3
+        - -25
+      radius: 3
+      material:
+        preset: matte
+        texture:
+          colour:
+            - 198
+            - 37
+            - 37
