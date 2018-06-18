@@ -15,7 +15,7 @@ scene:
     - pos: [-20, 50, -70]
       radius: 190
       brightness: 0.5
-    - pos: [-50, 20, -20]
+    - pos: [-50, 35, -20]
       radius: 90
       brightness: 1
   objects:

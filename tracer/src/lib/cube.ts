@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { Object3D } from './object3d';
+import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
 import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
@@ -78,7 +78,7 @@ export class Cube implements Object3D {
   }
 
   public getHitPoint(result: TResult): Hit {
-    let i: vec4 = result.ray.getPoint(result.t - Cube.FUDGE);
+    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON5);
 
     // Normal 
     // Code stolen from 
@@ -97,29 +97,22 @@ export class Cube implements Object3D {
     else if(Math.abs(i[2] - this.b2[2]) < Cube.THRES) 
       n = vec4.fromValues(0, 0, 1, 0);
 
-    // !TODO! Work out "best" orientation of u & V on the sides 
+    // Best orientation of u & V on the sides I can manage
     let u, v = 0;
     if(Math.abs(n[0]) > 0) {
-      u = Math.abs((i[2] % this.material.texture.scaleU) / this.material.texture.scaleU);
-      if(i[2] < 0) u = 1 - u;
-      v = Math.abs((i[1] % this.material.texture.scaleV) / this.material.texture.scaleV);
-      if(i[1] < 0) v = 1 - v;
-      v = 1 - v;
-      u = 1 - u;
+      let iz = i[2] - this.b2[2]; let iy = i[1] - this.b2[1];
+      u = Math.abs((iz % this.material.texture.scaleU) / this.material.texture.scaleU);
+      v = Math.abs((iy % this.material.texture.scaleV) / this.material.texture.scaleV);
     }   
     else if(Math.abs(n[1]) > 0) {
-      u = Math.abs((i[2] % this.material.texture.scaleU) / this.material.texture.scaleU);
-      if(i[2] < 0) u = 1 - u;
-      v = Math.abs((i[0] % this.material.texture.scaleV) / this.material.texture.scaleV);
-      if(i[0] < 0) v = 1 - v;
-
+      let ix = i[0] - this.b2[0]; let iz = i[2] - this.b2[2];
+      u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);
+      v = Math.abs((iz  % this.material.texture.scaleV) / this.material.texture.scaleV);
     }
     else if(Math.abs(n[2]) > 0) {
-      u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
-      if(i[0] < 0) u = 1 - u;
-      v = Math.abs((i[1] % this.material.texture.scaleV) / this.material.texture.scaleV);
-      if(i[1] < 0) v = 1 - v;
-      v = 1 - v;
+      let ix = i[0] - this.b2[0]; let iy = i[1] - this.b2[1];
+      u = Math.abs((ix % this.material.texture.scaleU) / this.material.texture.scaleU);
+      v = Math.abs((iy % this.material.texture.scaleV) / this.material.texture.scaleV);
     }         
 
     // move i back to world space

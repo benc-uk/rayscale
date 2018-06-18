@@ -165,10 +165,13 @@ export class Cylinder implements Object3D {
     let u: number = 0, v: number = 0;
     if(result.flag == TResult.TOP) {
       // Treat the cap as a plane
-      u = Math.abs((i[0] % (this.material.texture.scaleU*3)) / (this.material.texture.scaleU*3));
-      if(i[0] < 0) u = 1 - u;
-      v = Math.abs((i[2] % (this.material.texture.scaleV*3)) / (this.material.texture.scaleV*3));
-      if(i[2] < 0) v = 1 - v;
+      let ix = i[0] - this.radius; let iz = i[2] - this.radius;
+      u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);
+      v = Math.abs((iz  % this.material.texture.scaleV) / this.material.texture.scaleV);
+      //u = Math.abs((i[0] % (this.material.texture.scaleU*3)) / (this.material.texture.scaleU*3));
+      //if(i[0] < 0) u = 1 - u;
+      //v = Math.abs((i[2] % (this.material.texture.scaleV*3)) / (this.material.texture.scaleV*3));
+      //if(i[2] < 0) v = 1 - v;
     } else {
       // Treat the sides as a sphere where v = i.y
       u = Math.atan2(n[0], n[2]) / (2*Math.PI) + 0.5;
