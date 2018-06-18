@@ -32,7 +32,7 @@ These are some sample images rendered with RayScale
 
 
 # Core Components (Microservices)
-RayScale is comprised of two independent microservices, both written in Node.js using TypeScript. All interaction to/from these services is via REST API.
+RayScale is comprised of two separate microservices, the *Controller* and the *Tracers*. Both are written in Node.js using TypeScript, and all interaction to/from these services is via REST API (using Express).
 
 RayScale is intended to be run with a single *Controller* and one or more *Tracers* (either on the same machine as the controller (each on different TCP ports) or elsewhere on the network). Tracers can be started & stopped at any point, more added etc. and the *Controller* keeps track of tracers via health checks much like a network load balancer.
 
@@ -45,7 +45,7 @@ Acts as control point and main interface with RayScale. It provides the API and 
 
 ## Tracer 
 Renders and ray traces tasks given to it via the *Controller*. Each *Tracer* registers itself with the *Controller* on startup. The *Tracer* carries out scene parsing and also the work of actually computing the ray tracing algorithm of the task it has been given. Once completed, the results are POSTed back to the controller as a binary buffer of image data
-### [📘 Tracer documentation](controller/readme.md)
+### [📘 Tracer documentation](tracer/readme.md)
 
 
 

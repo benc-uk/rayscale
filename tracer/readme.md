@@ -1,7 +1,7 @@
 # RayScale Tracer
 
 ## Configuration
-All configuration is done via environmental variables. When running locally dotenv (`.env`) files are the simplest way to modify the configuration, a sample `.env.sample` file is provided which can be renamed. When running as a container provide you must the env variables using what ever interface the container runtime provides (command line, YAML, ARM template etc)
+All configuration is done via environmental variables. When running locally dotenv (`.env`) files are the simplest way to modify the configuration, a sample `.env.sample` file is provided which can be renamed. When running as a container you must provide the environmental variables using what ever interface the container runtime provides (command line, YAML, ARM template etc)
 
 |Name|Default|Notes|
 |---|---|---|
