@@ -17,8 +17,8 @@ It is not the goal of this project to create a completely fully featured ray tra
 RayScale currently provides:
 - Primitive objects: Spheres, planes, cubeboids & cylinders
 - Texture mapping; images (PNG) and checkerboard
-- [Phong illumination model](https://en.wikipedia.org/wiki/Phong_reflection_model) with per object surface properties
-- Single light source *(TODO - multiple lights)*
+- [Blinn-Phong illumination model](https://en.wikipedia.org/wiki/Phong_reflection_model) with per object surface properties
+- Multiple light sources
 - Positionable camera, FOV and image output at any resolution
 - Job & scene definition language (YAML) 
 
