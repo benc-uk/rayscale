@@ -6,13 +6,13 @@
 
 // Load in modules, and create Express app 
 import bodyParser from 'body-parser';
-import logger from 'morgan';
 import cors from 'cors';
 import express from 'express';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { API } from './api';
 
+// Config from dotenv ('.env') files
 dotenv.config();
 
 const app = express();
@@ -21,19 +21,11 @@ app.use(bodyParser.json())
 app.use(bodyParser.raw({ limit: '100mb', type: 'application/octet-stream' }));
 app.use(bodyParser.raw({ limit: '10mb', type: 'application/x-yaml' }));
 
-// Set up logging
-// if (app.get('env') === 'production') {
-//     app.use(logger('combined'));
-//   } else {
-//     app.use(logger('dev'));
-// }
-console.log(`### Node environment mode is '${app.get('env')}'`);
-
 var webUIDir = `${__dirname}/../webui`;
 var jobOutDir = process.env.JOB_OUTPUT || `${__dirname}/../jobs`;
 var checkInterval: number = parseInt(process.env.HEALTH_CHECK_INTERVAL || "80") * 1000
 
-// Create job dir
+// Create job dir if missing
 if (!fs.existsSync(jobOutDir)){
   fs.mkdirSync(jobOutDir);
 }
@@ -59,7 +51,8 @@ let port = process.env.PORT || 9000;
 const server = app.listen(port, function () {
   console.log(`### Controller server listening on ${port}`);
   console.log(`### Web UI serving static content from: ${webUIDir}`);
-  //console.log(`### Web UI URL: http://localhost:${port}/ui`);
+
   console.log(`### Tracer health checks run every ${checkInterval/1000} seconds`);
+  // Setup polling of tracers with good old setInterval
   setInterval(api.tracerHealthCheck, checkInterval);
 });

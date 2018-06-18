@@ -10,7 +10,7 @@ import { TextureImage } from './texture-image';
 import { TextureManager } from './texture-manager';
 import { Plane } from './plane';
 import { Sphere } from './sphere';
-import { Cube } from './cube';
+import { Cuboid } from './cuboid';
 import { Cylinder } from './cylinder';
 
 export class Scene {
@@ -78,17 +78,17 @@ export class Scene {
             case 'plane':
               obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
               break;
-            case 'cube':
-              obj = new Cube(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
-                             vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
-                             vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
+            case 'cuboid':
+              obj = new Cuboid(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
+                              vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
+                              vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
               break;
             case 'cylinder':
               if(!rawObj.radius) throw(`Cylinder radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cylinder length missing ${JSON.stringify(rawObj)}`);
               obj = new Cylinder(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
-                                 rawObj.radius, rawObj.length, rawObj.name);
+                                 rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
               break;
             default:
               throw `Object type '${rawObj.type}' is invalid`

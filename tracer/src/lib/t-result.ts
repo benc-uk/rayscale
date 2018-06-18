@@ -10,9 +10,11 @@ export class TResult {
   ray: Ray;      // Transformed ray
   flag: any;     // Arbitrary info, used by some objects
 
-  static SIDE: number = 0;
-  static INSIDE: number = 1;
-  static TOP: number = 2;
+  static SIDE: number     = 500;
+  static INSIDE: number   = 501;
+  static TOP: number      = 502;
+  static BOTTOM: number   = 503;
+  static CAPS: number     = 504;
 
   constructor(t: number, r: Ray) {
     this.t = t;

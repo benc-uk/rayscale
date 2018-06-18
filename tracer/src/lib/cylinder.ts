@@ -12,27 +12,34 @@ import { Stats } from './stats';
 import { TResult } from './t-result';
 import { Utils } from './utils';
 
+// ====================================================================================================
+// Object representing a cylinder with either open or capped ends
+// - Base is at `pos`, cylinder rises up `length` units, and is aligned along the Y axis
+// ====================================================================================================
 export class Cylinder implements Object3D {
-  pos: vec4;
+  // Base properties
+  name: string;
   trans: mat4;
   transFwd: mat4;
+  material: Material;
+  
+  // Cylinder properties
+  pos: vec4;
   radius: number;
   length: number;
   r2: number;
-  name: string;
-  material: Material;
-  //static SIDES = 0; static TOP = 1; static BOTTOM = 2;
-  //hitflag: any;
+  capped: boolean;
 
   // ====================================================================================
   // Create a Cylinder (called by Scene parser)
   // ====================================================================================
-  constructor(pos: vec4, rotation: vec3, radius: number, length: number, name: string) {
-    this.radius = radius;
-    this.r2 = radius * radius;
+  constructor(pos: vec4, rotation: vec3, radius: number, length: number, capped: boolean = false, name: string) {
     this.name = name;
     this.pos = pos;
+    this.radius = radius;
+    this.r2 = radius * radius;
     this.length = length;
+    this.capped = capped;
 
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());
@@ -93,24 +100,43 @@ export class Cylinder implements Object3D {
         return tresult; 
       }
 
-      // Get cap intersection, with a plane aligned with Y axis
-      let capNorm: vec4 = vec4.fromValues(0, 1, 0, 0);
-      // "Mini" ray transform, moving the plane +length in y axis, results in ray -length in y axis
-      let capRayPos: vec4 = vec4.fromValues(ray.pos[0], ray.pos[1] - this.length, ray.pos[2], 1);
-      // Same code as Plane calcT() method
-      let capT: number = 0;
-      let denom: number = vec4.dot(capNorm, ray.dir);
-      if (Math.abs(denom) > ObjectConsts.EPSILON3) {
+      // Only calc caps intersection if needed
+      let capT = Number.MAX_VALUE;
+      if(this.capped) {
+        // Get cap intersection, with a plane aligned with Y axis
+        let capNorm: vec4;
+        let capRayPos: vec4;
+
+        // Handle above or below the height of the cylinder (TOP or BOTTOM)
+        if(ray.pos[1] > this.length) {
+          // "Mini" ray transform, moving the plane +length in y axis, results in moving ray -length in y axis
+          capRayPos = vec4.fromValues(ray.pos[0], ray.pos[1] - this.length, ray.pos[2], 1);
+          capNorm = vec4.fromValues(0, 1, 0, 0);
+        } else {
+          // "Mini" ray transform, bottom ()
+          capRayPos = vec4.fromValues(ray.pos[0], ray.pos[1], ray.pos[2], 1);
+          capNorm = vec4.fromValues(0, -1, 0, 0);
+        }
+
+        // Same code as Plane calcT() method
+        //let capT: number = 0;
+        let denom: number = vec4.dot(capNorm, ray.dir);
+        if (Math.abs(denom) > ObjectConsts.EPSILON3) {
           let l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], capRayPos);
           let localT: number = vec4.dot(l0, capNorm) / denom;
           if (localT >= 0)  {
             capT = localT;
           }
+        }
       }
 
-      // Miss right down the tube means hit the cap
+      // Miss right down the tube means hit one of the caps
       if((iNear[1] < 0 || iNear[1] > this.length) && (iFar[1] < 0 || iFar[1] > this.length) ) { 
-        tresult.flag = TResult.TOP;
+        // Which cap? based on ray pos
+        if(ray.pos[1] > this.length)
+          tresult.flag = TResult.TOP;
+        else
+          tresult.flag = TResult.BOTTOM;
         tresult.t = capT;
         return tresult; 
       }
@@ -118,9 +144,13 @@ export class Cylinder implements Object3D {
       // Edge cases
       if(iFar[1] > this.length || iFar[1] < 0) { tresult.t = tNear; return tresult; }
       if(iNear[1] > this.length || iNear[1] < 0) { 
-        // Far inside, check if cap closer
+        // Far point is inside, check if cap closer
         if(capT < tFar) {
-          tresult.flag = TResult.TOP;
+          // Which cap? based on ray pos
+          if(ray.pos[1] > this.length)
+            tresult.flag = TResult.TOP;
+          else
+            tresult.flag = TResult.BOTTOM;
           tresult.t = capT; 
           return tresult; 
         } else {
@@ -156,10 +186,14 @@ export class Cylinder implements Object3D {
       n[0] = -n[0];
       n[2] = -n[2]
     }
-    // Hit the cap, the normal will just point up
+    // Hit the top cap, the normal will just point up
     if(result.flag == TResult.TOP) {
       n = vec4.fromValues(0, 1, 0, 0);
     }
+    // Hit the bottom cap, the normal will just point down
+    if(result.flag == TResult.BOTTOM) {
+      n = vec4.fromValues(0, -1, 0, 0);
+    }    
 
     // Calc u,v texture coords
     let u: number = 0, v: number = 0;
@@ -168,10 +202,6 @@ export class Cylinder implements Object3D {
       let ix = i[0] - this.radius; let iz = i[2] - this.radius;
       u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);
       v = Math.abs((iz  % this.material.texture.scaleV) / this.material.texture.scaleV);
-      //u = Math.abs((i[0] % (this.material.texture.scaleU*3)) / (this.material.texture.scaleU*3));
-      //if(i[0] < 0) u = 1 - u;
-      //v = Math.abs((i[2] % (this.material.texture.scaleV*3)) / (this.material.texture.scaleV*3));
-      //if(i[2] < 0) v = 1 - v;
     } else {
       // Treat the sides as a sphere where v = i.y
       u = Math.atan2(n[0], n[2]) / (2*Math.PI) + 0.5;

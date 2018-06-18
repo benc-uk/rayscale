@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { mat4 } from 'gl-matrix';
+import { mat4, vec4 } from 'gl-matrix';
 import { Ray } from './ray';
 import { Hit } from './hit';
 import { Material } from './material';
@@ -18,7 +18,14 @@ export interface Object3D {
   name: string;         // Name, not used yet
   material: Material;   // Material; color and other surface coefficients 
   
+  // ====================================================================================================
+  // Used by Raytracer main loop to test if a ray has hit this object
+  // ====================================================================================================
   calcT(ray: Ray): TResult;
+
+  // ====================================================================================================
+  // Used by Raytracer main loop to get details of the hit; intersection point, normal etc.
+  // ====================================================================================================
   getHitPoint(result: TResult): Hit;
 }
 

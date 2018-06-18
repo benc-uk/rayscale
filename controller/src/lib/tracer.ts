@@ -5,4 +5,9 @@ export class Tracer {
 
   // GUID, not currently used
   id: string;
+
+  constructor(endPoint: string, id: string) {
+    this.endPoint = endPoint;
+    this.id = id;
+  }
 }

@@ -15,9 +15,13 @@ import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
 
+// ====================================================================================================
+// Class acts as a holder for all API route handlers and some private functions they need
+// ====================================================================================================
 export class API {
 
   // Tracers is a dictionary map of strings -> Tracer
+  // The key is the URL of that tracer, which has the bonus of being unique
   private tracers: { [id: string]: Tracer };
   private job: Job;
   private jobOutDir: string;
@@ -35,9 +39,7 @@ export class API {
   // API: Register a new tracer/worker
   // ====================================================================================
   public addTracer = (req: Request, res: Response) => {
-    let tracer = new Tracer();
-    tracer.id = req.body.id;
-    tracer.endPoint = req.body.endPoint;
+    let tracer = new Tracer(req.body.endPoint, req.body.id;);
 
     this.tracers[tracer.endPoint] = tracer;
     console.log(`### Tracer registered: ${tracer.endPoint}`);
