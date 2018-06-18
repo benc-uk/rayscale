@@ -4,41 +4,44 @@ height: 600
 scene:
   name: test
   backgroundColour: [4, 22, 53]
-  ambientLevel: 1.0
+  ambientLevel: 0.15
   cameraFov: 30
   cameraPos: [0, 7, 7]
   cameraLookAt: [0, 1, -20]
   materials:
     - name: stone
       preset: matte
-      ks: 1.0
+      ks: 0.8
       kd: 1.3
       hardness: 8
       texture:
         type: image
-        u: 8
-        v: 8
+        scaleU: 8
+        scaleV: 13
         url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png        
   lights:
     - pos: [-28, 18, -3]
       radius: 300
-      brightness: 1.2
+      brightness: 1
+    - pos: [28, 18, 17]
+      radius: 300
+      brightness: 0.7      
   objects:
-    - type: cube
+    - type: cuboid
       name: top
       pos: [3, 3, -19]
       rotate: [0, -33, 0]
       size: [4, 1, 4]
       material:
         preset: stone
-    - type: cube
+    - type: cuboid
       name: bot
       pos: [3, -2.5, -19]
       rotate: [0, -33, 0]
       size: [4, 1, 4]
       material:
         preset: stone
-    - type: cube
+    - type: cuboid
       name: pillar
       pos: [3, 0, -19]
       rotate: [0, -33, 0]
@@ -47,8 +50,8 @@ scene:
         preset: stone
         texture:
           type: image
-          u: 13
-          v: 13
+          scaleU: 13
+          scaleV: 13
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png           
     - type: sphere
       name: ball
@@ -57,8 +60,10 @@ scene:
       radius: 1.5
       material:
         preset: shiny
+        hardness: 6
+        ks: 0.4
         texture:
-          colour: [220, 0, 0]
+          colour: [206, 35, 126]
     - type: plane
       name: floor
       pos: [0, -3, 0]
@@ -67,17 +72,29 @@ scene:
         preset: matte
         texture:
           type: check
-          u: 5
-          v: 5
+          scaleU: 5
+          scaleV: 5
           colour1: [0, 100, 0]  
           colour2: [250,250,250]
     - type: sphere
       name: mirror
-      pos: [-6, 0, -18]
+      pos: [-4.8, 0, -18]
       radius: 3
       rotate: [0, 0, 0]
       material:
-        preset: matte
+        preset: shiny
+        hardness: 80
+        ks: 1.3
         kr: 0.99
         texture:
-          colour: [0, 10, 40]   
+          colour: [0, 10, 40]
+    - type: cuboid
+      name: block
+      pos: [0, -2.5, -14]
+      rotate: [0, 33, 0]
+      size: [2.5, 2.5, 2.5]
+      material:
+        preset: shiny
+        texture:
+          type: basic
+          colour: [22, 111, 201]

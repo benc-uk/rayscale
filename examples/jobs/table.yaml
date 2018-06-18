@@ -8,6 +8,7 @@ scene:
   cameraFov: 28
   cameraPos: [0, 19, 5]
   cameraLookAt: [0, 0, -30]     
+  
   lights:
     - pos: [12, 30, 3]
       radius: 190
@@ -18,7 +19,9 @@ scene:
     - pos: [-50, 35, -20]
       radius: 90
       brightness: 1
+
   objects:
+    # Checked floor
     - type: plane
       name: floor
       pos: [0, 0.0, 0]
@@ -31,7 +34,8 @@ scene:
           scaleU: 10
           colour1: [30, 80 ,30]
           colour2: [220, 220, 200]
-          
+
+    # Round table with stone base and wooden leg and top
     - type: cylinder
       name: tableleg
       pos: [0, 0, -20]
@@ -43,41 +47,42 @@ scene:
         texture: 
           type: image
           scaleV: 10
-          scaleU: 0.5
+          scaleU: 0.2
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
-          
     - type: cylinder
       name: tablebase
       pos: [0, 0, -20]
       rotate: [0, 0, 0]
       radius: 3.2
       length: 0.5
+      capped: true
       material:
         preset: matte
         ks: 0.3
         texture: 
           type: image
-          scaleV: 8
-          scaleU: 2
+          scaleU: 4
+          scaleV: 40
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png
-          
     - type: cylinder
       name: tabletop
       pos: [0, 8, -20]
       rotate: [0, 0, 0]
       radius: 6
       length: 0.3
+      capped: true
       material:
         preset: shiny
         kr: 0.2
         texture: 
           type: image
-          scaleV: 1
-          scaleU: 0.8
+          scaleV: 8
+          scaleU: 5
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
           
+    # Shiny mirrored ball on table
     - type: sphere
-      name: checkball
+      name: mirror-ball
       pos: [1.7, 9.6, -22]
       rotate: [0, 0, 0]
       radius: 1.5
@@ -88,7 +93,8 @@ scene:
         kr: 0.8
         texture: 
           colour: [40, 40, 80]
-          
+
+    # Two cups on the table
     - type: cylinder
       name: cup1
       pos: [-0.2, 9.9, -17]
@@ -121,8 +127,9 @@ scene:
           scaleV: 0.4
           colour1: [204, 16, 91]
           colour2: [70, 12, 122]
-          
-    - type: cube
+    
+    # A blue marble "box" with gold button clasp
+    - type: cuboid
       name: box
       pos: [3.2, 8.8, -18]
       rotate: [0, 42, 0]
@@ -146,8 +153,9 @@ scene:
           type: basic
           colour: [200, 150, 20]
           
-    - type: cube
-      name: base
+    # Globe type object on a stick!
+    - type: cuboid
+      name: globe-base
       pos: [-3.5, 7.6, -19.1]
       rotate: [45, 0, 45]
       size: [1.5, 1.5, 1.5]
@@ -156,9 +164,8 @@ scene:
         texture: 
           type: basic
           colour: [181, 49, 23]
-          
     - type: cylinder
-      name: stem
+      name: globe-stem
       pos: [-3.5, 8.4, -19]
       rotate: [0, 0, 0]
       radius: 0.2
@@ -169,9 +176,8 @@ scene:
         texture: 
           type: basic
           colour: [10, 10, 10]     
-          
     - type: sphere
-      name: globe
+      name: globe-earth
       pos: [-3.5, 11.5, -19]
       rotate: [0, 0, 0]
       radius: 1.2
@@ -183,22 +189,23 @@ scene:
           scaleV: 1
           scaleU: 0.8
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/earth.png      
-          
+    
+    # Wall with mirror
     - type: plane
       name: wall
       pos: [15, 0.0, 0]
       rotate: [0, 20, 90]
       material:
         preset: matte
+        kd: 0.7
         texture: 
           type: image
           scaleV: 10
           scaleU: 10
           swapUV: true
           flipU: true
-          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png
-          
-    - type: cube
+          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall-2.png
+    - type: cuboid
       name: mirror
       pos: [8.1, 11, -19]
       rotate: [0, 20, 0]
@@ -209,8 +216,9 @@ scene:
         texture: 
           type: basic
           colour: [50, 50, 50]      
-          
-    - type: cube
+    
+    # Chair with cushions
+    - type: cuboid
       name: chairback
       pos: [-10, 3.5, -19]
       rotate: [0, 0, 0]
@@ -220,10 +228,10 @@ scene:
         texture: 
           type: image
           swapUV: true
-          scaleU: 3
-          scaleV: 5
+          scaleU: 4
+          scaleV: 3
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png  
-    - type: cube
+    - type: cuboid
       name: chairfront
       pos: [-6, 2.5, -19]
       rotate: [0, 0, 0]
@@ -236,7 +244,7 @@ scene:
           scaleU: 3
           scaleV: 5          
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png     
-    - type: cube
+    - type: cuboid
       name: chairbase
       pos: [-7.9, 4.752, -19]
       rotate: [0, 0, 0]
@@ -248,7 +256,7 @@ scene:
           scaleU: 3
           scaleV: 3
           url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png
-    - type: cube
+    - type: cuboid
       name: chaircushion
       pos: [-7.9, 4.9, -19]
       rotate: [0, 0, 0]
