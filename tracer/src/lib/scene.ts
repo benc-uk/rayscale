@@ -76,9 +76,12 @@ export class Scene {
               obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.radius, rawObj.name);
               break;
             case 'plane':
+              if(!rawObj.rotate) throw(`Plane rotate missing ${JSON.stringify(rawObj)}`);
               obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
               break;
             case 'cuboid':
+              if(!rawObj.size) throw(`Cuboid size missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) throw(`Cuboid rotate missing ${JSON.stringify(rawObj)}`);
               obj = new Cuboid(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                               vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                               vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
@@ -86,6 +89,7 @@ export class Scene {
             case 'cylinder':
               if(!rawObj.radius) throw(`Cylinder radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cylinder length missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) throw(`Cylinder rotate missing ${JSON.stringify(rawObj)}`);
               obj = new Cylinder(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                                  rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);

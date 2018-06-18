@@ -39,7 +39,7 @@ export class API {
   // API: Register a new tracer/worker
   // ====================================================================================
   public addTracer = (req: Request, res: Response) => {
-    let tracer = new Tracer(req.body.endPoint, req.body.id;);
+    let tracer = new Tracer(req.body.endPoint, req.body.id);
 
     this.tracers[tracer.endPoint] = tracer;
     console.log(`### Tracer registered: ${tracer.endPoint}`);
