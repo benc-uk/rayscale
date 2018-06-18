@@ -73,16 +73,17 @@ export class Raytracer {
     return this.image;
   }
 
-  //
-  //
-  //
+  // ====================================================================================================
+  // Main shading & lighting function, computes the colour of given ray
+  // Used by main outer loop (camera rays) and with reflected rays too
+  // ====================================================================================================
   private shadeRay(ray: Ray): Colour {
     let t: number = Number.MAX_VALUE;
     let objTResult: TResult;
     let hitObject = null;
     Stats.raysCast++;
 
-    // Check all objects for ray intersection t
+    // First pass - Check all objects for ray intersection t
     for(let obj of this.scene.objects) {
       let tResult: TResult = obj.calcT(ray);
 
@@ -96,73 +97,85 @@ export class Raytracer {
 
     // We have an object hit! Time to do more work 
     if(t > 0.0 && t < Number.MAX_VALUE) {
+      // Get the intersection details moved here for speed
       let hit: Hit = hitObject.getHitPoint(objTResult);
 
-      // !TODO! Loop here for all lights!
-
+      // outColour is an accumulator as we're looping over lights 
+      let outColour: Colour = new Colour();
+      // hitColour is the base colour of the object we've hit
       let hitColour: Colour = hitObject.material.texture.getColourAt(hit.u, hit.v).copy();
       if(hitObject.material.noShade) {
         return hitColour;
       }
 
-      // Lighting calculations
-      let lv: vec4 = vec4.create();
-      let lightPos: vec4 = this.scene.lights[0].pos;
-      vec4.subtract(lv, lightPos, hit.intersection);
-      let lightDist: number = vec4.length(lv);
-      vec4.normalize(lv, lv);
-      
-      let lightIntensity: number = Math.max(0.001, vec4.dot(lv, hit.normal)) * this.scene.lights[0].brightness ;
+      // Loop over all lights...
+      for(let light of this.scene.lights) {
 
-      // Light attenuation code here
-      let lightAtten: number = 1 / (1 + (this.scene.lights[0].kl * lightDist) + (this.scene.lights[0].kq * (lightDist * lightDist)));
+        // lightColour is a copy of the base colour modified for this light only
+        let lightColour: Colour = hitColour.copy();
 
-      // Are we in shadow?
-      let shadowRay: Ray = new Ray(hit.intersection, lv);
-      let shadowT: number = Number.MAX_VALUE;
-      let shadow: boolean = false;
-      for(let obj of this.scene.objects) {
-        let shadTestT = obj.calcT(shadowRay).t;
-        Stats.shadowRays++;
+        // Lighting calculations
+        let lv: vec4 = vec4.create();
+        vec4.subtract(lv, light.pos, hit.intersection);
+        let lightDist: number = vec4.length(lv);
+        vec4.normalize(lv, lv);
         
-        if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
-          shadowT = shadTestT;
-          break;
+        let lightIntensity: number = Math.max(0.001, vec4.dot(lv, hit.normal)) * light.brightness;
+
+        // Light attenuation code here
+        let lightAtten: number = 1 / (1 + (light.kl * lightDist) + (light.kq * (lightDist * lightDist)));
+
+        // Are we in shadow?
+        let shadowRay: Ray = new Ray(hit.intersection, lv);
+        let shadowT: number = Number.MAX_VALUE;
+        let shadow: boolean = false;
+        for(let obj of this.scene.objects) {
+          let shadTestT = obj.calcT(shadowRay).t;
+          Stats.shadowRays++;
+          
+          if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
+            shadowT = shadTestT;
+            break;
+          }
         }
-      }
-      if(shadowT > 0.0 && shadowT < Number.MAX_VALUE) {
-        shadow = true;
-      }
+        if(shadowT > 0.0 && shadowT < Number.MAX_VALUE) {
+          shadow = true;
+        }
 
-      // Diffuse, ambient and shadow shading
-      if(!shadow) {
-        // Specular Phong shading
-        let rv: number = Math.max(0.0, vec4.dot(hit.reflected, lv)); 
-        let phong: number = Math.pow(rv, hitObject.material.hardness) ;
-        hitColour.blend(phong * hitObject.material.ks);
+        // Diffuse, specular and shadow shading
+        if(!shadow) {
+          // Specular Phong shading
+          let rv: number = Math.max(0.0, vec4.dot(hit.reflected, lv)); 
+          let phong: number = Math.pow(rv, hitObject.material.hardness);
+          // With Phong we modify the outColour directly
+          outColour.blend(phong * hitObject.material.ks * light.brightness);
 
-        // Normal hit in light
-        let diffuseColour = hitColour.multNew(lightIntensity * lightAtten * hitObject.material.kd);
-        let ambientColour = hitColour.multNew(hitObject.material.ka * this.scene.ambientLevel);
-        hitColour = Colour.add(diffuseColour, ambientColour);
-      } else {
-        // In shadow hit use matrial ka
-        hitColour.mult(hitObject.material.ka * this.scene.ambientLevel);
-      }
+          // Normal hit in light
+          lightColour.mult(lightIntensity * lightAtten * hitObject.material.kd);
+        } else {
+          // In shadow hit use material ka
+          lightColour.mult(hitObject.material.ka * this.scene.ambientLevel);
+        }
+        
+        // Add hitColour to our accumulator colour 
+        outColour = Colour.add(outColour, lightColour);
+      } // End of light loop
 
       // Reflection!
       if(hitObject.material.kr > 0 && ray.depth < Raytracer.MAX_DEPTH) {        
-
         let rRay = new Ray(hit.intersection, hit.reflected);
         rRay.depth = ray.depth + 1;
         let reflectColour = this.shadeRay(rRay);
-        if(!reflectColour) reflectColour = Colour.BLACK.copy();
         reflectColour = reflectColour.multNew(hitObject.material.kr);
-        hitColour = Colour.add(hitColour, reflectColour);
+        outColour.add(reflectColour)
       }
 
-      return hitColour;
-    }
+      // Add ambient level once (outside light loop)
+      let ambientColour = outColour.multNew(hitObject.material.ka * this.scene.ambientLevel);
+      outColour.add(ambientColour);
+
+      return outColour;
+    } // End of object loop
 
     // Missed everything! 
     return this.scene.backgroundColour;

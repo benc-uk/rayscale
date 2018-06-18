@@ -38,6 +38,9 @@ export class Colour {
 
   public mult(v: number) {
     this.r = this.r * v; this.g = this.g * v; this.b = this.b * v;
+    this.r = Math.min(1, this.r);
+    this.g = Math.min(1, this.g);
+    this.b = Math.min(1, this.b);    
   }
 
   public static add(c1: Colour, c2: Colour): Colour {
@@ -49,6 +52,16 @@ export class Colour {
     c.g = Math.min(1, c.g);
     c.b = Math.min(1, c.b);
     return c;
+  }
+
+  public add(c: Colour) {
+    this.r += c.r;
+    this.g += c.g;
+    this.b += c.b;
+
+    this.r = Math.min(1, this.r);
+    this.g = Math.min(1, this.g);
+    this.b = Math.min(1, this.b);
   }
 
   public copy(): Colour {
