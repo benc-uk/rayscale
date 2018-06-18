@@ -25,9 +25,9 @@ RayScale currently provides:
 ## Sample Images
 These are some sample images rendered with RayScale
 
-<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
+<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table.png"><img src="examples/renders/table.png"></a><a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/best.png"><img src="examples/renders/best.png"></a>
-<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table4k.png"><img src="examples/renders/table4k.png"></a>
+
 
 
 
