@@ -5,15 +5,5 @@
   "version": "0.2.0",
   "configurations": [
 
-    {
-      "type": "node",
-      "request": "launch",
-      "useWSL": true,
-      "name": "Launch Test",
-      "program": "${workspaceFolder}/controller\\src\\test.ts",
-      "outFiles": [
-        "${workspaceFolder}/**/*.js"
-      ]
-    }
   ]
 }

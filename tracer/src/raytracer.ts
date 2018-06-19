@@ -12,25 +12,27 @@ import { Utils } from './lib/utils'
 import { Hit } from './lib/hit';
 import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
-import { ObjectConsts } from './lib/object3d';
 
+// ====================================================================================================
+// 
+// ====================================================================================================
 export class Raytracer {
   image: Buffer;
   task: Task;
   scene: Scene;
-  static MAX_DEPTH = 3;
   
   constructor(task: Task, scene: Scene) {
     this.task = task
     this.scene = scene;
     
-    console.log(`### New ray tracer for task ${this.task.index + 1}...`)
+    console.log(`### New ray tracer for task ${this.task.index + 1}...`);
     this.image = Buffer.alloc(this.task.imageWidth * this.task.imageHeight * 3);
+    //console.log(`### Max ray depth is: ${this.task.maxDepth}`)
   }
 
-  //
-  //
-  //
+  // ====================================================================================================
+  // 
+  // ====================================================================================================
   public startTrace(): Buffer {
     if(this.task.imageWidth < this.task.imageHeight) { throw("Error, image width must be > height"); };
     let aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height 
@@ -39,7 +41,7 @@ export class Raytracer {
     let camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
     mat4.invert(camTrans, camTrans);
 
-    let bufferY = 0
+    let bufferY = 0;
     for (var y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y++) {
       for (var x = 0; x < this.task.imageWidth; x++) {
 
@@ -78,6 +80,11 @@ export class Raytracer {
   // Used by main outer loop (camera rays) and with reflected rays too
   // ====================================================================================================
   private shadeRay(ray: Ray): Colour {
+    // Prevent infinite recursion
+    if(ray.depth > this.task.maxDepth) {
+      return this.scene.backgroundColour;
+    }
+
     let t: number = Number.MAX_VALUE;
     let objTResult: TResult;
     let hitObject = null;
@@ -162,7 +169,7 @@ export class Raytracer {
       } // End of light loop
 
       // Reflection!
-      if(hitObject.material.kr > 0 && ray.depth < Raytracer.MAX_DEPTH) {        
+      if(hitObject.material.kr > 0) {        
         let rRay = new Ray(hit.intersection, hit.reflected);
         rRay.depth = ray.depth + 1;
         let reflectColour = this.shadeRay(rRay);

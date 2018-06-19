@@ -59,10 +59,10 @@ export class API {
 
     // Check active job
     // !TODO! Removed temporary
-    if(this.job && this.job.status == "RUNNING") {
-      console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
-      res.status(400).send({msg: "There is currently an active job"}); return;
-    }
+    // if(this.job && this.job.status == "RUNNING") {
+    //   console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
+    //   res.status(400).send({msg: "There is currently an active job"}); return;
+    // }
 
     // Check if we have any tracers
     if(Object.keys(this.tracers).length <= 0) {
@@ -220,6 +220,7 @@ export class API {
       task.index = taskIndex;
       task.sliceStart = taskIndex * sliceHeight;
       task.sliceHeight = sliceHeight;
+      task.maxDepth = jobInput.maxDepth || 4;
 
       this.job.tasks.push(task); 
 

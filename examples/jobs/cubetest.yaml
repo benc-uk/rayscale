@@ -18,7 +18,7 @@ scene:
         type: image
         scaleU: 8
         scaleV: 13
-        url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png        
+        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png        
   lights:
     - pos: [-28, 18, -3]
       radius: 300
@@ -52,7 +52,7 @@ scene:
           type: image
           scaleU: 13
           scaleV: 13
-          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png           
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png           
     - type: sphere
       name: ball
       pos: [3, 5, -18]

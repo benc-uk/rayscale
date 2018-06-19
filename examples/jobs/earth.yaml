@@ -39,7 +39,7 @@ scene:
         hardness: 2
         texture:
           type: image
-          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/earth.png
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/earth.png
     - type: plane
       name: floor
       pos: [0, 0, 0]
@@ -52,7 +52,7 @@ scene:
           type: image
           u: 50
           v: 50
-          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/desert.png
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/desert.png
     - type: plane
       name: sky
       pos: [0, 200, 0]
@@ -65,4 +65,4 @@ scene:
           type: image
           u: 800
           v: 800
-          url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/sky.png          
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/sky.png          

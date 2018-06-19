@@ -70,7 +70,7 @@ scene:
         u: 0.2
         v: 1.7
         type: image
-        url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
   - type: sphere
     name: chrome3
     pos: [20, 4, -30]
@@ -112,7 +112,7 @@ scene:
         u: 12
         v: 12
         type: image
-        url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png
+        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png
   - type: plane
     name: wall
     pos: [25, 0, -4]
@@ -125,4 +125,4 @@ scene:
         u: 12
         v: 12
         type: image
-        url: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png        
+        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png        
