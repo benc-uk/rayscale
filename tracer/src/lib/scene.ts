@@ -37,16 +37,25 @@ export class Scene {
 
       try {
         if(!input.name) throw('Scene name missing');
-        if(!input.backgroundColour) throw('Scene backgroundColour missing');
-        if(!input.ambientLevel) throw('Scene ambientLevel missing');
-        if(!input.cameraFov) throw('Scene cameraFov missing');
         if(!input.cameraPos) throw('Scene cameraPos missing');
         if(!input.cameraLookAt) throw('Scene cameraLookAt missing');
         
-        scene.backgroundColour = Colour.fromRGB(input.backgroundColour[0], input.backgroundColour[1], input.backgroundColour[2]);
+        if(!input.backgroundColour) 
+          scene.backgroundColour = Colour.fromRGB(0, 0, 0);
+        else
+          scene.backgroundColour = Colour.fromRGB(input.backgroundColour[0], input.backgroundColour[1], input.backgroundColour[2]);
+        
+        if(!input.ambientLevel) 
+          scene.ambientLevel = 0.1;
+        else
+          scene.ambientLevel = input.ambientLevel;
+        
+        if(!input.cameraFov) 
+          scene.cameraFov = 30;
+        else
+          scene.cameraFov = input.cameraFov;
+
         scene.name = input.name;
-        scene.ambientLevel = input.ambientLevel;
-        scene.cameraFov = input.cameraFov;
         scene.cameraPos = vec3.fromValues(input.cameraPos[0], input.cameraPos[1], input.cameraPos[2]);
         scene.cameraLookAt = vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]);
   
@@ -145,21 +154,26 @@ export class Scene {
     // Type of texture check here
     let texture: Texture = null;
     if(input.texture) {
+      //if(!input.texture.type) throw(`Texture missing type ${input.texture}`);
       //console.log(`### Parsing texture type: ${input.texture.type}`);
       switch (input.texture.type) {
         case 'basic':
+          if(!input.texture.colour) throw(`Texture of type 'basic' requires colour`);
           var c: any = input.texture.colour;
           texture = TextureBasic.fromRGB(c[0], c[1], c[2])
           break;
         case 'check':
+          if(!input.texture.colour1) throw(`Texture of type 'check' requires colour1`);
+          if(!input.texture.colour2) throw(`Texture of type 'check' requires colour2`);
           var c1: any = input.texture.colour1;
           var c2: any = input.texture.colour2;
           texture = new TextureCheck(Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]));
           break;
         case 'image':
+          if(!input.texture.src) throw(`Texture of type 'image' requires src`); 
           // The await here is super important, we can't carry on until all textures are loaded
-          await TextureManager.getInstance().loadTexture(input.texture.url);
-          texture = new TextureImage(input.texture.url);
+          await TextureManager.getInstance().loadTexture(input.texture.src);
+          texture = new TextureImage(input.texture.src);
           break;
         default:
           var c = input.texture.colour;
