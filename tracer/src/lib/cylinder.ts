@@ -76,10 +76,6 @@ export class Cylinder implements Object3D {
       t1 = (-b + d) / a;
       t2 = (-b - d) / a;
 
-      //if (Math.abs(t1) < ObjectConsts.EPSILON || Math.abs(t2) < ObjectConsts.EPSILON3)
-      if (Math.abs(t1) < 0 || Math.abs(t2) < 0)  // Changing to zero has fixed some shadow errors
-        return tresult; // return 0
-
       // Sort smallest cylinder intersection
       let tNear: number;
       let tFar: number;
@@ -90,7 +86,7 @@ export class Cylinder implements Object3D {
         tNear = t2;
         tFar = t1;
       }
-
+      
       // Clip cylinder between 0 and length
       let iNear: vec4 = ray.getPoint(tNear); // - ObjectConsts.EPSILON3);
       let iFar: vec4 = ray.getPoint(tFar);   // - ObjectConsts.EPSILON3);
@@ -99,7 +95,6 @@ export class Cylinder implements Object3D {
       if((iNear[1] < 0 && iFar[1] < 0) || (iNear[1] > this.length && iFar[1] > this.length)) { 
         return tresult; 
       }
-
       // Only calc caps intersection if needed
       let capT = Number.MAX_VALUE;
       if(this.capped) {
@@ -142,7 +137,10 @@ export class Cylinder implements Object3D {
       }
 
       // Edge cases
-      if(iFar[1] > this.length || iFar[1] < 0) { tresult.t = tNear; return tresult; }
+      if(iFar[1] > this.length || iFar[1] < 0) { 
+        tresult.t = tNear; 
+        return tresult; 
+      }
       if(iNear[1] > this.length || iNear[1] < 0) { 
         // Far point is inside, check if cap closer
         if(capT < tFar) {
@@ -159,7 +157,15 @@ export class Cylinder implements Object3D {
           return tresult; 
         }
       }
+      // If we're inside (either t is negative) return the far point, 
+      // this um... fixes things like some shadows
+      if(t1 < 0 || t2 < 0) { 
+        tresult.flag = TResult.INSIDE;
+        tresult.t = tFar;
+        return tresult;
+      }
       // Else hit nearest
+      tresult.flag = TResult.SIDE;
       tresult.t = tNear; 
       return tresult;
     }
