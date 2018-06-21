@@ -5,17 +5,20 @@
 
 import { vec4, mat4 } from 'gl-matrix'
 import { Stats } from './stats';
+import { Object3D } from './object3d';
 
 export class Ray {
   pos: vec4;
   dir: vec4;
   depth: number;
+  inside: Object3D;
 
   constructor(pos: vec4, dir: vec4) {
     this.pos = pos;
     this.dir = vec4.create();
     this.dir[3] = 0;
     vec4.normalize(this.dir, dir);
+    this.inside = null;             // Null means ray is in the air/open space
     
     Stats.raysCreated++;
   }

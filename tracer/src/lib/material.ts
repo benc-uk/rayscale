@@ -12,15 +12,19 @@ export class Material {
   ks: number;         // Specular light coefficient 
   hardness: number;   // Hardness for specular highlights
   kr: number;         // Reflection coefficient
+  kt: number;         // Transparency
+  ior: number;        // Index of refraction 
   noShade: boolean    // If true, no lighting calcs will be done
 
-  constructor (ka: number, kd: number, ks: number, hardness: number, kr: number) {
+  constructor (ka: number, kd: number, ks: number, hardness: number, kr: number, kt: number) {
     this.ka = ka;
     this.kd = kd;
     this.ks = ks;
     this.hardness = hardness;
     this.kr = kr;
     this.noShade = false;
+    this.kt = kt;
+    this.ior = 1.0
   }
 
   public copy() {

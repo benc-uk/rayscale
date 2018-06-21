@@ -12,6 +12,7 @@ import { Utils } from './lib/utils'
 import { Hit } from './lib/hit';
 import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
+import { ObjectConsts, Object3D } from './lib/object3d';
 
 // ====================================================================================================
 // 
@@ -23,6 +24,8 @@ export class Raytracer {
   
   constructor(task: Task, scene: Scene) {
     this.task = task
+    // Skip not implemented so always set to 1
+    this.task.skip = 1;
     this.scene = scene;
     
     console.log(`### New ray tracer for task ${this.task.index + 1}...`);
@@ -42,37 +45,89 @@ export class Raytracer {
     mat4.invert(camTrans, camTrans);
 
     let bufferY = 0;
-    for (var y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y++) {
+    let cacheCorner: Colour;
+    let cacheRow: Colour[] = new Array();
+    for (var y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y += this.task.skip) {
       for (var x = 0; x < this.task.imageWidth; x++) {
 
         // Field of view scaling factor
         let fovScale = Math.tan(Utils.degreeToRad(this.scene.cameraFov * 0.5)); 
 
-        // This converts from raster space (output image) -> normalized space -> screen space
-        let px: number = (2 * (x + 0.5) / this.task.imageWidth - 1) * fovScale  * aspectRatio; 
-        let py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
+        // Top of ray tracing process, will recurse into the scene casting more rays, (lots more!)
 
-        // Create camera ray, starting at origin and pointing into -z 
-        let origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
-        let dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
-        let ray: Ray = new Ray(origin, dir);
+        let outPixel: Colour;
+        if(this.task.antiAlias) {
+          // Fire 5 rays. one in center and one in each corner of pixel
+          let outPixel0: Colour = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+          
+          let outPixel1: Colour;
+          let outPixel2: Colour;
+          let outPixel3: Colour;
+          if(cacheRow[x]) {
+            outPixel1 = cacheRow[x]
+          } else {
+            outPixel1 = this.shadeRay(this.makeCameraRay(x, y, camTrans, fovScale, aspectRatio));
+          }
+          if(cacheRow[x+1]) {
+            outPixel2 = cacheRow[x+1]
+          } else {
+            outPixel2 = this.shadeRay(this.makeCameraRay(x+1, y, camTrans, fovScale, aspectRatio));
+          }
+          if(cacheCorner) {
+            outPixel3 = cacheCorner;
+          } else {
+            outPixel3 = this.shadeRay(this.makeCameraRay(x, y+1, camTrans, fovScale, aspectRatio));
+          }
 
-        // Now move ray with respect to camera transform (into world space)
-        ray.transform(camTrans);
-        ray.depth = 1;
-        
-        // Top of raytracing process, will recurse into the scene casting more rays, (lots more!)
-        let outPixel: Colour = this.shadeRay(ray);
+          cacheRow[x] = outPixel3.copy();
+          let outPixel4: Colour = this.shadeRay(this.makeCameraRay(x+1, y+1, camTrans, fovScale, aspectRatio));
+          cacheRow[x+1] = outPixel4.copy();
+          cacheCorner = outPixel4.copy();
 
-        // Write resulting colour into output buffer
+          // Weighting is important
+          outPixel0.mult(0.5);
+          outPixel1.mult(0.125);
+          outPixel2.mult(0.125);
+          outPixel3.mult(0.125);
+          outPixel4.mult(0.125);
+
+          // Add 5 colours up
+          outPixel = Colour.add(outPixel0, outPixel1);
+          outPixel = Colour.add(outPixel, outPixel2);
+          outPixel = Colour.add(outPixel, outPixel3);
+          outPixel = Colour.add(outPixel, outPixel4);
+        } else {
+          outPixel = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+        }
         outPixel.writePixeltoBuffer(this.image, this.task.imageWidth, x, bufferY);
       }
+      cacheCorner = null;
       bufferY++;
       let perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
       if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Percent of task ${this.task.index + 1} rendered ${perc}%`);
     }
     
     return this.image;
+  }
+
+  // ====================================================================================================
+  // Create camera rays to cast into the scene for a given pixel
+  // ====================================================================================================
+  private makeCameraRay(x: number, y: number, camTrans: mat4, fovScale: number, aspectRatio: number): Ray {
+    // This converts from raster space (output image) -> normalized space -> screen space
+    let px: number = (2 * (x + 0.5) / this.task.imageWidth - 1) * fovScale  * aspectRatio; 
+    let py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
+
+    // Create camera ray, starting at origin and pointing into -z 
+    let origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
+    let dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
+    let ray: Ray = new Ray(origin, dir);
+
+    // Now move ray with respect to camera transform (into world space)
+    ray.transform(camTrans);
+    ray.depth = 1;
+
+    return ray;
   }
 
   // ====================================================================================================
@@ -118,8 +173,8 @@ export class Raytracer {
       // Loop over all lights...
       for(let light of this.scene.lights) {
 
-        // lightColour is a copy of the base colour modified for this light only
-        let lightColour: Colour = hitColour.copy();
+        // shadeColour is a copy of the base colour modified for this light only
+        let shadeColour: Colour = hitColour.copy();
 
         // Lighting calculations
         let lv: vec4 = vec4.create();
@@ -127,7 +182,8 @@ export class Raytracer {
         let lightDist: number = vec4.length(lv);
         vec4.normalize(lv, lv);
         
-        let lightIntensity: number = Math.max(0.001, vec4.dot(lv, hit.normal)) * light.brightness;
+        let minLight = hitObject.material.ka * this.scene.ambientLevel
+        let lightIntensity: number = Math.max(minLight, vec4.dot(lv, hit.normal)) * light.brightness;
 
         // Light attenuation code here
         let lightAtten: number = 1 / (1 + (light.kl * lightDist) + (light.kq * (lightDist * lightDist)));
@@ -155,26 +211,68 @@ export class Raytracer {
           let rv: number = Math.max(0.0, vec4.dot(hit.reflected, lv)); 
           let phong: number = Math.pow(rv, hitObject.material.hardness);
           // With Phong we modify the outColour directly
-          outColour.blend(phong * hitObject.material.ks * light.brightness);
+          outColour.blendRGB(phong * hitObject.material.ks * light.brightness * light.colour.r,
+            phong * hitObject.material.ks * light.brightness * light.colour.g,
+            phong * hitObject.material.ks * light.brightness * light.colour.b);
 
           // Normal hit in light
-          lightColour.mult(lightIntensity * lightAtten * hitObject.material.kd);
+          shadeColour.multRGB(lightIntensity * lightAtten * hitObject.material.kd * light.colour.r,
+            lightIntensity * lightAtten * hitObject.material.kd * light.colour.g,
+            lightIntensity * lightAtten * hitObject.material.kd * light.colour.b);
+
         } else {
           // In shadow hit use material ka
-          lightColour.mult(hitObject.material.ka * this.scene.ambientLevel);
+          //console.log(hitObject.material.ka * this.scene.ambientLevel);
+          shadeColour.mult(hitObject.material.ka * this.scene.ambientLevel);
+          //shadeColour = Colour.GREEN;
         }
         
         // Add hitColour to our accumulator colour 
-        outColour = Colour.add(outColour, lightColour);
+        outColour = Colour.add(outColour, shadeColour);
       } // End of light loop
 
       // Reflection!
       if(hitObject.material.kr > 0) {        
-        let rRay = new Ray(hit.intersection, hit.reflected);
-        rRay.depth = ray.depth + 1;
-        let reflectColour = this.shadeRay(rRay);
+        let reflectRay = new Ray(hit.intersection, hit.reflected);
+        reflectRay.depth = ray.depth + 1;
+        let reflectColour = this.shadeRay(reflectRay);
         reflectColour = reflectColour.multNew(hitObject.material.kr);
         outColour.add(reflectColour)
+      }
+
+      // Transparency.
+      // Note. This is VERY LIKELY not to be optically correct, but looks OK
+      if(hitObject.material.kt > 0) {  
+
+        // Find refracted direction
+        let newDir = this.calcRefractionDir(ray, hit, hitObject);
+
+        let transRay: Ray;
+        // Are we refracted or total interna
+        if(newDir)
+          transRay = new Ray(hit.intersection, newDir);
+        else
+          transRay = new Ray(hit.intersection, hit.reflected);
+
+        // Slide ray a fraction along direction
+        transRay.pos[0] += transRay.dir[0] * ObjectConsts.EPSILON2;
+        transRay.pos[1] += transRay.dir[1] * ObjectConsts.EPSILON2;
+        transRay.pos[2] += transRay.dir[2] * ObjectConsts.EPSILON2;
+        transRay.depth = ray.depth + 1;
+
+        // What is new ray inside?
+        let tFade = 1.0
+        if(!ray.inside) {
+          transRay.inside = hitObject;
+          tFade = 0.8;
+        } else {
+          transRay.inside = ray.inside;
+        }
+
+        // Shade transparent ray and add to colour
+        let transColour = this.shadeRay(transRay);
+        transColour.mult(hitObject.material.kt * tFade);
+        outColour.add(transColour);
       }
 
       // Add ambient level once (outside light loop)
@@ -187,4 +285,42 @@ export class Raytracer {
     // Missed everything! 
     return this.scene.backgroundColour;
   }
+
+  // ====================================================================================================
+  // Calculate direction for transparency - refraction or null when total internal reflection
+  // ====================================================================================================
+  private calcRefractionDir(ray: Ray, hit: Hit, hitObject: Object3D) {
+    
+    // The ratio of the index of refraction is key
+    let eta: number;
+    if(!ray.inside) {
+      // When outside an object take ratio of the "air" IOR with the hit object IOR
+      eta = this.scene.ior / hitObject.material.ior;
+    } else {
+      // When inside an object, take ratio of that objects IOR with the air
+      // NOTE. Big assumption we don't have nested transparent objects!
+      eta = ray.inside.material.ior / this.scene.ior;
+    }
+
+		// Some maths
+		let c1: number  = -vec4.dot(ray.dir, hit.normal);
+		let cs2: number = 1.0 - (eta * eta * (1.0 - c1 * c1));
+
+    // Direction of refracted ray
+    let dirOut: vec4 = vec4.create();
+
+    // Test for total internal reflection 
+    if (cs2 < 0) {
+			return null;
+		}
+		let tmp: number = eta * c1 - Math.sqrt(cs2);
+
+    // Also no idea about this either
+		dirOut[0] = (eta * ray.dir[0]) + (tmp * hit.normal[0]);
+		dirOut[1] = (eta * ray.dir[1]) + (tmp * hit.normal[1]);
+    dirOut[2] = (eta * ray.dir[2]) + (tmp * hit.normal[2]);
+    dirOut[3] = 0;
+
+		return dirOut;
+	}
 }

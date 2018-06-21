@@ -43,6 +43,20 @@ export class Colour {
     this.b = Math.min(1, this.b);    
   }
 
+  public multColour(c: Colour) {
+    this.r = this.r * c.r; this.g = this.g * c.g; this.b = this.b * c.b;
+    this.r = Math.min(1, this.r);
+    this.g = Math.min(1, this.g);
+    this.b = Math.min(1, this.b);    
+  }
+
+  public multRGB(r: number, g: number, b: number) {
+    this.r = this.r * r; this.g = this.g * g; this.b = this.b * b;
+    this.r = Math.min(1, this.r);
+    this.g = Math.min(1, this.g);
+    this.b = Math.min(1, this.b);    
+  }
+
   public static add(c1: Colour, c2: Colour): Colour {
     let c = new Colour;
     c.r = c1.r+c2.r;
@@ -72,6 +86,16 @@ export class Colour {
     this.r = this.r * (1 - v) + v;
     this.g = this.g * (1 - v) + v;
     this.b = this.b * (1 - v) + v;
+
+    this.r = Math.min(1, this.r);
+    this.g = Math.min(1, this.g);
+    this.b = Math.min(1, this.b);
+  }
+
+  public blendRGB(r: number, g: number, b: number) {
+    this.r = this.r * (1 - r) + r;
+    this.g = this.g * (1 - g) + g;
+    this.b = this.b * (1 - b) + b;
 
     this.r = Math.min(1, this.r);
     this.g = Math.min(1, this.g);

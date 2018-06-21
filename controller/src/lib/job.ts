@@ -11,6 +11,7 @@ export class Job {
   id: string;               // GUID (NOT USED)
   width: number;
   height: number;
+  skip: number;             // Row increment to speed up rendering but skip rows - NOT USED
 
   status: string;           // e.g. "RUNNING"; 
   reason: string;

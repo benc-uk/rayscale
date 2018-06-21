@@ -83,7 +83,7 @@ export class Cuboid implements Object3D {
   }
 
   public getHitPoint(result: TResult): Hit {
-    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON5);
+    let i: vec4 = result.ray.getPoint(result.t);// - ObjectConsts.EPSILON3);
 
     // Normal 
     // Code stolen from 

@@ -6,9 +6,10 @@
 import { Ray } from './ray';
 
 export class TResult {
-  t: number;     // t value
-  ray: Ray;      // Transformed ray
-  flag: any;     // Arbitrary info, used by some objects
+  t: number;        // t value
+  ray: Ray;         // Transformed ray
+  inside: boolean;  // Was calculated from inside object
+  flag: any;        // Arbitrary info, used by some objects
 
   static SIDE: number     = 500;
   static INSIDE: number   = 501;
@@ -19,5 +20,6 @@ export class TResult {
   constructor(t: number, r: Ray) {
     this.t = t;
     this.ray = r;
+    this.inside = false;
   }
 }

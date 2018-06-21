@@ -68,8 +68,11 @@ export class Sphere implements Object3D {
     let t1: number = (-b+d)/2.0;
     let t2: number = (-b-d)/2.0;
 
-    if (Math.abs(t1) < ObjectConsts.EPSILON3 || Math.abs(t2) < ObjectConsts.EPSILON3)
-      return tresult;
+    // if (Math.abs(t1) < ObjectConsts.EPSILON2 || Math.abs(t2) < ObjectConsts.EPSILON2)
+    //   return tresult;
+    if(t1 < 0 || t2 < 0) {
+      tresult.inside = true;
+    }
     
     // Ray is inside if there is only 1 positive root
     // Added for refractive transparency
@@ -90,12 +93,18 @@ export class Sphere implements Object3D {
   // ====================================================================================
   public getHitPoint(result: TResult): Hit {
     // Intersection point
-    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON5);
+    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON3);
 
     // Normal is pointing from center of sphere (0,0,0) to intersect (i)
     let n: vec4 = vec4.fromValues(0, 0, 0, 1);  //vec4.sub(vec4.create(), i, [0, 0, 0, 1]);
     vec4.div(n, i, [this.radius, this.radius, this.radius, 1]);
     n[3] = 0; 
+
+    if(result.inside) {
+      n[0] = -n[0];
+      n[1] = -n[1];
+      n[2] = -n[2];
+    }
 
     // Calc texture u, v coords on sphere (polar coordinates) and scale/wrap
     let u = Math.atan2(n[0], n[2]) / (2*Math.PI) + 0.5;

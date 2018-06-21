@@ -13,10 +13,14 @@ import { Sphere } from './sphere';
 import { Cuboid } from './cuboid';
 import { Cylinder } from './cylinder';
 
+// ====================================================================================================
+// 
+// ====================================================================================================
 export class Scene {
   name: string;
   backgroundColour: Colour;
   ambientLevel: number;
+  ior: number;
 
   cameraPos: vec3;      // Camera position in world
   cameraLookAt: vec3;   // Camera look at point
@@ -26,6 +30,9 @@ export class Scene {
   lights: Light[];
   static presetMaterials: { [name: string]: Material; } = { };
 
+  // ====================================================================================================
+  // 
+  // ====================================================================================================
   static parseScene(input: any): Promise<any> {
 
     return new Promise(async (resolve, reject) => {
@@ -56,14 +63,15 @@ export class Scene {
           scene.cameraFov = input.cameraFov;
 
         scene.name = input.name;
+        scene.ior = 1.0;
         scene.cameraPos = vec3.fromValues(input.cameraPos[0], input.cameraPos[1], input.cameraPos[2]);
         scene.cameraLookAt = vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]);
   
         // Parse presetMaterials materials
-        Scene.presetMaterials.basic = new Material(0.1, 1, 0, 5, 0);
-        Scene.presetMaterials.matte = new Material(0.2, 0.8, 0, 2, 0);
-        Scene.presetMaterials.rubber = new Material(0.05, 0.9, 0.3, 2, 0);
-        Scene.presetMaterials.shiny = new Material(0.05, 0.9, 1.2, 20, 0);
+        Scene.presetMaterials.basic   = new Material(0.1,  1,   0,   5,  0, 0);
+        Scene.presetMaterials.matte   = new Material(0.2,  0.8, 0,   2,  0, 0);
+        Scene.presetMaterials.rubber  = new Material(0.05, 0.9, 0.3, 2,  0, 0);
+        Scene.presetMaterials.shiny   = new Material(0.05, 0.9, 1.2, 20, 0, 0);
         if(input.materials) {
           for(let rawMat of input.materials) {
             Scene.presetMaterials[rawMat.name] = await Scene.parseMaterial(rawMat);
@@ -124,7 +132,11 @@ export class Scene {
           if(rawLight.brightness) b = rawLight.brightness;
           if(rawLight.radius) r = rawLight.radius;
           let light = new Light(vec4.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2], 1), b, r);   
-          
+
+          if(rawLight.colour) {
+            light.colour = Colour.fromRGB(rawLight.colour[0], rawLight.colour[1], rawLight.colour[2])
+          }
+
           if(light) scene.lights.push(light);
         }      
 
@@ -135,19 +147,24 @@ export class Scene {
     });
   }
 
+  // ====================================================================================================
+  // 
+  // ====================================================================================================
   static async parseMaterial(input: any) {
 
-    let m = new Material(0.1, 1, 0, 5, 0);
+    let m = new Material(0.1, 1, 0, 5, 0, 0);
     if(input.preset) {
       m = Object.assign({}, Scene.presetMaterials[input.preset]);
       if(!m) throw(`Preset material ${input.preset} not found`);
     }
 
     // Other material properties, override the preset if set
-    if(input.ka) m.ka = input.ka;
-    if(input.kd) m.kd = input.kd;
-    if(input.ks) m.ks = input.ks;
-    if(input.kr) m.kr = input.kr;
+    if(input.hasOwnProperty('ka')) m.ka = input.ka;
+    if(input.hasOwnProperty('kd')) m.kd = input.kd;
+    if(input.hasOwnProperty('ks')) m.ks = input.ks;
+    if(input.hasOwnProperty('kr')) m.kr = input.kr;
+    if(input.hasOwnProperty('kt')) m.kt = input.kt;
+    if(input.hasOwnProperty('ior')) m.ior = input.ior;
     if(input.noShade) m.noShade = input.noShade;
     if(input.hardness) m.hardness = input.hardness;
 
@@ -193,26 +210,3 @@ export class Scene {
     return m;
   }
 }
-
-
-// - CUBE OF SPHERES - 
-// Add a floor of coloured spheres to the scene, 
-// ** TEST CODE **
-/*for(let z = -10; z <= 10; z+= 4) {
-  for(let x = -10; x <= 10; x+= 4) {
-    for(let y = 0; y <= 20; y+= 6) {
-      let m = new Material(0.05, 0.9, 1.5, 50, 0.5);
-      
-      let s = new Sphere(vec4.fromValues(x, y, z, 1), 2, `sphere,${z}, ${x}`);
-      let r = ((z+40)*5) - ((y+10)*2);
-      let g = ((x+20)*2.5) - ((y+10)*5);
-      let b = ((y+10)*3)+0;
-
-      m.texture = new TextureBasic(Colour.fromRGB(r, g, b));
-
-      s.material = m;
-      scene.objects.push(s);
-    }
-  }
-}*/
-  

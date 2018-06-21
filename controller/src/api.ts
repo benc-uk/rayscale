@@ -59,10 +59,10 @@ export class API {
 
     // Check active job
     // !TODO! Removed temporary
-    // if(this.job && this.job.status == "RUNNING") {
-    //   console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
-    //   res.status(400).send({msg: "There is currently an active job"}); return;
-    // }
+    if(this.job && this.job.status == "RUNNING") {
+      console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
+      res.status(400).send({msg: "There is currently an active job"}); return;
+    }
 
     // Check if we have any tracers
     if(Object.keys(this.tracers).length <= 0) {
@@ -118,10 +118,11 @@ export class API {
     this.job.tasksComplete++;
     console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.taskCount}`);
 
+    this.job.skip = 1;
     for (var x = 0; x < this.job.width; x++) {
       let yBuff = 0;
 
-      for (var y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y++) {
+      for (var y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y+=this.job.skip) {
         let pngIdx = (this.job.width * y + x) << 2;
         let buffIndx = ((this.job.width * yBuff + x) * 3);
 
@@ -221,6 +222,7 @@ export class API {
       task.sliceStart = taskIndex * sliceHeight;
       task.sliceHeight = sliceHeight;
       task.maxDepth = jobInput.maxDepth || 4;
+      task.antiAlias = jobInput.antiAlias || false;
 
       this.job.tasks.push(task); 
 
@@ -266,7 +268,7 @@ export class API {
       console.log(`### Render complete, ${outDir}/render.png saved`);
       this.job.status = "COMPLETE";
       this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
-      let stats: any = {
+      let results: any = {
         status: this.job.status,
         reason: this.job.reason,
         start: this.job.startDate,
@@ -276,11 +278,13 @@ export class API {
         imageHeight: this.job.height,
         pixels: this.job.width * this.job.height,
         tracersUsed: Object.keys(this.tracers).length,
+        RPP: this.job.stats.raysCast / (this.job.width * this.job.height),
         stats: this.job.stats
       };
+      console.log('### Results details: ', results);
   
       let yamlOut: string = yaml.safeDump(this.rawJob, {});
-      fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(stats, null, 2));
+      fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));
       fs.writeFileSync(`${outDir}/job.yaml`, yamlOut);      
     });
   }
