@@ -16,16 +16,19 @@ In computer graphics, ray tracing is a rendering technique for generating an ima
 It is not the goal of this project to create a completely fully featured ray tracer, as the scope of that is almost limitless. 
 RayScale currently provides:
 - Primitive objects: Spheres, planes, cubeboids & cylinders
-- Texture mapping; images (PNG) and checkerboard
+- Texture mapping; images (PNG) and checker pattern
 - [Blinn-Phong illumination model](https://en.wikipedia.org/wiki/Phong_reflection_model) with per object surface properties
-- Multiple light sources
+- Multiple coloured light sources
+- Refractive transparency
 - Positionable camera, FOV and image output at any resolution
 - Job & scene definition language (YAML) 
+- Anti-aliasing
 
 ## Sample Images
 These are some sample images rendered with RayScale
 
-<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table.png"><img src="examples/renders/table.png"></a>
+<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table-scene.png"><img src="examples/renders/table-scene.png"></a>
+<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/transparency.png"><img src="examples/renders/transparency.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/quilted-floor.png"><img src="examples/renders/quilted-floor.png"></a>
 
