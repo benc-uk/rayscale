@@ -1,24 +1,28 @@
 name: tableScene
-width: 1920
-height: 1080
+width: 3840
+height: 2160
+antiAlias: true
+maxDepth: 6
 scene:
   name: tableScene
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.1
   cameraFov: 28
   cameraPos: [0, 19, 5]
-  cameraLookAt: [0, 0, -30]     
+  cameraLookAt: [0, 0, -30]   
   
   lights:
     - pos: [7, 25, 3]
       radius: 80
-      brightness: 1.5
+      brightness: 1.7
+      colour: [249, 238, 174]
     - pos: [-20, 50, -70]
       radius: 190
-      brightness: 0.5
+      brightness: 0.8
+      colour: [249, 216, 174]
     - pos: [-50, 35, -20]
       radius: 90
-      brightness: 1
+      brightness: 1.2
 
   objects:
     # Skybox
@@ -94,17 +98,19 @@ scene:
           scaleU: 5
           src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
           
-    # Shiny mirrored ball on table
+    # # Shiny mirrored ball on table
     - type: sphere
       name: mirror-ball
-      pos: [1.7, 9.6, -22]
+      pos: [1.7, 9.8, -22]
       rotate: [0, 0, 0]
       radius: 1.5
       material:
         preset: shiny
         hardness: 90
         ks: 1.5
-        kr: 0.8
+        kr: 0.2
+        kt: 0.8
+        ior: 1.3
         texture: 
           colour: [40, 40, 80]
 
@@ -175,23 +181,38 @@ scene:
         texture:
           colour: [221, 188, 117]    
     
-    # A cup ?
+    # A cup 1
     - type: cylinder
       name: cup1
-      pos: [-0.1, 9.5, -17.5]
+      pos: [-0.1, 9.59, -17.5]
       rotate: [180, 0, 0]
       radius: 0.4
       length: 1.3
       material:
         preset: shiny
         hardness: 11
-        ks: 1.5
+        ks: 1.2
+        kt: 0.8
+        ior: 1.2
         texture: 
-          type: check
-          scaleU: 1000
-          scaleV: 0.4
-          colour1: [250, 250, 250]
-          colour2: [90, 70, 215]
+          type: basic
+          colour: [10, 60, 60]
+    # A cup 2
+    - type: cylinder
+      name: cup1
+      pos: [-3.4, 9.59, -16.2]
+      rotate: [180, 0, 0]
+      radius: 0.4
+      length: 1.3
+      material:
+        preset: shiny
+        hardness: 11
+        ks: 1.2
+        kt: 0.8
+        ior: 1.2
+        texture: 
+          type: basic
+          colour: [10, 60, 60]
           
     # A blue marble "box" with gold button clasp
     - type: cuboid
@@ -280,7 +301,8 @@ scene:
         kr: 0.9
         texture: 
           type: basic
-          colour: [50, 50, 50]      
+          colour: [50, 50, 50]  
+
           
     # Chair with cushions
     - type: cuboid
@@ -323,7 +345,7 @@ scene:
           src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png
     - type: cuboid
       name: chaircushion
-      pos: [-7.9, 4.9, -19]
+      pos: [-7.9, 4.85, -19]
       rotate: [0, 0, 0]
       size: [3.5, 0.5, 3.1]
       material:

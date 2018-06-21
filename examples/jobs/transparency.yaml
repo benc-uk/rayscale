@@ -1,0 +1,98 @@
+name: trans-test
+width: 1200
+height: 800
+maxDepth: 6
+antiAlias: true
+scene:
+  name: glass-ball
+  backgroundColour: [10, 90, 30]
+  ambientLevel: 0.2
+  cameraFov: 30
+  cameraPos: [2, 18, 0]
+  cameraLookAt: [1.5, 5, -30]
+  lights:
+    - pos: [-30, 80, 38]
+      radius: 120
+      brightness: 3.5
+    - pos: [20, 25, -39]
+      colour: [244, 203, 66]
+      radius: 50
+      brightness: 2.5  
+  objects: 
+    - type: plane
+      name: floor
+      pos: [0, 0, 0]
+      rotate: [0, 45, 0]
+      material:
+        preset: matte
+        ka: 0.6
+        texture:
+          type: check
+          scaleU: 8
+          scaleV: 8
+          colour1: [173, 34, 34]
+          colour2: [224, 224, 224]  
+    - type: cylinder
+      name: glass
+      pos: [1, -0.05, -30]
+      rotate: [0, 0, 0]
+      radius: 2.5
+      length: 7
+      capped: true
+      material:
+        preset: shiny
+        hardness: 16
+        ks: 3
+        kt: 0.8
+        ior: 1.5
+        kr: 0.05
+        texture:
+          colour: [22, 42, 68]
+    - type: cuboid
+      name: rod
+      pos: [1.5, 5.5, -29.5]
+      rotate: [0, 17, 65]
+      size: [10, 0.8, 0.8]
+      material:
+        preset: shiny
+        hardness: 70
+        texture:
+          colour: [10, 180, 15]    
+
+    - type: sphere
+      name: crystal-ball
+      pos: [-5, 4, -33]
+      radius: 4
+      material:
+        preset: shiny
+        hardness: 70
+        kt: 0.8
+        ior: 1.32
+        kr: 0.2
+        texture:
+          colour: [20, 5, 17]       
+    - type: cuboid
+      name: wood-beam
+      pos: [1, 1.5, -37.4]
+      rotate: [0, -10, 0]
+      size: [36, 3, 3]
+      material:
+        preset: matte
+        texture:
+          type: image
+          scaleU: 8
+          scaleV: 10
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+    - type: cuboid
+      name: rod
+      pos: [7.5, 2.502, -30]
+      rotate: [0, 17, 0]
+      size: [5, 5, 5]
+      material:
+        preset: shiny
+        hardness: 8
+        kt: 0.7
+        ior: 1.2
+        texture:
+          colour: [20, 51, 33]              
+          

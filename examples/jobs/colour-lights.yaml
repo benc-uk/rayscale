@@ -1,0 +1,50 @@
+name: shadow-test
+width: 2400
+height: 2000
+scene:
+  name: three-lights
+  backgroundColour: [10, 10, 30]
+  ambientLevel: 0.15
+  cameraFov: 50
+  cameraPos: [0, 45, 20]
+  cameraLookAt: [0, 0, 0]
+  lights:
+    - pos: [25, 12, 8]
+      radius: 50
+      brightness: 2.85
+      colour: [255, 80, 80]
+    - pos: [-25, 12, 8]
+      radius: 50
+      brightness: 2.85
+      colour: [80, 255, 80]
+    - pos: [0, 12, -18]
+      radius: 50
+      brightness: 2.85
+      colour: [60, 60, 255]
+  objects: 
+    - type: plane
+      name: floor
+      pos: [0, 0, 0]
+      rotate: [0, 45, 0]
+      material:
+        preset: matte
+        ka: 0.01
+        kd: 1.2
+        texture:
+          type: check
+          scaleU: 6
+          scaleV: 6
+          colour1: [70, 70, 70]
+          colour2: [180, 180, 180]  
+    - type: sphere
+      name: test
+      pos: [0, 6, 0]
+      radius: 6
+      #capped: true
+      material:
+        preset: shiny
+        ka: 0.001
+        ks: 1.1
+        hardness: 50
+        texture:
+          colour: [220, 220, 220]
