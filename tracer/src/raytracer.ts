@@ -272,7 +272,7 @@ export class Raytracer {
         }
 
         // Shade transparent ray and add to colour
-        let transColour = this.shadeRay(transRay);
+        let transColour = this.shadeRay(transRay).copy();
         transColour.mult(hitObject.material.kt * tFade);
         outColour.add(transColour);
       }
