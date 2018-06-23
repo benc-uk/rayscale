@@ -23,6 +23,17 @@ export class Ray {
     Stats.raysCreated++;
   }
 
+  // ====================================================================================================
+  // Convenience getters for ray dir and pos values
+  // ====================================================================================================
+  get px(): number { return this.pos[0]; }
+  get py(): number { return this.pos[1]; }
+  get pz(): number { return this.pos[2]; }
+  get dx(): number { return this.dir[0]; }
+  get dy(): number { return this.dir[1]; }
+  get dz(): number { return this.dir[2]; }
+
+
   public toString(): string  {
     return `pos: [${this.pos[0]}, ${this.pos[1]}, ${this.pos[2]}], dir: [${this.dir[0]}, ${this.dir[1]}, ${this.dir[2]}]`;
   }
