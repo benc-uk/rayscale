@@ -54,28 +54,25 @@ export class Sphere implements Object3D {
     let tresult = new TResult(0.0, ray);
 
     // Sphere at origin (0,0,0) so L simply becomes ray.pos, but with w=0
-    //let L: vec4 = vec4.sub(vec4.create(), ray.pos, vec4.fromValues(0, 0, 0, 1));
-    let L: vec4 = vec4.fromValues(ray.pos[0], ray.pos[1], ray.pos[2], 0);
-    let b: number = 2.0 * vec4.dot(ray.pos, ray.dir);
-    let c: number = vec4.dot(L, L) - this.r2;
-    let d: number = b*b - 4.0 * c;
+    let b: number = 2 * vec4.dot(ray.pos, ray.dir);
+    let c: number = vec4.dot([ray.px, ray.py, ray.pz, 0], [ray.px, ray.py, ray.pz, 0]) - this.r2;
+    let d: number = b * b - 4 * c;
 
     // Miss
     if (d <= 0.0)
       return tresult;
     
     d = Math.sqrt(d);
-    let t1: number = (-b+d)/2.0;
-    let t2: number = (-b-d)/2.0;
+    let t1: number = (-b + d) / 2.0;
+    let t2: number = (-b - d) / 2.0;
 
-    // if (Math.abs(t1) < ObjectConsts.EPSILON2 || Math.abs(t2) < ObjectConsts.EPSILON2)
-    //   return tresult;
+    // Ray is inside if there is only 1 positive root
+    // Added for refractive transparency
     if(t1 < 0 || t2 < 0) {
       tresult.inside = true;
     }
     
-    // Ray is inside if there is only 1 positive root
-    // Added for refractive transparency
+    // Work out root to return
     if (t1 < 0 && t2 > 0) {
       tresult.t = t2; return tresult;
     }
