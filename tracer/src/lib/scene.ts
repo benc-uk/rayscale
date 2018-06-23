@@ -12,6 +12,7 @@ import { Plane } from './plane';
 import { Sphere } from './sphere';
 import { Cuboid } from './cuboid';
 import { Cylinder } from './cylinder';
+import { Cone } from './cone';
 
 // ====================================================================================================
 // 
@@ -108,6 +109,14 @@ export class Scene {
               if(!rawObj.length) throw(`Cylinder length missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) throw(`Cylinder rotate missing ${JSON.stringify(rawObj)}`);
               obj = new Cylinder(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
+                                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
+                                 rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
+              break;
+            case 'cone':
+              if(!rawObj.radius) throw(`Cone radius missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.length) throw(`Cone length missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) throw(`Cone rotate missing ${JSON.stringify(rawObj)}`);
+              obj = new Cone(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                                  rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
               break;

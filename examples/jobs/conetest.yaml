@@ -1,0 +1,29 @@
+name: Cone Test
+width: 500
+height: 400
+scene:
+  name: cone
+  backgroundColour: [4, 22, 53]
+  ambientLevel: 0.1
+  cameraFov: 50
+  cameraPos: [0, 3, 0]
+  cameraLookAt: [0, 0, -20]   
+  
+  lights:
+    - pos: [20, 20, 20]
+      radius: 20
+      brightness: 1
+
+  objects:
+    # Cone...
+    - type: cylinder
+      name: cone-1
+      pos: [0, 0, -20]
+      rotate: [0, 0, 0]
+      radius: 4
+      length: 8
+      material:
+        preset: basic
+        noShade: true
+        texture: 
+          colour: [255, 20, 20]
