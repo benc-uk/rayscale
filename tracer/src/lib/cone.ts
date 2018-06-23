@@ -86,7 +86,7 @@ export class Cone implements Object3D {
         tNear = t2; tFar = t1;
       }
       
-      // This should 
+      // For transparency, not sure if it works
       if((t1 < ObjectConsts.EPSILON3 || t2 < ObjectConsts.EPSILON3) && ray.pos[1] < this.length && ray.pos[1] > 0) {
         tresult.inside = true; 
       }
