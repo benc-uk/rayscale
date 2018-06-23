@@ -163,7 +163,7 @@ export class Cylinder implements Object3D {
         }
       }
       // If we're inside (either t is negative) return the far point, 
-      // this um... fixes things like some shadows
+      // fixes things like self shadows and shadows inside the cylinder 
       if(tresult.inside) { 
         tresult.t = tFar;
         return tresult;

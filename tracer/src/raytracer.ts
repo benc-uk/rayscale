@@ -45,7 +45,7 @@ export class Raytracer {
     mat4.invert(camTrans, camTrans);
 
     let bufferY = 0;
-    let cacheCorner: Colour;
+    let cacheCorner: Colour = null;
     let cacheRow: Colour[] = new Array();
     for (var y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y += this.task.skip) {
       for (var x = 0; x < this.task.imageWidth; x++) {
@@ -77,9 +77,9 @@ export class Raytracer {
             outPixel3 = cacheCorner;
           } else {
             outPixel3 = this.shadeRay(this.makeCameraRay(x, y+1, camTrans, fovScale, aspectRatio));
+            cacheRow[x] = outPixel3.copy();
           }
 
-          cacheRow[x] = outPixel3.copy();
           let outPixel4: Colour = this.shadeRay(this.makeCameraRay(x+1, y+1, camTrans, fovScale, aspectRatio));
           cacheRow[x+1] = outPixel4.copy();
           cacheCorner = outPixel4.copy();
@@ -202,6 +202,7 @@ export class Raytracer {
           }
         }
         if(shadowT > 0.0 && shadowT < Number.MAX_VALUE) {
+          if(shadowT == 444) return Colour.BLUE;
           shadow = true;
         }
 
@@ -221,10 +222,8 @@ export class Raytracer {
             lightIntensity * lightAtten * hitObject.material.kd * light.colour.b);
 
         } else {
-          // In shadow hit use material ka
-          //console.log(hitObject.material.ka * this.scene.ambientLevel);
+          // In shadow, use material ka & scene ambient level 
           shadeColour.mult(hitObject.material.ka * this.scene.ambientLevel);
-          //shadeColour = Colour.GREEN;
         }
         
         // Add hitColour to our accumulator colour 
@@ -248,13 +247,14 @@ export class Raytracer {
         let newDir = this.calcRefractionDir(ray, hit, hitObject);
 
         let transRay: Ray;
-        // Are we refracted or total interna
+        // Are we refracted or total internal reflection
         if(newDir)
           transRay = new Ray(hit.intersection, newDir);
         else
           transRay = new Ray(hit.intersection, hit.reflected);
 
         // Slide ray a fraction along direction
+        // Reflections don't work otherwise
         transRay.pos[0] += transRay.dir[0] * ObjectConsts.EPSILON2;
         transRay.pos[1] += transRay.dir[1] * ObjectConsts.EPSILON2;
         transRay.pos[2] += transRay.dir[2] * ObjectConsts.EPSILON2;
@@ -263,9 +263,11 @@ export class Raytracer {
         // What is new ray inside?
         let tFade = 1.0
         if(!ray.inside) {
+          // If ray was in "air" ray spawns inside the object we just hit
           transRay.inside = hitObject;
           tFade = 0.8;
         } else {
+          // Ray traversing inside object
           transRay.inside = ray.inside;
         }
 
@@ -283,7 +285,7 @@ export class Raytracer {
     } // End of object loop
 
     // Missed everything! 
-    return this.scene.backgroundColour;
+    return this.scene.backgroundColour.copy();
   }
 
   // ====================================================================================================

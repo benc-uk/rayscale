@@ -37,7 +37,9 @@ export class Colour {
   }
 
   public mult(v: number) {
-    this.r = this.r * v; this.g = this.g * v; this.b = this.b * v;
+    this.r *= v; 
+    this.g *= v; 
+    this.b *= v;
     this.r = Math.min(1, this.r);
     this.g = Math.min(1, this.g);
     this.b = Math.min(1, this.b);    
