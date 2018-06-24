@@ -12,15 +12,23 @@ import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 
+// ====================================================================================================
+// Object representing a plane infinite plane
+// - Centred at `pos`, and pointing upwards (+ve Y axis), like a "floor"
+// ====================================================================================================
 export class Plane implements Object3D {
-  trans: mat4; 
-  transFwd: mat4;
+  // Base properties
   name: string;
+  trans: mat4;
+  transFwd: mat4;
   material: Material;
-  norm: vec4;
-  static THRES: number = 0.0001;
-  static FUDGE: number = 0.0001;
 
+  // Plane properties
+  norm: vec4;
+  
+  // ====================================================================================================
+  // Create a Plane (called by Scene parser)
+  // ====================================================================================================
   constructor(pos: vec4, rotation: vec3, name: string) {
     this.name = name;
 
@@ -37,19 +45,19 @@ export class Plane implements Object3D {
     mat4.invert(this.trans, this.transFwd);
   }
 
-  public calcT(ray: Ray): TResult {
+  public calcT(inray: Ray): TResult {
     Stats.objectTests++;
-    let tRay: Ray = ray.transformNewRay(this.trans);
+    let ray: Ray = inray.transformNewRay(this.trans);
 
-    let denom: number = vec4.dot(this.norm, tRay.dir);
+    let denom: number = vec4.dot(this.norm, ray.dir);
     if (Math.abs(denom) > ObjectConsts.EPSILON3) {
-        let l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], tRay.pos);
+        let l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], ray.pos);
         let t: number = vec4.dot(l0, this.norm) / denom;
         if (t >= 0)  {
-          return new TResult(t, tRay); //{t: t, tRay: tRay}; 
+          return new TResult(t, ray);
         }
     }
-    return new TResult(0.0, tRay); //{t: 0, tRay: tRay};
+    return new TResult(0.0, ray);
   }
 
   public getHitPoint(result: TResult): Hit {
