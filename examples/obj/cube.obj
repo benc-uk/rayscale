@@ -1,5 +1,8 @@
 # cube.obj
-#
+# Taken from http://people.sc.fsu.edu/~jburkardt/data/obj/cube.obj 
+ 
+o cube
+
 v  0.0  0.0  0.0
 v  0.0  0.0  1.0
 v  0.0  1.0  0.0
@@ -15,7 +18,9 @@ vn  0.0  1.0  0.0
 vn  0.0 -1.0  0.0
 vn  1.0  0.0  0.0
 vn -1.0  0.0  0.0
- 
+
+g cubefaces
+
 f  1//2  7//2  5//2
 f  1//2  3//2  7//2 
 f  1//6  4//6  3//6 
