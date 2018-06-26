@@ -13,6 +13,8 @@ import { Sphere } from './sphere';
 import { Cuboid } from './cuboid';
 import { Cylinder } from './cylinder';
 import { Cone } from './cone';
+import { ObjManager } from './obj-manager';
+import { Mesh } from './mesh';
 
 // ====================================================================================================
 // 
@@ -37,9 +39,7 @@ export class Scene {
   static parseScene(input: any): Promise<any> {
 
     return new Promise(async (resolve, reject) => {
-      // Important we clear out old textures
-      if(!process.env.SKIP_TEXTURE_RESET)
-        TextureManager.getInstance().clearTextures();      
+    
       let scene: Scene = new Scene();
       console.log(`### Begin parsing scene...`);
 
@@ -119,6 +119,12 @@ export class Scene {
               obj = new Cone(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                                  rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
+              break;
+            case 'mesh':
+              if(!rawObj.src) throw(`Mesh src missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) throw(`Mesh rotate missing ${JSON.stringify(rawObj)}`);
+              await ObjManager.getInstance().loadObjFile(rawObj.src);
+              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
               break;
             default:
               throw `Object type '${rawObj.type}' is invalid`

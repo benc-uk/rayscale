@@ -1,10 +1,10 @@
 name: trans-test
-width: 1200
-height: 800
+width: 1920
+height: 1080
 maxDepth: 6
 antiAlias: true
 scene:
-  name: glass-ball
+  name: glass-objects
   backgroundColour: [10, 90, 30]
   ambientLevel: 0.2
   cameraFov: 30
@@ -95,4 +95,17 @@ scene:
         ior: 1.2
         texture:
           colour: [20, 51, 33]              
-          
+    - type: cone
+      name: cone-1
+      pos: [-8.8, 0.01, -28]
+      rotate: [0, 0, 0]
+      radius: 3
+      length: 9
+      material:
+        preset: shiny
+        hardness: 8
+        kt: 0.7
+        ior: 1.2
+        texture:
+          colour: [60, 41, 33]              
+             

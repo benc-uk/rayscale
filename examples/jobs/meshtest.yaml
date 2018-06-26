@@ -1,8 +1,8 @@
-name: Cone Test
-width: 500
-height: 400
+name: Mesh Test
+width: 1
+height: 1
 scene:
-  name: cone
+  name: mesh
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.1
   cameraFov: 50
@@ -15,13 +15,12 @@ scene:
       brightness: 1
 
   objects:
-    # Cone...
-    - type: cone
-      name: cone-1
+    # 3D polygon mesh
+    - type: mesh
+      name: blahblah
+      src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/obj/cube.obj
       pos: [0, -4, -20]
       rotate: [0, 0, 0]
-      radius: 4
-      length: 11
       material:
         preset: shiny
         texture: 
