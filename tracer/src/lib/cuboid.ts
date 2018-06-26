@@ -47,7 +47,7 @@ export class Cuboid implements Object3D {
     Stats.objectTests++;
     let ray: Ray = inray.transformNewRay(this.trans);
 
-    let t1, t2, tnear = -100000.0, tfar = 100000.0, temp, tCube;
+    let t1, t2, tnear = -Number.MAX_VALUE, tfar = Number.MAX_VALUE, temp, tCube;
     let intersectFlag: boolean = true;
 
     // Code stolen from 
