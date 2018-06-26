@@ -57,6 +57,7 @@ export class Raytracer {
 
         let outPixel: Colour;
         if(this.task.antiAlias) {
+          // !TODO: MAJOR BUG with split image lines appear
           // Fire 5 rays. one in center and one in each corner of pixel
           let outPixel0: Colour = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
           
