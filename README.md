@@ -28,6 +28,7 @@ RayScale currently provides:
 These are some sample images rendered with RayScale
 
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table-scene.png"><img src="examples/renders/table-scene.png"></a>
+<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/teapot.png"><img src="examples/renders/teapot.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/transparency.png"><img src="examples/renders/transparency.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/quilted-floor.png"><img src="examples/renders/quilted-floor.png"></a>
