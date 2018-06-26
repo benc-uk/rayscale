@@ -56,7 +56,7 @@ export class TextureManager {
   }
 
   // Wipe out textures
-  public clearTextures() {
+  public clearCache() {
     console.log(`### TextureManager is clearing cached textures`);
     delete this.textures;
     this.textures = {};

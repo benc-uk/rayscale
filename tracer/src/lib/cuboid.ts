@@ -13,7 +13,7 @@ import { Stats } from './stats';
 import { TResult } from './t-result';
 
 // ====================================================================================================
-// Object representing a cuboid
+// Object representing a cuboid (3d rectangle)
 // - Centred at `pos`, cuboid extends along each axis as per the `size` vector
 // ====================================================================================================
 export class Cuboid implements Object3D {
@@ -21,8 +21,8 @@ export class Cuboid implements Object3D {
   transFwd: mat4;
   name: string;
   material: Material;
-  b1: number[] = [];
-  b2: number[] = [];
+  private b1: number[] = [];
+  private b2: number[] = [];
 
   // ====================================================================================================
   // Create a Cuboid (called by Scene parser)
