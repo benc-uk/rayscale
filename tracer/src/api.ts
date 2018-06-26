@@ -48,11 +48,11 @@ export class API {
     // Send OK back before starting tracing
     res.status(202).send({ msg: "Task accepted" });
 
-    // Important we clear out caches
-    if(!process.env.SKIP_TEXTURE_RESET)
+    // Clear out caches, or not 
+    if(process.env.CLEAR_CACHE || true) {
       TextureManager.getInstance().clearCache();  
-    if(true)
       ObjManager.getInstance().clearCache();
+    }
 
     // Start the ray tracer for the give task & scene
     try { 
