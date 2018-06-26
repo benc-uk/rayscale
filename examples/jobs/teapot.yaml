@@ -1,0 +1,42 @@
+name: teapot
+width: 400
+height: 300
+#antiAlias: true
+scene:
+  name: utah-teapot
+  backgroundColour: [4, 22, 53]
+  ambientLevel: 0.2
+  cameraFov: 15
+  cameraPos: [0, 7, 0]
+  cameraLookAt: [0, 1, -20]   
+  
+  lights:
+    - pos: [100, 170, 100]
+      radius: 2000
+      brightness: 1
+
+  objects:
+    # Basic floor
+    - type: plane
+      name: floor
+      pos: [0, 0, 0]
+      rotate: [0, 26, 0]
+      material:
+        preset: matte
+        texture:
+          type: check
+          scaleU: 5
+          scaleV: 5
+          colour1: [0, 40, 190]  
+          colour2: [250,250,250]
+    # The classic Utah teapot .obj mesh
+    - type: mesh
+      name: teapot-mesh
+      src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/obj/teapot.obj
+      pos: [0, 0, -20]
+      rotate: [0, 7, 0]
+      material:
+        preset: shiny
+        kr: 0.5
+        texture: 
+          colour: [127, 255, 92]
