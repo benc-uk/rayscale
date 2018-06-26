@@ -1,6 +1,6 @@
 {
   "name": "rayscale",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Container based distributed raytracer - tracer/worker",
   "main": "dist/server.js",
   "scripts": {
@@ -24,9 +24,10 @@
     "express": "^4.16.3",
     "gl-matrix": "^2.6.1",
     "morgan": "^1.9.0",
+    "obj-file-parser": "^0.5.0",
     "pngjs": "^3.3.3",
-    "request-promise-native": "^1.0.5",
     "request": "2.87.0",
+    "request-promise-native": "^1.0.5",
     "uuid": "^3.2.1"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "@types/express": "4.11.1",
     "@types/gl-matrix": "^2.4.0",
     "@types/morgan": "^1.7.35",
+    "@types/obj-file-parser": "^0.5.0",
     "@types/pngjs": "^3.3.1",
     "@types/request-promise-native": "^1.0.14",
     "@types/uuid": "^3.4.3"
