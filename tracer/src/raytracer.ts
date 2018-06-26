@@ -57,7 +57,6 @@ export class Raytracer {
 
         let outPixel: Colour;
         if(this.task.antiAlias) {
-          // !TODO: MAJOR BUG with split image lines appear
           // Fire 5 rays. one in center and one in each corner of pixel
           let outPixel0: Colour = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
           
@@ -65,17 +64,17 @@ export class Raytracer {
           let outPixel2: Colour;
           let outPixel3: Colour;
           if(cacheRow[x]) {
-            outPixel1 = cacheRow[x]
+            outPixel1 = cacheRow[x].copy();
           } else {
             outPixel1 = this.shadeRay(this.makeCameraRay(x, y, camTrans, fovScale, aspectRatio));
           }
           if(cacheRow[x+1]) {
-            outPixel2 = cacheRow[x+1]
+            outPixel2 = cacheRow[x+1].copy();
           } else {
             outPixel2 = this.shadeRay(this.makeCameraRay(x+1, y, camTrans, fovScale, aspectRatio));
           }
           if(cacheCorner) {
-            outPixel3 = cacheCorner;
+            outPixel3 = cacheCorner.copy();;
           } else {
             outPixel3 = this.shadeRay(this.makeCameraRay(x, y+1, camTrans, fovScale, aspectRatio));
             cacheRow[x] = outPixel3.copy();
