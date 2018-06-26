@@ -5,6 +5,8 @@ import { Task } from './lib/task';
 import { Scene } from './lib/scene';
 import { Stats } from './lib/stats';
 import { Utils } from './lib/utils';
+import { TextureManager } from './lib/texture-manager';
+import { ObjManager } from './lib/obj-manager';
 
 // =======================================================================================================
 
@@ -44,7 +46,13 @@ export class API {
     }
 
     // Send OK back before starting tracing
-    res.status(200).send({ msg: "Task accepted" });
+    res.status(202).send({ msg: "Task accepted" });
+
+    // Important we clear out caches
+    if(!process.env.SKIP_TEXTURE_RESET)
+      TextureManager.getInstance().clearCache();  
+    if(true)
+      ObjManager.getInstance().clearCache();
 
     // Start the ray tracer for the give task & scene
     try { 

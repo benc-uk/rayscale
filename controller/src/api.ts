@@ -45,7 +45,7 @@ export class API {
     console.log(`### Tracer registered: ${tracer.endPoint}`);
 
     res.contentType('application.json');
-    res.status(200).send({msg: "Tracer registered"});
+    res.status(200).send({ msg: "Tracer registered" });
   
     console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
   }
@@ -57,8 +57,7 @@ export class API {
     res.type('application/json');
     console.log(`### New job request received`);
 
-    // Check active job
-    // !TODO! Removed temporary
+    // Check active job 
     if(this.job && this.job.status == "RUNNING") {
       console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
       res.status(400).send({msg: "There is currently an active job"}); return;
@@ -146,13 +145,16 @@ export class API {
   // Regular tracer health check, remove tracers that are not contactable 
   // ====================================================================================
   public tracerHealthCheck = () => {
-    //console.log(`### Running tracer health check...`);
-    
+    // Skip checks when rendering a job
+    // With very long/intense jobs the health checks would fail, due to API stops responding during render
+    if(this.job && this.job.status == "RUNNING") {
+      return;
+    }
+
     for(let tid in this.tracers) {
       let endPoint = this.tracers[tid].endPoint;
   
       // Call health ping API on tracer, expect 200 and nothing more
-      // !TODO! Further validation, check id etc
       request({ uri: `${endPoint}/ping` }) //, timeout: this.checkInterval - 1 })
       .then(resp => { /* Do nothing */ })
       .catch(err => {
@@ -160,16 +162,15 @@ export class API {
         delete this.tracers[tid];
 
         // If we had a job in progress we're probably screwed, so fail the job
-        if(this.job && this.job.status == "RUNNING") {
-          console.log(`### ERROR! One or more tracers went offline while job was running`);
-          this.job.status = "FAILED";
-          this.job.reason = `One or more tracers went offline while job was running`;
-        }
+        // if(this.job && this.job.status == "RUNNING") {
+        //   console.log(`### ERROR! One or more tracers went offline while job was running`);
+        //   this.job.status = "FAILED";
+        //   this.job.reason = `One or more tracers went offline while job was running`;
+        // }
 
         console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
       });
     }
-    //console.log(`### Tracers online: ${Object.keys(tracers).length}`);
   }
 
   // ====================================================================================
@@ -213,7 +214,7 @@ export class API {
     for(let tid in this.tracers) {
       let tracer = this.tracers[tid];
 
-      // !TODO! sliceHeight needs to account for remainder when non-integer
+      // !TODO: sliceHeight needs to account for remainder when non-integer
       let task = new Task();
       task.id = uuidv4();
       task.imageWidth = this.job.width;
