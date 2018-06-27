@@ -22,6 +22,7 @@ export class Mesh implements Object3D {
   name: string;
   trans: mat4;
   transFwd: mat4;
+  transNorm: mat4;
   material: Material;
 
   // Mesh properties
@@ -30,7 +31,7 @@ export class Mesh implements Object3D {
   // ====================================================================================================
   // Create a ObjMesh
   // ====================================================================================================
-  constructor(objFile: string, pos: vec4, rotation: vec3, name: string) {
+  constructor(objFile: string, pos: vec4, rotation: vec3, scale: vec3, name: string) {
     this.name = name;
     this.objModel = ObjManager.getInstance().getObjModel(objFile, 0);
     if(!this.objModel) {
@@ -39,12 +40,14 @@ export class Mesh implements Object3D {
 
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());
+    this.transNorm = mat4.identity(mat4.create());
     let rot: quat = quat.identity(quat.create());
     quat.rotateX(rot, rot, Utils.degreeToRad(rotation[0]));
     quat.rotateY(rot, rot, Utils.degreeToRad(rotation[1]));
     quat.rotateZ(rot, rot, Utils.degreeToRad(rotation[2])); 
-    mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
+    mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [scale[0], scale[1], scale[2]]);
     mat4.invert(this.trans, this.transFwd);
+    mat4.transpose(this.transNorm, this.transFwd);
   }
 
   public calcT(inray: Ray): TResult {
@@ -57,6 +60,7 @@ export class Mesh implements Object3D {
     let maxt: number = Number.MAX_VALUE;
     let faceIndex = 0;
     for(let face of this.objModel.faces) {
+      //console.log(face);
       let v0: vec3 = vec3.fromValues(this.objModel.vertices[face.vertices[0].vertexIndex - 1].x,
         this.objModel.vertices[face.vertices[0].vertexIndex - 1].y,
         this.objModel.vertices[face.vertices[0].vertexIndex - 1].z);
@@ -67,6 +71,7 @@ export class Mesh implements Object3D {
         this.objModel.vertices[face.vertices[2].vertexIndex - 1].y,
         this.objModel.vertices[face.vertices[2].vertexIndex - 1].z);
 
+      // Note the weird order of vertices here, 
       let faceHit: FaceHit = this.calcFaceHit(ray, v1, v0, v2);
       
       if(faceHit && faceHit.t < maxt) {
@@ -85,6 +90,7 @@ export class Mesh implements Object3D {
   // Taken from: https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm
   // =====================================================================================ray===============
   private calcFaceHit(ray: Ray, vertex0: vec3, vertex1: vec3, vertex2: vec3): FaceHit {
+    Stats.meshFaceTests++;
     let edge1: vec3 = vec3.sub(vec3.create(), vertex1, vertex0);
     let edge2: vec3 = vec3.sub(vec3.create(), vertex2, vertex0);
     let h: vec3 = vec3.cross(vec3.create(), [ray.dx, ray.dy, ray.dz], edge2);
@@ -101,7 +107,7 @@ export class Mesh implements Object3D {
     if (v < 0.0 || u + v > 1.0) 
       return null;
     let t: number = f * (vec3.dot(edge2, q)); 
-    if (t > ObjectConsts.EPSILON5) {
+    if (t > ObjectConsts.EPSILON4) {
       return new FaceHit(u, v, t)
     } else { 
       return null;
@@ -122,22 +128,11 @@ export class Mesh implements Object3D {
     let n2 = vec4.fromValues(this.objModel.vertexNormals[face.vertices[2].vertexNormalIndex - 1].x,
                              this.objModel.vertexNormals[face.vertices[2].vertexNormalIndex - 1].y,
                              this.objModel.vertexNormals[face.vertices[2].vertexNormalIndex - 1].z, 0);
-        
-    // vec4.scale(n0, n0, 1 - result.flag.u);
-    // vec4.scale(n0, n0, 1 - result.flag.v);
-    // vec4.scale(n1, n1, result.flag.u);
-    // vec4.scale(n2, n2, result.flag.v);
-    // let n = vec4.add(vec4.create(), n0, n1);
-    // //vec4.normalize(n, n);
-    // n = vec4.add(n, n, n2);
-    // vec4.normalize(n, n);
-    // n[3] = 0;
 
-    let nx = ( (1.0 - (result.flag.u + result.flag.v)) * n1[0] + n0[0] * result.flag.u + n2[0] * result.flag.v);
-    let ny = ( (1.0 - (result.flag.u + result.flag.v)) * n1[1] + n0[1] * result.flag.u + n2[1] * result.flag.v);
-    let nz = ( (1.0 - (result.flag.u + result.flag.v)) * n1[2] + n0[2] * result.flag.u + n2[2] * result.flag.v);
+    let nx = (1.0 - (result.flag.u + result.flag.v)) * n1[0] + n0[0] * result.flag.u + n2[0] * result.flag.v;
+    let ny = (1.0 - (result.flag.u + result.flag.v)) * n1[1] + n0[1] * result.flag.u + n2[1] * result.flag.v;
+    let nz = (1.0 - (result.flag.u + result.flag.v)) * n1[2] + n0[2] * result.flag.u + n2[2] * result.flag.v;
     let n = vec4.fromValues(nx, ny, nz, 0);
-    vec4.normalize(n, n);
 
     // let u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
     // if(i[0] < 0) u = 1 - u;
@@ -153,14 +148,17 @@ export class Mesh implements Object3D {
     vec4.normalize(r, r);   
 
     // Move normal into world
-    // vec4.transformMat4(n, n, this.transFwd);
-    //vec4.normalize(n, n);
+    vec4.transformMat4(n, n, this.transFwd);
+    vec4.normalize(n, n);
     
     let hit: Hit = new Hit(i, n, r, 0, 0);
     return hit;
   }
 }
 
+// ====================================================================================================
+// 
+// ====================================================================================================
 class FaceHit {
   t: number;
   u: number; 

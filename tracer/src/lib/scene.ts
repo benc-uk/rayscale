@@ -122,9 +122,10 @@ export class Scene {
               break;
             case 'mesh':
               if(!rawObj.src) throw(`Mesh src missing ${JSON.stringify(rawObj)}`);
-              if(!rawObj.rotate) throw(`Mesh rotate missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
+              if(!rawObj.scale) { rawObj.scale = []; rawObj.scale[0] = 1; rawObj.scale[1] = 1; rawObj.scale[2] = 1; }
               await ObjManager.getInstance().loadObjFile(rawObj.src);
-              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
+              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), vec3.fromValues(rawObj.scale[0], rawObj.scale[1], rawObj.scale[2]), rawObj.name);
               break;
             default:
               throw `Object type '${rawObj.type}' is invalid`
