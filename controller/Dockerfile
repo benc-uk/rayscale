@@ -30,8 +30,9 @@ LABEL org.label-schema.name="RayScale: Controller" \
 
 WORKDIR /app/controller
 ENV PORT 9000
-ENV HEALTH_CHECK_INTERVAL 5
+ENV HEALTH_CHECK_INTERVAL 90
 ENV JOB_OUTPUT /app/controller/jobs
+ENV NODE_ENV production
 
 # NPM install packages
 COPY controller/package*.json ./

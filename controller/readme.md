@@ -6,7 +6,7 @@ All configuration is done via environmental variables. When running locally dote
 |Name|Default|Notes|
 |---|---|---|
 |**PORT**|9000|The port the server listens on|
-|**HEALTH_CHECK_INTERVAL**|80|How often in seconds, to 'ping' tracers to check they are healthy and online. Setting lower than 60 sec with remote tracers you might trip over TCP timeouts (often 60 secs). Setting lower than 5 seconds is a bad idea.
+|**HEALTH_CHECK_INTERVAL**|90|How often in seconds, to 'ping' tracers to check they are healthy and online. Setting lower than 60 sec with remote tracers you might trip over TCP timeouts (often 60 secs). Setting lower than 5 seconds is a bad idea.
 |**DIR_JOBOUT**|./dist/../jobs|Where to store jobs, folder will be created if it doesn't exist. The default will be folder above the dist folder with compiled JS|
 
 

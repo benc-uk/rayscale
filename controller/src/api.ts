@@ -57,10 +57,12 @@ export class API {
     res.type('application/json');
     console.log(`### New job request received`);
 
-    // Check active job 
-    if(this.job && this.job.status == "RUNNING") {
-      console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
-      res.status(400).send({msg: "There is currently an active job"}); return;
+    // Check active job  
+    if(res.app.get('env').toLowerCase() == "production") {
+      if(this.job && this.job.status == "RUNNING") {
+        console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
+        res.status(400).send({msg: "There is currently an active job"}); return;
+      }
     }
 
     // Check if we have any tracers
@@ -82,7 +84,6 @@ export class API {
     try {
       this.createJob(jobInput)
     } catch(e) {
-      console.log("EEEE", e);
       res.status(400).send({msg: `Job invalid ${e}`});
       return;
     }
@@ -100,6 +101,7 @@ export class API {
     this.job.stats.raysCast += parseInt(req.headers['x-stats-rayscast'].toString());
     this.job.stats.shadowRays += parseInt(req.headers['x-stats-shadowrays'].toString());
     this.job.stats.objectTests += parseInt(req.headers['x-stats-objtests'].toString());
+    this.job.stats.meshFaceTests += parseInt(req.headers['x-stats-meshtests'].toString());
 
     // If we get anything other than binary data, that's a failure
     if(req.headers['content-type'] != 'application/octet-stream') {
@@ -203,7 +205,8 @@ export class API {
       raysCreated: 0,
       raysCast: 0,
       shadowRays: 0,
-      objectTests: 0
+      objectTests: 0,
+      meshFaceTests: 0
     };
   
     // Create tasks and send to tracers
