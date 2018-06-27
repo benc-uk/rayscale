@@ -65,6 +65,7 @@ export class API {
       console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
       console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
       console.log(`### Object tests: ${Utils.numberWithCommas(Stats.objectTests)}`);
+      console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
 
       // Send image buffer to controller as binary (octet-stream)
       request.post({
@@ -78,7 +79,8 @@ export class API {
           'x-stats-rayscreated': Stats.raysCreated,
           'x-stats-rayscast': Stats.raysCast,
           'x-stats-shadowrays': Stats.shadowRays,
-          'x-stats-objtests': Stats.objectTests
+          'x-stats-objtests': Stats.objectTests,
+          'x-stats-meshtests': Stats.meshFaceTests
         }
       })
       .then()
