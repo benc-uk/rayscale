@@ -94,12 +94,12 @@ export class Scene {
               obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.radius, rawObj.name);
               break;
             case 'plane':
-              if(!rawObj.rotate) throw(`Plane rotate missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
               break;
             case 'cuboid':
               if(!rawObj.size) throw(`Cuboid size missing ${JSON.stringify(rawObj)}`);
-              if(!rawObj.rotate) throw(`Cuboid rotate missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Cuboid(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                               vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                               vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
@@ -107,7 +107,7 @@ export class Scene {
             case 'cylinder':
               if(!rawObj.radius) throw(`Cylinder radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cylinder length missing ${JSON.stringify(rawObj)}`);
-              if(!rawObj.rotate) throw(`Cylinder rotate missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Cylinder(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                                  rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
@@ -115,7 +115,7 @@ export class Scene {
             case 'cone':
               if(!rawObj.radius) throw(`Cone radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cone length missing ${JSON.stringify(rawObj)}`);
-              if(!rawObj.rotate) throw(`Cone rotate missing ${JSON.stringify(rawObj)}`);
+              if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Cone(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                                  rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
@@ -124,8 +124,10 @@ export class Scene {
               if(!rawObj.src) throw(`Mesh src missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               if(!rawObj.scale) { rawObj.scale = []; rawObj.scale[0] = 1; rawObj.scale[1] = 1; rawObj.scale[2] = 1; }
+              let debug: boolean = false;
+              if(rawObj.debug) debug = rawObj.debug;
               await ObjManager.getInstance().loadObjFile(rawObj.src);
-              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), vec3.fromValues(rawObj.scale[0], rawObj.scale[1], rawObj.scale[2]), rawObj.name);
+              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), vec3.fromValues(rawObj.scale[0], rawObj.scale[1], rawObj.scale[2]), rawObj.name, debug);
               break;
             default:
               throw `Object type '${rawObj.type}' is invalid`

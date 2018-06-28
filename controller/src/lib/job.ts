@@ -20,7 +20,9 @@ export class Job {
 
   png: PNG.PNG;             // Output PNG image
 
+  unassignedTasks: string[];    // Ids of tasks not yet assigned
   tasks: Task[];    
+  rawScene: any; 
 
   stats: any;
 }

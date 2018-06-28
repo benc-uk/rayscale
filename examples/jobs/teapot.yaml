@@ -1,42 +1,60 @@
 name: teapot
-width: 400
-height: 300
+width: 640
+height: 480
 #antiAlias: true
 scene:
-  name: utah-teapot
+  name: mesh-test
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.2
-  cameraFov: 15
-  cameraPos: [0, 7, 0]
-  cameraLookAt: [0, 1, -20]   
+  cameraFov: 32
+  cameraPos: [0, 8, 0]
+  cameraLookAt: [0, 1, -10]   
   
   lights:
-    - pos: [100, 170, 100]
+    - pos: [120, 63, 120]
       radius: 2000
-      brightness: 1
-
+      brightness: 0.7      
+    - pos: [-100, 93, 180]
+      radius: 2000
+      brightness: 0.8
+      colour: [232, 204, 125]
+      
   objects:
-    # Basic floor
+    # Tiled floor
     - type: plane
       name: floor
       pos: [0, 0, 0]
       rotate: [0, 26, 0]
       material:
         preset: matte
+        kr: 0.4
         texture:
           type: check
           scaleU: 5
           scaleV: 5
-          colour1: [0, 40, 190]  
-          colour2: [250,250,250]
-    # The classic Utah teapot .obj mesh
+          colour1: [78, 70, 226]  
+          colour2: [80, 80, 80]
+    # Utah teapot obj mesh
     - type: mesh
-      name: teapot-mesh
-      src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/obj/teapot.obj
-      pos: [0, 0, -20]
-      rotate: [0, 7, 0]
+      name: teapot
+      src: https://github.com/benc-uk/rayscale/raw/master/examples/obj/teapot-high.obj
+      pos: [-1.3, 0, -11]
+      rotate: [0, 20, 0]
       material:
         preset: shiny
-        kr: 0.5
+        hardness: 90
+        kr: 0.6
         texture: 
-          colour: [127, 255, 92]
+          colour: [201, 193, 165]
+    # Rubber ball
+    - type: sphere
+      name: ball
+      pos: [1.8, 1.2, -8]
+      radius: 1.2
+      material:
+        preset: matte
+        ks: 0.2
+        hardness: 5
+        texture: 
+          colour: [255, 90, 90]
+          

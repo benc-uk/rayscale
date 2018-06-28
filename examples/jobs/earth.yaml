@@ -50,8 +50,8 @@ scene:
         kd: 1.2
         texture:
           type: image
-          u: 50
-          v: 50
+          scaleU: 50
+          scaleV: 50
           src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/desert.png
     - type: plane
       name: sky
@@ -63,6 +63,6 @@ scene:
         kd: 3.5
         texture:
           type: image
-          u: 800
-          v: 800
+          scaleU: 800
+          scaleV: 800
           src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/sky.png          

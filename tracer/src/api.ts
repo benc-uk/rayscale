@@ -13,9 +13,11 @@ import { ObjManager } from './lib/obj-manager';
 export class API {
   ctrlEndPoint: string;
   tracerEndPoint: string;
+  lastJobId: string;
 
   constructor(ep: string) {
     this.ctrlEndPoint = ep;
+    this.lastJobId = '';
   }
 
   //
@@ -30,29 +32,34 @@ export class API {
     let task: Task = req.body.task;
     let scene: Scene = null;
 
-    console.log(`### Starting task...`);
-    Stats.reset();
+    // We only parse the scene on new jobs, this way the tracer 
+    // can accept multiple tasks for the same job without re-parsing the scene
+    if(task.jobId != this.lastJobId) {
+      Stats.reset();
+      // Clear out caches, or not 
+      if(process.env.CLEAR_CACHE != "false") { 
+        TextureManager.getInstance().clearCache();  
+        ObjManager.getInstance().clearCache();
+      }
 
-    // Parse scene
-    scene = await Scene.parseScene(req.body.scene)
-    .catch(err => {
-      console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
-      res.contentType('application/json'); 
-      res.status(460).send({ error: `Scene did not parse correctly: ${err}. Task rejected` });
-    });
+      // Parse scene
+      scene = await Scene.parseScene(req.body.scene)
+      .catch(err => {
+        console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
+        res.contentType('application/json'); 
+        res.status(460).send({ error: `Scene did not parse correctly: ${err}. Task rejected` });
+      });
 
-    if(!scene) {
-       return;  
+      if(!scene) {
+        return;  
+      }
+    } else {
+      console.log(`### Scene parsing skipped for job: ${task.jobId}`);
     }
+    console.log(`### Starting task...`);
 
     // Send OK back before starting tracing
     res.status(202).send({ msg: "Task accepted" });
-
-    // Clear out caches, or not 
-    if(process.env.CLEAR_CACHE || true) {
-      TextureManager.getInstance().clearCache();  
-      ObjManager.getInstance().clearCache();
-    }
 
     // Start the ray tracer for the give task & scene
     try { 

@@ -22,7 +22,7 @@ spec:
         - containerPort: 9000
         env:     
         - name: HEALTH_CHECK_INTERVAL
-          value: "70"
+          value: "90"
 
 ---
 
@@ -33,7 +33,7 @@ metadata:
   labels:
     app: tracer
 spec:
-  replicas: 1
+  replicas: 12
   selector:
     matchLabels:
       app: tracer

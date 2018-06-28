@@ -6,7 +6,7 @@
 
 import { Request, Response } from 'express';
 import request from 'request-promise-native';
-import uuidv4 from 'uuid/v4';
+import randstr from 'randomstring';
 import * as PNG from 'pngjs';
 import * as yaml from 'js-yaml';
 import fs from 'fs';
@@ -25,7 +25,7 @@ export class API {
   private tracers: { [id: string]: Tracer };
   private job: Job;
   private jobOutDir: string;
-  private rawJob: any;
+  private inputJobYaml: string;
   private checkInterval: number;
 
   constructor(outDir: string, checkInterval: number) {
@@ -75,6 +75,7 @@ export class API {
     let jobInput: any = null;
     try {
       jobInput = yaml.safeLoad(req.body.toString());
+      this.inputJobYaml = req.body.toString();
     } catch(err) {
       console.error(`### ERROR! YAML conversion failed ${err.message}`);
       res.status(400).send({msg: `YAML conversion failed ${err.message}`}); return;
@@ -96,7 +97,7 @@ export class API {
   public taskComplete = (req: Request, res: Response) => {
     let taskId = req.params.id;
     let taskIndex = req.headers['x-task-index'];
-    let taskTracer = req.headers['x-tracer'];
+    let taskTracer: string = req.headers['x-tracer'].toString();
     this.job.stats.raysCreated += parseInt(req.headers['x-stats-rayscreated'].toString());
     this.job.stats.raysCast += parseInt(req.headers['x-stats-rayscast'].toString());
     this.job.stats.shadowRays += parseInt(req.headers['x-stats-shadowrays'].toString());
@@ -112,8 +113,10 @@ export class API {
       return;
     }
     console.log(`### Image buffer received from ${taskTracer} for task: ${taskIndex}`);
-
+taskTracer
+    // Raw buffer (binary) body
     let buff = req.body;
+    // Locate the task by taskId, we could also use taskIndex
     let task = this.job.tasks.find(t => t.id == taskId);
 
     this.job.tasksComplete++;
@@ -138,9 +141,14 @@ export class API {
     if(this.job.tasksComplete == this.job.taskCount) {
       // We're DONE!
       this.completeJob();
-    } 
+    } else {
+      if(this.job.unassignedTasks.length > 0) {
+        let tracer: Tracer = this.tracers[taskTracer];
+        this.assignTaskToTracer(tracer);
+      }
+    }
     
-    res.status(200).send({msg: "OK, slice buffer stored"});
+    res.status(200).send({ msg: "OK, slice buffer stored" });
   }
   
   // ====================================================================================
@@ -179,28 +187,37 @@ export class API {
   // Create a new render job, with sub tasks fired off to tracers
   // ====================================================================================
   private createJob(jobInput: JobInput) {
+    // Job object holds a lot of state
+    this.job = new Job();
 
     // Basic checks
     if(!jobInput.name) throw('Job must have a name');
     if(!jobInput.width) throw('Job must have a width');
     if(!jobInput.height) throw('Job must have a height');
     if(!jobInput.scene) throw('Job must have a scene');
+    if(!jobInput.tasks) {
+      this.job.taskCount = Object.keys(this.tracers).length;
+      console.log(`### WARNING! Task count not supplied, using default: ${this.job.taskCount}`);
+    } else {
+      this.job.taskCount = jobInput.tasks;
+      if(this.job.taskCount > jobInput.height) {
+        throw 'Error! Can not request more tasks than image height!';
+      }
+    }
 
     // Basic job info supplied to us
-    this.job = new Job();
-    this.job.startDate = new Date();
-    this.job.startTime = new Date().getTime();
     this.job.name = jobInput.name;
     this.job.width = jobInput.width;
     this.job.height = jobInput.height;
 
     // Add extra properties and objects we need
-    this.job.id = uuidv4();
+    this.job.startDate = new Date();
+    this.job.startTime = new Date().getTime();
+    this.job.id = randstr.generate(5);
     this.job.status = "RUNNING"; 
     this.job.reason = ""; 
-    this.job.taskCount = Object.keys(this.tracers).length; 
     this.job.tasksComplete = 0;
-    this.job.png = new PNG.PNG({width:this.job.width, height:this.job.height});
+    this.job.png = new PNG.PNG({ width: this.job.width, height: this.job.height });
     this.job.stats = {
       raysCreated: 0,
       raysCast: 0,
@@ -208,18 +225,19 @@ export class API {
       objectTests: 0,
       meshFaceTests: 0
     };
+    this.job.rawScene = jobInput.scene;
   
-    // Create tasks and send to tracers
+    // Create tasks
     // Logic to slice image into sub-regions is here
     let sliceHeight = Math.floor(this.job.height / this.job.taskCount);
     this.job.tasks = [];
-    let taskIndex = 0;
-    for(let tid in this.tracers) {
-      let tracer = this.tracers[tid];
-
+    this.job.unassignedTasks = [];
+    //let taskIndex = 0;
+    for(let taskIndex = 0; taskIndex < this.job.taskCount; taskIndex++) {
       // !TODO: sliceHeight needs to account for remainder when non-integer
       let task = new Task();
-      task.id = uuidv4();
+      task.id = randstr.generate(5);
+      task.jobId = this.job.id;
       task.imageWidth = this.job.width;
       task.imageHeight = this.job.height;
       task.index = taskIndex;
@@ -229,25 +247,47 @@ export class API {
       task.antiAlias = jobInput.antiAlias || false;
 
       this.job.tasks.push(task); 
-
-      this.rawJob = jobInput;
-      console.log(`### Sending task ${task.index} to ${tracer.endPoint}`);
-      request.post({
-        uri: `${tracer.endPoint}/tasks`,
-        body: JSON.stringify({ task: task, scene: jobInput.scene }),
-        headers: { 'content-type': 'application/json' }
-      })
-      .then()
-      .catch(err => {
-        console.error(`### ERROR! Unable to send task to tracer ${err}`);
-        this.job.status = "FAILED";
-        this.job.reason = err.message;
-      })
-
-      taskIndex++;
+      this.job.unassignedTasks.push(task.id);
     }
 
-    console.log(`### New job created: ${this.job.name} with ${this.job.taskCount} tasks`)
+    console.log(`### New job created: ${this.job.name} with ${this.job.taskCount} tasks`);
+
+    // First pass, send one task out to each tracer online
+    for(let tid in this.tracers) {
+      let tracer = this.tracers[tid];
+      this.assignTaskToTracer(tracer);
+    }
+  }
+
+  // ====================================================================================================
+  // Assign a random unassigned task to a remote tracer via the REST API
+  // Payload is simple JSON object with two members, task and scene
+  // ====================================================================================================
+  private assignTaskToTracer(tracer: Tracer) {
+    // Get random task not yet assigned
+    if(this.job.unassignedTasks.length <= 0) return;
+
+    let unassignedTaskIndex = Math.floor(Math.random() * this.job.unassignedTasks.length)
+    let taskId = this.job.unassignedTasks[unassignedTaskIndex];
+    // Remember to remove from array!
+    this.job.unassignedTasks.splice(unassignedTaskIndex, 1) 
+    let task = this.job.tasks.find(t => t.id == taskId);
+
+    // Send to tracer
+    console.log(`### Sending task ${task.id}:${task.index} to ${tracer.endPoint}`);
+    request.post({
+      uri: `${tracer.endPoint}/tasks`,
+      body: JSON.stringify({ task: task, scene: this.job.rawScene }),
+      headers: { 'content-type': 'application/json' }
+    })
+    .then(() => {
+
+    })
+    .catch(err => {
+      console.error(`### ERROR! Unable to send task to tracer ${err}`);
+      this.job.status = "FAILED";
+      this.job.reason = err.message;
+    })
   }
 
   // ====================================================================================
@@ -266,9 +306,11 @@ export class API {
       fs.mkdirSync(outDir);
     }
 
+    // Write out result PNG file
     this.job.png.pack()
     .pipe(fs.createWriteStream(`${outDir}/render.png`))
     .on('finish', () => {
+      // Output debug info and stats JSON
       console.log(`### Render complete, ${outDir}/render.png saved`);
       this.job.status = "COMPLETE";
       this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
@@ -281,15 +323,16 @@ export class API {
         imageWidth: this.job.width,
         imageHeight: this.job.height,
         pixels: this.job.width * this.job.height,
+        tasks: this.job.taskCount,
         tracersUsed: Object.keys(this.tracers).length,
         RPP: this.job.stats.raysCast / (this.job.width * this.job.height),
         stats: this.job.stats
       };
       console.log('### Results details: ', results);
   
-      let yamlOut: string = yaml.safeDump(this.rawJob, {});
+      // Supplementary result files
       fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));
-      fs.writeFileSync(`${outDir}/job.yaml`, yamlOut);      
+      fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);      
     });
   }
 

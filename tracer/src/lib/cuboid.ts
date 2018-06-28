@@ -47,9 +47,9 @@ export class Cuboid implements Object3D {
     Stats.objectTests++;
     let ray: Ray = inray.transformNewRay(this.trans);
 
-    let t1, t2, tnear = -Number.MAX_VALUE, tfar = Number.MAX_VALUE, temp, tCube;
+    let t1, t2, tnear = -Number.MAX_VALUE, tfar = Number.MAX_VALUE, temp;
     let intersectFlag: boolean = true;
-
+    let result: TResult = new TResult(0.0, ray);
     // Code stolen from 
     // http://ray-tracing-conept.blogspot.com/2015/01/ray-box-intersection-and-normal.html
     for (let i = 0; i < 3; i++) {
@@ -68,18 +68,22 @@ export class Cuboid implements Object3D {
           tnear = t1;
         if (t2 < tfar)
           tfar = t2;
-        if (tnear > tfar)
+        if (tnear > tfar) 
           intersectFlag = false;
-        if (tfar < 0)
+        if (tfar < 0) 
           intersectFlag = false;
       }
     }
-    if (intersectFlag == false)
-      tCube = -1;
-    else
-      tCube = tnear;
+    if (intersectFlag) {
+      // Now we handle if we're inside the cuboid
+      if(tnear < 0) {
+        result.t = tfar;
+        result.inside = true;
+      } else
+        result.t = tnear;
+    }
 
-    return new TResult(tCube, ray);
+    return result;
   }
 
   public getHitPoint(result: TResult): Hit {
@@ -101,6 +105,13 @@ export class Cuboid implements Object3D {
       n = vec4.fromValues(0, 0, -1, 0);
     else if(Math.abs(i[2] - this.b2[2]) < ObjectConsts.EPSILON4) 
       n = vec4.fromValues(0, 0, 1, 0);
+
+    // Flip normals if inside
+    if(result.inside) {
+      n[0] = -n[0];
+      n[1] = -n[1];
+      n[2] = -n[2];
+    }
 
     // Best orientation of u & V on the sides I can manage
     let u, v = 0;

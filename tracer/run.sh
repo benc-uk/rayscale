@@ -2,7 +2,7 @@
 
 # Compile TypeScript
 echo "*** Transpiling TypeScript..."
-node node_modules/typescript/bin/tsc
+node node_modules/typescript/bin/tsc 
 
 # Trap exit/sigterm and close down all processes
 trap "trap - SIGTERM && kill -- -$$" SIGINT SIGTERM EXIT
@@ -14,7 +14,7 @@ for i in `seq 1 $1`;
 do
   tracerPort=$((8549+$i))
   export PORT=$tracerPort
-  node dist/server.js &
+  nodemon dist/server.js &
   sleep 0.1
 done 
 

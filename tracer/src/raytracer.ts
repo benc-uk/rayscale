@@ -13,6 +13,7 @@ import { Hit } from './lib/hit';
 import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
 import { ObjectConsts, Object3D } from './lib/object3d';
+import { Mesh } from './lib/mesh';
 
 // ====================================================================================================
 // 
@@ -28,7 +29,7 @@ export class Raytracer {
     this.task.skip = 1;
     this.scene = scene;
     
-    console.log(`### New ray tracer for task ${this.task.index + 1}...`);
+    console.log(`### New ray tracer for task ${this.task.index + 1} in job ${this.task.jobId}...`);
     this.image = Buffer.alloc(this.task.imageWidth * this.task.imageHeight * 3);
     //console.log(`### Max ray depth is: ${this.task.maxDepth}`)
   }
@@ -37,7 +38,7 @@ export class Raytracer {
   // 
   // ====================================================================================================
   public startTrace(): Buffer {
-    if(this.task.imageWidth < this.task.imageHeight) { throw("Error, image width must be > height"); };
+    if(this.task.imageWidth < this.task.imageHeight) { throw("Error, image width must be > height") };
     let aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height 
 
     // Create our camera transform and invert
@@ -104,7 +105,7 @@ export class Raytracer {
       cacheCorner = null;
       bufferY++;
       let perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
-      if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Percent of task ${this.task.index + 1} rendered ${perc}%`);
+      if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Task '${this.task.index + 1} / ${this.task.jobId}' rendered ${perc}%`);
     }
     
     return this.image;
@@ -148,6 +149,7 @@ export class Raytracer {
     // First pass - Check all objects for ray intersection t
     for(let obj of this.scene.objects) {
       let tResult: TResult = obj.calcT(ray);
+      //console.log(`!!!! ${tResult.t}`);
 
       // Find closest hit only, as that's how reality works
       if (tResult.t > 0.0 && tResult.t < t) {
@@ -190,19 +192,31 @@ export class Raytracer {
 
         // Are we in shadow?
         let shadowRay: Ray = new Ray(hit.intersection, lv);
-        let shadowT: number = Number.MAX_VALUE;
+        // !TODO: Do we need to fudge the shadow ray pos ?
+        shadowRay.pos[0] += hit.normal[0] * 0.01;
+        shadowRay.pos[1] += hit.normal[1] * 0.01;
+        shadowRay.pos[2] += hit.normal[2] * 0.01;
+        let shadowT: number = Number.MAX_VALUE; 
         let shadow: boolean = false;
-        for(let obj of this.scene.objects) {
-          let shadTestT = obj.calcT(shadowRay).t;
-          Stats.shadowRays++;
-          
-          if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
-            shadowT = shadTestT;
-            break;
+        if(vec4.dot(lv, hit.normal) > 0) {
+          for(let obj of this.scene.objects) {
+            let shadTestT = obj.calcT(shadowRay).t;
+            Stats.shadowRays++;
+            // Self shadowing checks
+            // if(obj == hitObject && hitObject instanceof Mesh) {
+            //   // The shadow terminator problem!
+            //   let stp = vec4.dot(shadowRay.dir, hit.normal);
+            //   if(stp > ObjectConsts.EPSILON2) continue
+            // }
+            if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
+              shadowT = shadTestT;
+              break;
+            }
           }
-        }
-        if(shadowT > 0.0 && shadowT < Number.MAX_VALUE) {
-          if(shadowT == 444) return Colour.BLUE;
+          if(shadowT > 0.0 && shadowT < Number.MAX_VALUE) {
+            shadow = true;
+          }
+        } else {
           shadow = true;
         }
 

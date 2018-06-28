@@ -33,7 +33,7 @@
     "cpu": 1.0,
     "dnsLabelController": "[concat(parameters('dnsPrefix'), '-controller')]",
     "dnsLabelTracer": "[concat(parameters('dnsPrefix'), '-tracer')]",
-    "healthCheckTime": "150"
+    "healthCheckTime": "170"
   },
   "resources": [
     {
