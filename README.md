@@ -16,6 +16,7 @@ In computer graphics, ray tracing is a rendering technique for generating an ima
 It is not the goal of this project to create a completely fully featured ray tracer, as the scope of that is almost limitless. 
 RayScale currently provides:
 - Primitive objects: Spheres, planes, cubeboids & cylinders
+- Complex polygon meshes in .obj format
 - Texture mapping; images (PNG) and checker pattern
 - [Blinn-Phong illumination model](https://en.wikipedia.org/wiki/Phong_reflection_model) with per object surface properties
 - Multiple coloured light sources
@@ -28,7 +29,7 @@ RayScale currently provides:
 These are some sample images rendered with RayScale
 
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table-scene.png"><img src="examples/renders/table-scene.png"></a>
-<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/teapot.png"><img src="examples/renders/teapot.png"></a>
+<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/teapot-best.png"><img src="examples/renders/teapot-best.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/transparency.png"><img src="examples/renders/transparency.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/quilted-floor.png"><img src="examples/renders/quilted-floor.png"></a>
@@ -91,7 +92,6 @@ The way *Scenes* are defined is in YAML, there's
 # Limitations and Design Constraints
 These constraints are either by design or known issues
  - The system only allows for a single *Job* to be running at any time
- - Each *Tracer* is assigned a single task from the *Job*
  - Failure of any one *Task*, will result in a failed/incomplete job. *Job* and *Task* recovery is considered out of scope, and unlikely to be resolvable.
  - *Tracers* do not check to see if the *Controller* is active, it is assumed the controller is online at all times. Should the *Controller* be restarted for any reason, all *Tracers* will also need to be terminated and restarted. 
 

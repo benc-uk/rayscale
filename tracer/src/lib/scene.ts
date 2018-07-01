@@ -128,7 +128,7 @@ export class Scene {
             case 'mesh':
               if(!rawObj.src) throw(`Mesh src missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
-              if(!rawObj.scale) { rawObj.scale = []; rawObj.scale[0] = 1; rawObj.scale[1] = 1; rawObj.scale[2] = 1; }
+              if(!rawObj.scale) { rawObj.scale = 1 }
               let debug: boolean = false;
               if(rawObj.debug) debug = rawObj.debug;
               // Override mesh settings if provided 
