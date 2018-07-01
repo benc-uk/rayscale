@@ -64,7 +64,7 @@ export class Cone implements Object3D {
 		let t1: number, t2: number;
     let d: number = 0;
     
-    //tresult.flag = TResult.SIDE;
+    //tresult.data = TResult.SIDE;
 
 		let a: number = (ray.dx * ray.dx + ray.dz * ray.dz - ray.dy * ray.dy * this.ratio);
     let b: number = (ray.px * ray.dx + ray.pz * ray.dz - ray.py * ray.dy * this.ratio);
@@ -102,7 +102,7 @@ export class Cone implements Object3D {
 
       // Some hit cases 
       if(iFar[1] < this.length && iNear[1] < 0) { tresult.t = tFar; return tresult };
-      if(iNear[1] < this.length && iFar[1] < 0) { tresult.flag = TResult.INSIDE; tresult.t = tNear; return tresult };
+      if(iNear[1] < this.length && iFar[1] < 0) { tresult.data = TResult.INSIDE; tresult.t = tNear; return tresult };
       if(iNear[1] < 0 || iFar[1] < 0) return tresult;
    
       // Cap the end of the cone, it keeps us sane
@@ -114,7 +114,7 @@ export class Cone implements Object3D {
           let l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], capRayPos);
           let localT: number = vec4.dot(l0, capNorm) / denom;
           if (localT >= 0)  {
-            tresult.flag = TResult.TOP;
+            tresult.data = TResult.TOP;
             tresult.t = localT; 
             return tresult;
           }
@@ -122,7 +122,7 @@ export class Cone implements Object3D {
       }
 
       // Else hit nearest
-      tresult.flag = TResult.SIDE;
+      tresult.data = TResult.SIDE;
       tresult.t = tNear; 
       return tresult;
     }
@@ -148,12 +148,12 @@ export class Cone implements Object3D {
     n[2] = (i[2] / m) * (this.length * this.radius);
 
     // Hit the bottom cap, the normal will just point down
-    if(result.flag == TResult.TOP) {
+    if(result.data == TResult.TOP) {
       n = vec4.fromValues(0, 1, 0, 0);
     }    
 
     // Hit the inside of cone, flip normal
-    if(result.flag == TResult.INSIDE || result.inside) {
+    if(result.data == TResult.INSIDE || result.inside) {
       n[0] = -n[0];
       n[1] = -n[1];
       n[2] = -n[2];
@@ -161,7 +161,7 @@ export class Cone implements Object3D {
 
     // Calc u,v texture coords
     let u: number = 0, v: number = 0;
-    if(result.flag == TResult.TOP) {
+    if(result.data == TResult.TOP) {
       // Treat the cap as a plane
       let ix = i[0] - this.radius; let iz = i[2] - this.radius;
       u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);

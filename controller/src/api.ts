@@ -229,12 +229,10 @@ taskTracer
   
     // Create tasks
     // Logic to slice image into sub-regions is here
-    let sliceHeight = Math.floor(this.job.height / this.job.taskCount);
+    let sliceHeight = Math.ceil(this.job.height / this.job.taskCount);
     this.job.tasks = [];
     this.job.unassignedTasks = [];
-    //let taskIndex = 0;
     for(let taskIndex = 0; taskIndex < this.job.taskCount; taskIndex++) {
-      // !TODO: sliceHeight needs to account for remainder when non-integer
       let task = new Task();
       task.id = randstr.generate(5);
       task.jobId = this.job.id;
@@ -299,7 +297,6 @@ taskTracer
     }
     this.job.endDate = new Date();
     this.job.durationTime = (new Date().getTime() - this.job.startTime) / 1000;
-    console.log(`### Job completed in ${this.job.durationTime} seconds`);
 
     let outDir = `${this.jobOutDir}/${this.job.name}`;
     if (!fs.existsSync(outDir)){
@@ -308,10 +305,9 @@ taskTracer
 
     // Write out result PNG file
     this.job.png.pack()
-    .pipe(fs.createWriteStream(`${outDir}/render.png`))
+    .pipe(fs.createWriteStream(`${outDir}/${this.job.name}.png`))
     .on('finish', () => {
       // Output debug info and stats JSON
-      console.log(`### Render complete, ${outDir}/render.png saved`);
       this.job.status = "COMPLETE";
       this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
       let results: any = {
@@ -329,6 +325,8 @@ taskTracer
         stats: this.job.stats
       };
       console.log('### Results details: ', results);
+      console.log(`### Render complete, ${outDir}/render.png saved`);
+      console.log(`### Job completed in ${this.job.durationTime} seconds`);
   
       // Supplementary result files
       fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));

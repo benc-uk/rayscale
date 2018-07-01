@@ -54,6 +54,7 @@ app.use('*', function (req, res, next) {
 // Start server
 let port = process.env.PORT || 8500;
 const server = app.listen(port, async () => {
+  console.log(`### Tracer version ${require('../package.json').version} starting`);
   console.log(`### Tracer server listening on ${port}`);
 
   // Get hostname / IP address or used fixed name

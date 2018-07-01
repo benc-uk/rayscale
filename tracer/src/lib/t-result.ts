@@ -9,7 +9,7 @@ export class TResult {
   t: number;        // t value
   ray: Ray;         // Transformed ray
   inside: boolean;  // Was calculated from inside object
-  flag: any;        // Arbitrary info, used by some objects
+  data: any;        // Arbitrary info, used by some objects
 
   static SIDE: number     = 500;
   static INSIDE: number   = 501;

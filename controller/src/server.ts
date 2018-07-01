@@ -50,6 +50,7 @@ let port = process.env.PORT || 9000;
 
 const server = app.listen(port, function () {
   console.log(`### Node environment mode is '${app.get('env')}'`);
+  console.log(`### Controller version ${require('../package.json').version} starting`);
   console.log(`### Controller server listening on ${port}`);
   console.log(`### Web UI serving static content from: ${webUIDir}`);
 

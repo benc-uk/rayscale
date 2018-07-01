@@ -1,6 +1,6 @@
-name: shadow-test
-width: 2400
-height: 2000
+name: Coloured Lights
+width: 1200
+height: 800
 scene:
   name: three-lights
   backgroundColour: [10, 10, 30]

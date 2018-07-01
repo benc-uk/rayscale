@@ -14,7 +14,7 @@ import { Cuboid } from './cuboid';
 import { Cylinder } from './cylinder';
 import { Cone } from './cone';
 import { ObjManager } from './obj-manager';
-import { Mesh } from './mesh';
+import { Mesh, BoundingBoxSettings } from './mesh';
 
 // ====================================================================================================
 // 
@@ -69,10 +69,10 @@ export class Scene {
         scene.cameraLookAt = vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]);
   
         // Parse presetMaterials materials
-        Scene.presetMaterials.basic   = new Material(0.1,  1,   0,   5,  0, 0);
-        Scene.presetMaterials.matte   = new Material(0.2,  0.8, 0,   2,  0, 0);
-        Scene.presetMaterials.rubber  = new Material(0.05, 0.9, 0.3, 2,  0, 0);
-        Scene.presetMaterials.shiny   = new Material(0.05, 0.9, 1.2, 20, 0, 0);
+        Scene.presetMaterials.basic  = new Material(0.1,  1,   0,   5,  0, 0);
+        Scene.presetMaterials.matte  = new Material(0.2,  0.8, 0,   2,  0, 0);
+        Scene.presetMaterials.rubber = new Material(0.05, 0.9, 0.3, 2,  0, 0);
+        Scene.presetMaterials.shiny  = new Material(0.05, 0.9, 1.2, 20, 0, 0);
         if(input.materials) {
           for(let rawMat of input.materials) {
             Scene.presetMaterials[rawMat.name] = await Scene.parseMaterial(rawMat);
@@ -93,10 +93,12 @@ export class Scene {
               if(!rawObj.radius) throw(`Sphere radius missing ${JSON.stringify(rawObj)}`);
               obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.radius, rawObj.name);
               break;
+
             case 'plane':
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
               break;
+
             case 'cuboid':
               if(!rawObj.size) throw(`Cuboid size missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
@@ -104,6 +106,7 @@ export class Scene {
                               vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                               vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
               break;
+
             case 'cylinder':
               if(!rawObj.radius) throw(`Cylinder radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cylinder length missing ${JSON.stringify(rawObj)}`);
@@ -112,6 +115,7 @@ export class Scene {
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                                  rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
               break;
+
             case 'cone':
               if(!rawObj.radius) throw(`Cone radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cone length missing ${JSON.stringify(rawObj)}`);
@@ -120,15 +124,28 @@ export class Scene {
                                  vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
                                  rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
               break;
+
             case 'mesh':
               if(!rawObj.src) throw(`Mesh src missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               if(!rawObj.scale) { rawObj.scale = []; rawObj.scale[0] = 1; rawObj.scale[1] = 1; rawObj.scale[2] = 1; }
               let debug: boolean = false;
               if(rawObj.debug) debug = rawObj.debug;
+              // Override mesh settings if provided 
+              let boxSettings: BoundingBoxSettings = new BoundingBoxSettings(100, 5, 0.06);
+              if(rawObj.boundingSettings) {
+                boxSettings.maxDepth = rawObj.boundingSettings[0];
+                boxSettings.maxFaces = rawObj.boundingSettings[1];
+                boxSettings.vertexEpsilon = rawObj.boundingSettings[2];
+              }
+              // Load .obj file into manager before creating Mesh object
               await ObjManager.getInstance().loadObjFile(rawObj.src);
-              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), vec3.fromValues(rawObj.scale[0], rawObj.scale[1], rawObj.scale[2]), rawObj.name, debug);
+              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
+                             vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
+                             rawObj.scale, rawObj.name, debug, boxSettings);
+
               break;
+
             default:
               throw `Object type '${rawObj.type}' is invalid`
           }
@@ -166,7 +183,7 @@ export class Scene {
   }
 
   // ====================================================================================================
-  // 
+  // Parse a preset or inline material
   // ====================================================================================================
   static async parseMaterial(input: any) {
 

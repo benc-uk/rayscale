@@ -1,8 +1,10 @@
-name: earth
-width: 1920
-height: 1080
+name: Earth
+width: 1600
+height: 1200
+#antiAlias: true
+tasks: 8
 scene:
-  name: blah
+  name: test-scene
   backgroundColour: [10, 10, 30]
   ambientLevel: 0.6
   cameraFov: 30
@@ -55,12 +57,12 @@ scene:
           src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/desert.png
     - type: plane
       name: sky
-      pos: [0, 200, 0]
-      rotate: [0, 0, 0]
+      pos: [0, 150, 0]
+      rotate: [0, 33, 0]
       material:
         preset: matte
-        ka: 2
-        kd: 3.5
+        ka: 1
+        kd: 1.5
         texture:
           type: image
           scaleU: 800

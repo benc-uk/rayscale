@@ -115,8 +115,8 @@ function jobRefresh() {
       for(let job of data.jobs) {
         let row = $('<tr/>');
         row.append(`<td><b>${job}</b></td>`);
-        row.append(`<td><a href='/jobs/${job}/render.png' 
-          target='${job}_render'><img class='minirender' src='/jobs/${job}/render.png?r=${Math.random()}'></a></td>`);
+        row.append(`<td><a href='/jobs/${job}/${job}.png' 
+          target='${job}_render'><img class='minirender' src='/jobs/${job}/${job}.png?r=${Math.random()}'></a></td>`);
         row.append(`<td><a class='btn btn-primary btn-lg' href='/jobs/${job}/result.json' 
           target='${job}_result'>&nbsp;<i class="fas fa-info-circle"></i> &nbsp; INFO &nbsp;</a></td>`);
         row.append(`<td><a class='btn btn-primary btn-lg' href='/jobs/${job}/job.yaml' 

@@ -62,7 +62,7 @@ export class Cylinder implements Object3D {
 		let t1: number, t2: number;
     let d: number = 0;
     
-    tresult.flag = TResult.SIDE;
+    tresult.data = TResult.SIDE;
 
 		let a: number = (ray.dir[0] * ray.dir[0] + ray.dir[2] * ray.dir[2]);
     let b: number = (ray.pos[0] * ray.dir[0] + ray.pos[2] * ray.dir[2]);
@@ -133,9 +133,9 @@ export class Cylinder implements Object3D {
       if((iNear[1] < 0 || iNear[1] > this.length) && (iFar[1] < 0 || iFar[1] > this.length) ) { 
         // Which cap? based on ray pos
         if(ray.pos[1] > this.length) {
-          tresult.flag = TResult.TOP;
+          tresult.data = TResult.TOP;
         } else {
-          tresult.flag = TResult.BOTTOM;
+          tresult.data = TResult.BOTTOM;
         }
         tresult.t = capT;
         return tresult; 
@@ -151,13 +151,13 @@ export class Cylinder implements Object3D {
         if(capT < tFar) {
           // Which cap? based on ray pos
           if(ray.pos[1] > this.length)
-            tresult.flag = TResult.TOP;
+            tresult.data = TResult.TOP;
           else
-            tresult.flag = TResult.BOTTOM;
+            tresult.data = TResult.BOTTOM;
           tresult.t = capT; 
           return tresult; 
         } else {
-          tresult.flag = TResult.INSIDE;
+          tresult.data = TResult.INSIDE;
           tresult.t = tFar; 
           return tresult; 
         }
@@ -169,7 +169,7 @@ export class Cylinder implements Object3D {
         return tresult;
       }
       // Else hit nearest
-      tresult.flag = TResult.SIDE;
+      tresult.data = TResult.SIDE;
       tresult.t = tNear; 
       return tresult;
     }
@@ -193,16 +193,16 @@ export class Cylinder implements Object3D {
     n[3] = 0;
 
     // Hit the top cap, the normal will just point up
-    if(result.flag == TResult.TOP) {
+    if(result.data == TResult.TOP) {
       n = vec4.fromValues(0, 1, 0, 0);
     }
     // Hit the bottom cap, the normal will just point down
-    if(result.flag == TResult.BOTTOM) {
+    if(result.data == TResult.BOTTOM) {
       n = vec4.fromValues(0, -1, 0, 0);
     }    
 
     // Hit the inside of cylinder, flip normal
-    if(result.flag == TResult.INSIDE || result.inside) {
+    if(result.data == TResult.INSIDE || result.inside) {
       n[0] = -n[0];
       n[1] = -n[1];
       n[2] = -n[2];
@@ -210,7 +210,7 @@ export class Cylinder implements Object3D {
 
     // Calc u,v texture coords
     let u: number = 0, v: number = 0;
-    if(result.flag == TResult.TOP) {
+    if(result.data == TResult.TOP) {
       // Treat the cap as a plane
       let ix = i[0] - this.radius; let iz = i[2] - this.radius;
       u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);

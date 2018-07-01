@@ -193,9 +193,9 @@ export class Raytracer {
         // Are we in shadow?
         let shadowRay: Ray = new Ray(hit.intersection, lv);
         // !TODO: Do we need to fudge the shadow ray pos ?
-        shadowRay.pos[0] += hit.normal[0] * 0.01;
-        shadowRay.pos[1] += hit.normal[1] * 0.01;
-        shadowRay.pos[2] += hit.normal[2] * 0.01;
+        // shadowRay.pos[0] += hit.normal[0] * 0.01;
+        // shadowRay.pos[1] += hit.normal[1] * 0.01;
+        // shadowRay.pos[2] += hit.normal[2] * 0.01;
         let shadowT: number = Number.MAX_VALUE; 
         let shadow: boolean = false;
         if(vec4.dot(lv, hit.normal) > 0) {
@@ -203,11 +203,11 @@ export class Raytracer {
             let shadTestT = obj.calcT(shadowRay).t;
             Stats.shadowRays++;
             // Self shadowing checks
-            // if(obj == hitObject && hitObject instanceof Mesh) {
-            //   // The shadow terminator problem!
-            //   let stp = vec4.dot(shadowRay.dir, hit.normal);
-            //   if(stp > ObjectConsts.EPSILON2) continue
-            // }
+            if(obj == hitObject && hitObject instanceof Mesh) {
+              // The shadow terminator problem!
+              let stp = vec4.dot(shadowRay.dir, hit.normal);
+              if(stp > ObjectConsts.EPSILON2) continue
+            }
             if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
               shadowT = shadTestT;
               break;

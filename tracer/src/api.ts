@@ -14,6 +14,7 @@ export class API {
   ctrlEndPoint: string;
   tracerEndPoint: string;
   lastJobId: string;
+  lastScene: Scene;
 
   constructor(ep: string) {
     this.ctrlEndPoint = ep;
@@ -53,8 +54,11 @@ export class API {
       if(!scene) {
         return;  
       }
+      this.lastJobId = task.jobId;
+      this.lastScene = scene;
     } else {
       console.log(`### Scene parsing skipped for job: ${task.jobId}`);
+      scene = this.lastScene;
     }
     console.log(`### Starting task...`);
 

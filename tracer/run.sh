@@ -14,7 +14,7 @@ for i in `seq 1 $1`;
 do
   tracerPort=$((8549+$i))
   export PORT=$tracerPort
-  nodemon dist/server.js &
+  node dist/server.js &
   sleep 0.1
 done 
 
