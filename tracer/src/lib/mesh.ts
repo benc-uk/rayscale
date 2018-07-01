@@ -3,16 +3,16 @@
 // (C) Ben Coleman 2018
 //
 
+import { vec3, vec4, mat4, quat } from 'gl-matrix';
+import { ObjModel, Face, Vertex } from 'obj-file-parser';
 import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
-import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
 import { Material } from './material';
 import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 import { ObjManager } from './obj-manager';
-import { ObjModel, Face, Vertex } from 'obj-file-parser';
 import { TextureBasic } from './texture-basic';
 import { Colour } from './colour';
 
@@ -29,20 +29,25 @@ export class Mesh implements Object3D {
   // Mesh properties
   public objModel: ObjModel;
   private boundingBox: BoundingBox;
-  private debug: boolean = true;
+  //private debug: boolean = true;
   public boxSettings: BoundingBoxSettings;
 
   // ====================================================================================================
   // Create a ObjMesh
+  // Note. Before calling this constructor the OBJ must be loaded into the ObjManager
   // ====================================================================================================
-  constructor(objFile: string, pos: vec4, rotation: vec3, scale: number, name: string, debug: boolean, bbSettings: BoundingBoxSettings) {
+  constructor(objFile: string, pos: vec4, rotation: vec3, scale: number, name: string, bbSettings: BoundingBoxSettings) {
     this.name = name;
+    
+    // Fetch the OBJ model for this mesh from the ObjManager (global singleton)
     // Why the JSON parsing here? This is a hacky way to give me a deep copy of the object
     this.objModel = JSON.parse(JSON.stringify(ObjManager.getInstance().getObjModel(objFile, 0))); 
     if(!this.objModel) {
       throw `Obj file ${objFile} not loaded in ObjectManager`;
     }
 
+    // Standard set up of transformation matrices for translation and rotation
+    // Note. Scaling is not handled with a transformation has it messes with things 
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());
     let rot: quat = quat.identity(quat.create());
@@ -52,9 +57,6 @@ export class Mesh implements Object3D {
     mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
     mat4.invert(this.trans, this.transFwd);
 
-    // !TODO: Remove later
-    this.debug = debug;
-    
     // Pre scale mesh, yes this is a bit of a hack and we should be using the matrix transforms
     // Note. This is why we needed a deep clone of the objModel 
     // Otherwise we would modify the source data and mess up subsequent renders
@@ -64,7 +66,7 @@ export class Mesh implements Object3D {
       vertPoint.z *= scale;
     }
 
-    // Outer bounding box
+    // Wor out outer bounding box dimensions
     let min = vec3.fromValues(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
     let max = vec3.fromValues(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE);
     for(let vertPoint of this.objModel.vertices) {
@@ -78,7 +80,7 @@ export class Mesh implements Object3D {
 
     // Default settings for bounding box
     this.boxSettings = bbSettings;
-    // Create top level bounding box, depth = 0
+    // Create top level bounding box holding the whole mesh, depth = 0
     this.boundingBox = new BoundingBox(0, vec3.clone(min), vec3.clone(max), this);
   }
 
@@ -94,7 +96,7 @@ export class Mesh implements Object3D {
     let boxResult = Mesh.boundingBoxTest(ray, this.boundingBox);
     if(boxResult.length > 0) {
       // In debug mode we stop when we hit the box and return that result
-      if(this.debug) {
+      if(this.boxSettings.debug) {
         result.t = 5;
         let box = boxResult[boxResult.length-1];
         (<TextureBasic>this.material.texture).colour = box.debugColour.copy();
@@ -166,9 +168,13 @@ export class Mesh implements Object3D {
           intersectFlag = false;
       }
     }
+
+    // If we've hit this box
     if (intersectFlag) {
-      // If we've hit this box, need to check nested child boxes
+      // We need to check any nested child boxes
       if(box.hasChildren()) {
+
+        // Recursion!
         // Test all child boxes and return box hit results together
         // Note. We have to test all possible hit boxes, not just the closest one!
         let tempBoxArray = new Array<BoundingBox>();
@@ -232,7 +238,7 @@ export class Mesh implements Object3D {
 
     // Normal is from hit face, we use the flag to hold this
     let n = vec4.fromValues(0.0, 0.0, 0.0, 0);
-    if(!this.debug) {
+    if(!this.boxSettings.debug) {
       let face = result.data.face;
       let n0 = vec4.fromValues(this.objModel.vertexNormals[face.vertices[0].vertexNormalIndex - 1].x,
                               this.objModel.vertexNormals[face.vertices[0].vertexNormalIndex - 1].y,
@@ -272,11 +278,12 @@ export class Mesh implements Object3D {
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-// Private classes just used for Mesh here
+// Private classes just used for Mesh below here
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 // ====================================================================================================
-// Extra junk we need to add to a TResult on a hit, this holds info about the face that was hit
+// Private struct with data we need to add to a TResult in the data field, 
+// - this holds info about the mesh face that was hit, as well as t, u & v values
 // ====================================================================================================
 class FaceHit {
   t: number;
@@ -292,7 +299,7 @@ class FaceHit {
 }
 
 // ====================================================================================================
-// 
+// Private class for creating an axis aligned bounding box hierarchy around the mesh
 // ====================================================================================================
 class BoundingBox {
   public min: vec3; 
@@ -303,6 +310,9 @@ class BoundingBox {
   private mesh: Mesh;
   public debugColour: Colour;
 
+  // ====================================================================================================
+  // Create a bounding box with given mix and max bounds (corners) around given Mesh
+  // ====================================================================================================
   constructor(depth: number, min: vec3, max: vec3, mesh: Mesh) {
     this.depth = depth;
     this.min = min;
@@ -331,24 +341,34 @@ class BoundingBox {
     }
     console.log(`### Bounding box contains ${this.faces.length} faces`);
 
+    // Recursion!
+    // Sub divide this box if contains more faces than our threshold
+    // Don't sub-divide too far 
     if(this.faces.length > mesh.boxSettings.maxFaces && this.depth < mesh.boxSettings.maxDepth) 
       this.subDivide();
   }
 
+  // ====================================================================================================
+  // Octree - Sub divide box into eight sub-boxes and store as children 
+  // ====================================================================================================
   public subDivide(): void {    
+    // Find center mid point of this box
     let midx = this.min[0] + ((this.max[0] - this.min[0]) / 2);
     let midy = this.min[1] + ((this.max[1] - this.min[1]) / 2);
     let midz = this.min[2] + ((this.max[2] - this.min[2]) / 2);
 
+    // This gibberish is creating 8 more boxes, I don't really understand it
     let bb1b = new BoundingBox(this.depth + 1, vec3.fromValues(this.min[0], this.min[1], this.min[2]), vec3.fromValues(midx, midy, midz), this.mesh);
-    let bb2b = new BoundingBox(this.depth + 1, vec3.fromValues(this.min[0], midy, this.min[2]),        vec3.fromValues(midx, this.max[1], midz), this.mesh);
-    let bb3b = new BoundingBox(this.depth + 1, vec3.fromValues(midx, this.min[1], this.min[2]),        vec3.fromValues(this.max[0], midy, midz), this.mesh);
-    let bb4b = new BoundingBox(this.depth + 1, vec3.fromValues(midx, midy, this.min[2]),               vec3.fromValues(this.max[0], this.max[1], midz), this.mesh);
+    let bb2b = new BoundingBox(this.depth + 1, vec3.fromValues(this.min[0], midy, this.min[2]), vec3.fromValues(midx, this.max[1], midz), this.mesh);
+    let bb3b = new BoundingBox(this.depth + 1, vec3.fromValues(midx, this.min[1], this.min[2]), vec3.fromValues(this.max[0], midy, midz), this.mesh);
+    let bb4b = new BoundingBox(this.depth + 1, vec3.fromValues(midx, midy, this.min[2]), vec3.fromValues(this.max[0], this.max[1], midz), this.mesh);
     let bb1f = new BoundingBox(this.depth + 1, vec3.fromValues(this.min[0], this.min[1], midz), vec3.fromValues(midx, midy, this.max[2]), this.mesh);
-    let bb2f = new BoundingBox(this.depth + 1, vec3.fromValues(this.min[0], midy, midz),        vec3.fromValues(midx, this.max[1], this.max[2]), this.mesh);
-    let bb3f = new BoundingBox(this.depth + 1, vec3.fromValues(midx, this.min[1], midz),        vec3.fromValues(this.max[0], midy, this.max[2]), this.mesh);
-    let bb4f = new BoundingBox(this.depth + 1, vec3.fromValues(midx, midy, midz),               vec3.fromValues(this.max[0], this.max[1], this.max[2]), this.mesh);
+    let bb2f = new BoundingBox(this.depth + 1, vec3.fromValues(this.min[0], midy, midz), vec3.fromValues(midx, this.max[1], this.max[2]), this.mesh);
+    let bb3f = new BoundingBox(this.depth + 1, vec3.fromValues(midx, this.min[1], midz), vec3.fromValues(this.max[0], midy, this.max[2]), this.mesh);
+    let bb4f = new BoundingBox(this.depth + 1, vec3.fromValues(midx, midy, midz), vec3.fromValues(this.max[0], this.max[1], this.max[2]), this.mesh);
 
+    // Add sub boxes to children list, 
+    // Important to only add boxes that actually contain faces
     if(bb1b.hasFaces()) this.children.push(bb1b);
     if(bb2b.hasFaces()) this.children.push(bb2b); 
     if(bb3b.hasFaces()) this.children.push(bb3b);
@@ -359,6 +379,9 @@ class BoundingBox {
     if(bb4f.hasFaces()) this.children.push(bb4f); 
   }
 
+  // ====================================================================================================
+  // Check if a mesh vertex is contained inside this box
+  // ====================================================================================================
   public containsPoint(vertex: Vertex): boolean {
     if(vertex.x > this.min[0] - this.mesh.boxSettings.vertexEpsilon && vertex.x < this.max[0] + this.mesh.boxSettings.vertexEpsilon && 
        vertex.y > this.min[1] - this.mesh.boxSettings.vertexEpsilon && vertex.y < this.max[1] + this.mesh.boxSettings.vertexEpsilon &&
@@ -368,10 +391,16 @@ class BoundingBox {
     return false;
   }
 
+  // ====================================================================================================
+  // Has this box any children?
+  // ====================================================================================================
   public hasChildren(): boolean {
     return this.children.length > 0;
   }
 
+  // ====================================================================================================
+  // Does this this box contain any faces
+  // ====================================================================================================
   public hasFaces(): boolean {
     return this.faces.length > 0;
   }  
@@ -384,10 +413,12 @@ export class BoundingBoxSettings {
   public maxFaces: number;
   public maxDepth: number;
   public vertexEpsilon: number;
+  public debug: boolean;
 
   constructor(maxFaces: number, maxDepth: number, vertexEpsilon: number) {
     this.maxFaces = maxFaces;
     this.maxDepth = maxDepth;
     this.vertexEpsilon = vertexEpsilon;
+    this.debug = false;
   }
 }

@@ -3,15 +3,14 @@ import * as PNG from 'pngjs';
 
 export class Job {
   name: string;             // Job name, no spaces!
-  startDate: Date;
+  startDate: Date;          // Job start & end dates
   endDate: Date;
-  startTime: any;
+  startTime: any;           //
   durationTime: number;
   
   id: string;               // GUID (NOT USED)
   width: number;
   height: number;
-  skip: number;             // Row increment to speed up rendering but skip rows - NOT USED
 
   status: string;           // e.g. "RUNNING"; 
   reason: string;

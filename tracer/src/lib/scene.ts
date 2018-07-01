@@ -129,8 +129,7 @@ export class Scene {
               if(!rawObj.src) throw(`Mesh src missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               if(!rawObj.scale) { rawObj.scale = 1 }
-              let debug: boolean = false;
-              if(rawObj.debug) debug = rawObj.debug;
+
               // Override mesh settings if provided 
               let boxSettings: BoundingBoxSettings = new BoundingBoxSettings(100, 5, 0.06);
               if(rawObj.boundingSettings) {
@@ -138,11 +137,12 @@ export class Scene {
                 boxSettings.maxFaces = rawObj.boundingSettings[1];
                 boxSettings.vertexEpsilon = rawObj.boundingSettings[2];
               }
+              if(rawObj.debug) boxSettings.debug = rawObj.debug;
               // Load .obj file into manager before creating Mesh object
               await ObjManager.getInstance().loadObjFile(rawObj.src);
               obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), 
                              vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), 
-                             rawObj.scale, rawObj.name, debug, boxSettings);
+                             rawObj.scale, rawObj.name, boxSettings);
 
               break;
 

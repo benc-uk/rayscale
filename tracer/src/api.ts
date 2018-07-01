@@ -67,8 +67,8 @@ export class API {
 
     // Start the ray tracer for the give task & scene
     try { 
-      // GOOOOoooooo!
-      let imgSlice = new Raytracer(task, scene).startTrace();
+      // Go!
+      let imgSlice = new Raytracer(task, scene).runRayTrace();
 
       // Log stats
       console.log(`### Task complete, sending image fragment back to controller`);

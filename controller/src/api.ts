@@ -113,7 +113,7 @@ export class API {
       return;
     }
     console.log(`### Image buffer received from ${taskTracer} for task: ${taskIndex}`);
-taskTracer
+
     // Raw buffer (binary) body
     let buff = req.body;
     // Locate the task by taskId, we could also use taskIndex
@@ -122,11 +122,10 @@ taskTracer
     this.job.tasksComplete++;
     console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.taskCount}`);
 
-    this.job.skip = 1;
     for (var x = 0; x < this.job.width; x++) {
       let yBuff = 0;
 
-      for (var y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y+=this.job.skip) {
+      for (var y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y++) {
         let pngIdx = (this.job.width * y + x) << 2;
         let buffIndx = ((this.job.width * yBuff + x) * 3);
 
