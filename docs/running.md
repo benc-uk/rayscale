@@ -28,7 +28,7 @@ You can run both the *Controller* and *Tracer* locally using Node.js. To speed u
   - `npm run build` (this will transpile source TypeScript into JavaScript in the `dist` subfolder)
   - `npm start`
   - Tracer will start on port 8500 and connect to the controller on port 9000
-- To run multiple tracers, a shell script is provided; `run.sh` in the tracer directory. This starts each tracer on a different port (8550, 8551, 8552, etc) Simply run it under bash/WSL and pass the number of tracers you want to start, e.g. `./run.sh 3`
+- To run multiple tracers, a shell script is provided; `run.sh` in the tracer directory. This starts each tracer on a different port (8550, 8551, 8552, etc) Simply run it under bash/WSL and pass the number of tracers you want to start, e.g. `./run.sh 3` Note. running more tracers than you have CPU cores is not a good plan!
 - Access the Web UI at `http://localhost:9000/`
 - Jump to the [quick start guide](#quick-start-guide)
 
@@ -90,6 +90,6 @@ Deploy to Azure Container Instances using the supplied ARM template
 - Access the web UI, by opening the IP/domain name of the controller and port in your browser, `http://{controller-ip}:9000/`
 - Open any of the provided [example jobs & scenes](../examples/jobs) 
 - Copy and paste the whole YAML of the file into the "Job Editor" view of the web UI
-- Tip: If you are running locally or with a single tracer, start with a low image resolution, modify the `width` & `height` to something such as 800 x 600
+- Tip: If you are running locally or with a single tracer, start with a low image resolution, modify the `width` & `height` to something such as 800 x 600, and disable anti-aliasing
 - Click 'Start Job'
 - When job completes, view results and rendered image on the "Job Results" page 

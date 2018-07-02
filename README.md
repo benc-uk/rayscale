@@ -69,7 +69,9 @@ As well as *Controller* & *Tracer* RayScale has several named objects and concep
 - **JobInput** - A YAML document passed to the Controller to start a *Job*, at a high level it contains three things; job name, image dimensions and a scene definition. Full details are in the [job & scene reference guide](docs/reference.md)
 - **Job** - Internal representation of a *Job*, managed by the controller, holding its status, an array of tasks, start time etc. When a job is completed most of this information is placed in `result.json`
 - **Scene** - A description of what is to be rendered, consists of sets of parameters defining the camera position, lights and most importantly all the objects that make up the scene. The objects are described by type, position, size and their appearance. Full details are in the [job & scene reference guide](docs/reference.md)
-- **Tasks** - The controller divides a *Job* into *Tasks*, one *Task* per *Tracer* online at the time of job submission. The *Controller* sends each *Task* out to all the *Tracers*. The *Task* contains the above *Scene* definition, the overall image size, and also the size of the sub-slice the task is to generate. The *Tracer* will only render the portion of the overall image given to it in the *Task*
+- **Tasks** - The controller divides a *Job* into *Tasks*. You can specify how many tasks you want your job split into, if you don't the system will simply allocate one task per tracer. A good rule of thumb for quickest rendering is to split the scene into twice as many tasks as you have tracers.  
+The *Controller* schedules *Tasks* by creating a queue and sending them off the queue to idle *Tracers*. Only a single *Task* is allocated to a *Tracer* at a time, once a *Task* is completed another will be sent to the *Tracer* off the queue.  
+The *Task* contains the above *Scene* definition, the overall image size, and also the size of the sub-slice the task is to generate. The *Tracer* will only render the portion of the overall image given to it in the *Task*
 
 
 # Running RayScale

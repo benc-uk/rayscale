@@ -20,7 +20,8 @@ scene:
         type: image
         scaleU: 8
         scaleV: 13
-        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png        
+        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png   
+        
   lights:
     - pos: [-28, 18, -3]
       radius: 300
@@ -28,6 +29,7 @@ scene:
     - pos: [28, 18, 17]
       radius: 300
       brightness: 0.7      
+      
   objects:
     - type: cuboid
       name: top
@@ -76,8 +78,8 @@ scene:
           type: check
           scaleU: 5
           scaleV: 5
-          colour1: [0, 100, 0]  
-          colour2: [250,250,250]
+          colour1: [0, 120, 0]  
+          colour2: [250, 250, 250]
     - type: sphere
       name: mirror
       pos: [-4.8, 0, -18]

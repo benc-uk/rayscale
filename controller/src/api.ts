@@ -60,7 +60,7 @@ export class API {
     // Check active job  
     if(res.app.get('env').toLowerCase() == "production") {
       if(this.job && this.job.status == "RUNNING") {
-        console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.taskCount - this.job.tasksComplete} tasks remaining`);
+        console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.totalTasks} of ${this.job.tasksRemaining} tasks remaining`);
         res.status(400).send({msg: "There is currently an active job"}); return;
       }
     }
@@ -119,8 +119,8 @@ export class API {
     // Locate the task by taskId, we could also use taskIndex
     let task = this.job.tasks.find(t => t.id == taskId);
 
-    this.job.tasksComplete++;
-    console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.taskCount}`);
+    //this.job.tasksComplete++;
+    console.log(`### Tasks completed: ${this.job.taskQueue.length} of ${this.job.totalTasks}`);
 
     for (var x = 0; x < this.job.width; x++) {
       let yBuff = 0;
@@ -137,11 +137,11 @@ export class API {
       }
     }
 
-    if(this.job.tasksComplete == this.job.taskCount) {
+    if(this.job.tasksRemaining <= 0) { //} == this.job.taskCount) {
       // We're DONE!
       this.completeJob();
     } else {
-      if(this.job.unassignedTasks.length > 0) {
+      if(this.job.tasksRemaining > 0) {
         let tracer: Tracer = this.tracers[taskTracer];
         this.assignTaskToTracer(tracer);
       }
@@ -194,15 +194,6 @@ export class API {
     if(!jobInput.width) throw('Job must have a width');
     if(!jobInput.height) throw('Job must have a height');
     if(!jobInput.scene) throw('Job must have a scene');
-    if(!jobInput.tasks) {
-      this.job.taskCount = Object.keys(this.tracers).length;
-      console.log(`### WARNING! Task count not supplied, using default: ${this.job.taskCount}`);
-    } else {
-      this.job.taskCount = jobInput.tasks;
-      if(this.job.taskCount > jobInput.height) {
-        throw 'Error! Can not request more tasks than image height!';
-      }
-    }
 
     // Basic job info supplied to us
     this.job.name = jobInput.name;
@@ -215,7 +206,7 @@ export class API {
     this.job.id = randstr.generate(5);
     this.job.status = "RUNNING"; 
     this.job.reason = ""; 
-    this.job.tasksComplete = 0;
+    //this.job.tasksComplete = 0;
     this.job.png = new PNG.PNG({ width: this.job.width, height: this.job.height });
     this.job.stats = {
       raysCreated: 0,
@@ -228,10 +219,21 @@ export class API {
   
     // Create tasks
     // Logic to slice image into sub-regions is here
-    let sliceHeight = Math.ceil(this.job.height / this.job.taskCount);
     this.job.tasks = [];
-    this.job.unassignedTasks = [];
-    for(let taskIndex = 0; taskIndex < this.job.taskCount; taskIndex++) {
+    this.job.taskQueue = [];
+    let requestedTaskCount = 0;
+    if(!jobInput.tasks) {
+      requestedTaskCount = Object.keys(this.tracers).length;
+      console.log(`### WARNING! Task count not supplied, using default: ${requestedTaskCount}`);
+    } else {
+      requestedTaskCount = jobInput.tasks;
+      if(requestedTaskCount > jobInput.height) {
+        throw 'Error! Can not request more tasks than image height!';
+      }
+    }
+    // Using ceil here removes rounding bug where image height not divisible by number tasks 
+    let sliceHeight = Math.ceil(this.job.height / requestedTaskCount);
+    for(let taskIndex = 0; taskIndex < requestedTaskCount; taskIndex++) {
       let task = new Task();
       task.id = randstr.generate(5);
       task.jobId = this.job.id;
@@ -244,10 +246,10 @@ export class API {
       task.antiAlias = jobInput.antiAlias || false;
 
       this.job.tasks.push(task); 
-      this.job.unassignedTasks.push(task.id);
+      this.job.taskQueue.push(task.id);
     }
 
-    console.log(`### New job created: ${this.job.name} with ${this.job.taskCount} tasks`);
+    console.log(`### New job created: ${this.job.name} with ${this.job.totalTasks} tasks`);
 
     // First pass, send one task out to each tracer online
     for(let tid in this.tracers) {
@@ -262,12 +264,12 @@ export class API {
   // ====================================================================================================
   private assignTaskToTracer(tracer: Tracer) {
     // Get random task not yet assigned
-    if(this.job.unassignedTasks.length <= 0) return;
+    if(this.job.tasksRemaining <= 0) return;
 
-    let unassignedTaskIndex = Math.floor(Math.random() * this.job.unassignedTasks.length)
-    let taskId = this.job.unassignedTasks[unassignedTaskIndex];
+    let unassignedTaskIndex = Math.floor(Math.random() * this.job.taskQueue.length)
+    let taskId = this.job.taskQueue[unassignedTaskIndex];
     // Remember to remove from array!
-    this.job.unassignedTasks.splice(unassignedTaskIndex, 1) 
+    this.job.taskQueue.splice(unassignedTaskIndex, 1) 
     let task = this.job.tasks.find(t => t.id == taskId);
 
     // Send to tracer
@@ -318,13 +320,13 @@ export class API {
         imageWidth: this.job.width,
         imageHeight: this.job.height,
         pixels: this.job.width * this.job.height,
-        tasks: this.job.taskCount,
+        tasks: this.job.totalTasks,
         tracersUsed: Object.keys(this.tracers).length,
         RPP: this.job.stats.raysCast / (this.job.width * this.job.height),
         stats: this.job.stats
       };
       console.log('### Results details: ', results);
-      console.log(`### Render complete, ${outDir}/render.png saved`);
+      console.log(`### Render complete, ${outDir}/${this.job.name}.png saved`);
       console.log(`### Job completed in ${this.job.durationTime} seconds`);
   
       // Supplementary result files
@@ -344,8 +346,8 @@ export class API {
           status: this.job.status,
           reason: this.job.reason,
           started: this.job.startDate,
-          tasksComplete: this.job.tasksComplete,
-          taskCount: this.job.taskCount
+          tasksComplete: this.job.totalTasks - this.job.tasksRemaining,
+          taskCount: this.job.totalTasks
         }
       })
     } else {
