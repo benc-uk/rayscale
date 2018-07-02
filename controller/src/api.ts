@@ -119,8 +119,8 @@ export class API {
     // Locate the task by taskId, we could also use taskIndex
     let task = this.job.tasks.find(t => t.id == taskId);
 
-    //this.job.tasksComplete++;
-    console.log(`### Tasks completed: ${this.job.taskQueue.length} of ${this.job.totalTasks}`);
+    this.job.tasksComplete++;
+    console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.totalTasks}`);
 
     for (var x = 0; x < this.job.width; x++) {
       let yBuff = 0;
@@ -137,11 +137,11 @@ export class API {
       }
     }
 
-    if(this.job.tasksRemaining <= 0) { //} == this.job.taskCount) {
+    if(this.job.tasksRemaining <= 0) {
       // We're DONE!
       this.completeJob();
     } else {
-      if(this.job.tasksRemaining > 0) {
+      if(this.job.tasksInQueue > 0) {
         let tracer: Tracer = this.tracers[taskTracer];
         this.assignTaskToTracer(tracer);
       }
@@ -221,6 +221,7 @@ export class API {
     // Logic to slice image into sub-regions is here
     this.job.tasks = [];
     this.job.taskQueue = [];
+    this.job.tasksComplete = 0;
     let requestedTaskCount = 0;
     if(!jobInput.tasks) {
       requestedTaskCount = Object.keys(this.tracers).length;
@@ -249,7 +250,7 @@ export class API {
       this.job.taskQueue.push(task.id);
     }
 
-    console.log(`### New job created: ${this.job.name} with ${this.job.totalTasks} tasks`);
+    console.log(`### New job created: '${this.job.name}' with ${this.job.totalTasks} tasks`);
 
     // First pass, send one task out to each tracer online
     for(let tid in this.tracers) {
@@ -346,7 +347,7 @@ export class API {
           status: this.job.status,
           reason: this.job.reason,
           started: this.job.startDate,
-          tasksComplete: this.job.totalTasks - this.job.tasksRemaining,
+          tasksComplete: this.job.tasksComplete,
           taskCount: this.job.totalTasks
         }
       })

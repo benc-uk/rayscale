@@ -14,17 +14,22 @@ export class Job {
   reason: string;           // Text description of current status
   rawScene: any;            // Unparsed scene as given to us from jobInput
   stats: any;               // General data bag for holding stats about the job
-
+  
   png: PNG.PNG;             // Output PNG image buffer
 
   taskQueue: string[];      // Ids of tasks not yet assigned
   tasks: Task[];            // Tasks this job has been split into
+  tasksComplete: number;    // Tasks completed
 
   get totalTasks(): number {
     return this.tasks.length;
   }
 
-  get tasksRemaining(): number {
+  get tasksInQueue(): number {
     return this.taskQueue.length;
   }  
+
+  get tasksRemaining(): number {
+    return this.totalTasks - this.tasksComplete;
+  }
 }
