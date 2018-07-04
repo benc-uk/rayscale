@@ -10,7 +10,7 @@ import { TextureManager } from './texture-manager';
 import { vec2, mat2 } from 'gl-matrix';
 import { Utils } from './utils';
 
-export class TextureImage implements Texture {
+export class TextureImage extends Texture {
   swapUV: boolean;
   flipU: boolean;
   flipV: boolean;
@@ -22,6 +22,7 @@ export class TextureImage implements Texture {
   // NOTE! Important texture is loaded into TextureManager first
   // We can't do that here, or we'd be in async/await/Promise hell
   constructor(url: string) {
+    super();
     this.textureUrl = url;
     this.png = TextureManager.getInstance().getTexturePNG(this.textureUrl);
   }

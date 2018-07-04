@@ -40,9 +40,9 @@ export class Colour {
     this.r *= v; 
     this.g *= v; 
     this.b *= v;
-    this.r = Math.min(1, this.r);
-    this.g = Math.min(1, this.g);
-    this.b = Math.min(1, this.b);    
+    this.r = Math.min(1, Math.max(0, this.r));
+    this.g = Math.min(1, Math.max(0, this.g));
+    this.b = Math.min(1, Math.max(0, this.b));    
   }
 
   public multColour(c: Colour) {

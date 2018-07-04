@@ -6,16 +6,12 @@
 import { Texture } from './texture';
 import { Colour } from './colour';
 
-export class TextureCheck implements Texture {
-  swapUV: boolean;
-  flipU: boolean;
-  flipV: boolean;
-  scaleU: number = 1;
-  scaleV: number = 1;
+export class TextureCheck extends Texture {
   colour1: Colour;
   colour2: Colour;
 
   constructor(c1: Colour, c2: Colour) {
+    super();
     this.colour1 = c1;
     this.colour2 = c2;
   }

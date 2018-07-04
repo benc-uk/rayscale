@@ -15,15 +15,16 @@ import { Cylinder } from './cylinder';
 import { Cone } from './cone';
 import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './mesh';
+import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture } from './texture-noise';
 
 // ====================================================================================================
 // 
 // ====================================================================================================
 export class Scene {
-  name: string;
   backgroundColour: Colour;
   ambientLevel: number;
   ior: number;
+  seed: string;
 
   cameraPos: vec3;      // Camera position in world
   cameraLookAt: vec3;   // Camera look at point
@@ -32,11 +33,12 @@ export class Scene {
   objects: Object3D[];
   lights: Light[];
   static presetMaterials: { [name: string]: Material; } = { };
+  static randomSeed: string;
 
   // ====================================================================================================
-  // 
+  // Main scene parser, convert JSON into a real Scene with Object3Ds and Lights etc etc
   // ====================================================================================================
-  static parseScene(input: any): Promise<any> {
+  static parseScene(input: any, jobId: string): Promise<any> {
 
     return new Promise(async (resolve, reject) => {
     
@@ -44,9 +46,16 @@ export class Scene {
       console.log(`### Begin parsing scene...`);
 
       try {
-        if(!input.name) throw('Scene name missing');
         if(!input.cameraPos) throw('Scene cameraPos missing');
         if(!input.cameraLookAt) throw('Scene cameraLookAt missing');
+
+        // !GOTCHA: We need to use the same random seed across all tracers otherwise 
+        // We'll get banding with noiseTextures
+        if(!input.seed) 
+          scene.seed = jobId;
+        else
+          scene.seed = input.seed;
+        NoiseLib.initNoise(scene.seed);
         
         if(!input.backgroundColour) 
           scene.backgroundColour = Colour.fromRGB(0, 0, 0);
@@ -62,8 +71,7 @@ export class Scene {
           scene.cameraFov = 30;
         else
           scene.cameraFov = input.cameraFov;
-
-        scene.name = input.name;
+          
         scene.ior = 1.0;
         scene.cameraPos = vec3.fromValues(input.cameraPos[0], input.cameraPos[1], input.cameraPos[2]);
         scene.cameraLookAt = vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]);
@@ -204,7 +212,7 @@ export class Scene {
     if(input.hardness) m.hardness = input.hardness;
 
     // Type of texture check here
-    let texture: Texture = null;
+    let texture: any = null;
     if(input.texture) {
       //if(!input.texture.type) throw(`Texture missing type ${input.texture}`);
       //console.log(`### Parsing texture type: ${input.texture.type}`);
@@ -227,9 +235,45 @@ export class Scene {
           await TextureManager.getInstance().loadTexture(input.texture.src);
           texture = new TextureImage(input.texture.src);
           break;
+        case 'noise':
+          if(!input.texture.colour1) throw(`Texture of type 'noise' requires colour1`);
+          if(!input.texture.colour2) throw(`Texture of type 'noise' requires colour2`);
+          if(!input.texture.scale) { input.texture.scale = []; input.texture.scale[0] = 1; input.texture.scale[1] = 1; input.texture.scale[2] = 1; }
+          var c1: any = input.texture.colour1;
+          var c2: any = input.texture.colour2;
+          if(!input.texture.mult) { input.texture.mult = 1 }
+          if(!input.texture.pow) { input.texture.pow = 1 }
+          texture = new NoiseTexture(input.texture.scale, Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.mult, input.texture.pow)
+          break;
+        case 'turbulence':
+          if(!input.texture.colour1) throw(`Texture of type 'noise' requires colour1`);
+          if(!input.texture.colour2) throw(`Texture of type 'noise' requires colour2`);
+          if(!input.texture.scale) { input.texture.scale = []; input.texture.scale[0] = 1; input.texture.scale[1] = 1; input.texture.scale[2] = 1; }
+          if(!input.texture.size) { input.texture.size = 32 }
+          if(!input.texture.mult) { input.texture.mult = 1 }
+          if(!input.texture.pow) { input.texture.pow = 1 }
+          if(!input.texture.abs) { input.texture.abs = false }
+          var c1: any = input.texture.colour1;
+          var c2: any = input.texture.colour2;
+          texture = new TurbulenceTexture(input.texture.scale, Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.size, input.texture.mult, input.texture.pow, input.texture.abs);
+          break;
+        case 'marble':
+          if(!input.texture.colour1) throw(`Texture of type 'marble' requires colour1`);
+          if(!input.texture.colour2) throw(`Texture of type 'marble' requires colour2`);
+          if(!input.texture.periods) { input.texture.periods = [10, 5, 5] }
+          if(!input.texture.turbPower) { input.texture.turbPower = 5 }
+          if(!input.texture.turbSize) { input.texture.turbSize = 32 }
+          if(!input.texture.mult) { input.texture.mult = 1 }
+          if(!input.texture.pow) { input.texture.pow = 1 }
+          var c1: any = input.texture.colour1;
+          var c2: any = input.texture.colour2;
+          texture = new MarbleTexture(input.texture.scale, 
+            Colour.fromRGB(c1[0], c1[1], c1[2]), 
+            Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.periods, input.texture.turbPower, input.texture.turbSize, input.texture.mult, input.texture.pow);
+          break;          
         default:
           var c = input.texture.colour;
-          texture = TextureBasic.fromRGB(c[0], c[1], c[2])
+          texture = TextureBasic.fromRGB(c[0], c[1], c[2]);
           break;
       }
             

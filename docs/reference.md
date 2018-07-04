@@ -17,10 +17,10 @@ Items in italics are specific types/classes of object
 
 ## <i>Scene</i> Definition
 <pre>
-<b>name:</b>             Name of scene, not currently used
-<span style="color:#275ce5"><b>backgroundColour:</b> <i>Colour</i> of background, used when ray misses all objects</span>
+<span style="color:#275ce5"><b>backgroundColour:</b> <i>Colour</i> of background, used when ray misses all objects (default: black)</span>
 <span style="color:#275ce5"><b>ambientLevel:</b>     Level of ambient light, <i>float</i> typically: 0.0 ~ 0.3 (default: 0.1)</span>
 <span style="color:#275ce5"><b>cameraFov:</b>        Camera field of view, lower values "zoom in" (default: 30)</span>
+<span style="color:#275ce5"><b>seed:</b>             String used to init random number generator</span>
 <b>cameraPos:</b>        Camera position <i>Point</i> in world space
 <b>cameraLookAt:</b>     Camera will be oriented and looking at this <i>Point</i> in world space
 <b>lights:</b>           Array of <i>Light</i> in the scene

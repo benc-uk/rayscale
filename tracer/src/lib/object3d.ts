@@ -29,13 +29,15 @@ export interface Object3D {
   getHitPoint(result: TResult): Hit;
 }
 
-// ====================================================================================
+// ******************************************************************************************************
+
+// ======================================================================================================
 // Global static consts, and magic numbers
-// ====================================================================================
+// ======================================================================================================
 export class ObjectConsts {
   // We use epsilon tolerance values to stop artefacts and other floating point weirdness
-  static EPSILON2: number = 0.01;
-  static EPSILON3: number = 0.001;
-  static EPSILON4: number = 0.0001;
-  static EPSILON5: number = 0.00001;
+  public static readonly EPSILON2: number = 0.01;
+  public static readonly EPSILON3: number = 0.001;
+  public static readonly EPSILON4: number = 0.0001;
+  public static readonly EPSILON5: number = 0.00001;
 }

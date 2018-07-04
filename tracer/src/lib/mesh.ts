@@ -99,7 +99,7 @@ export class Mesh implements Object3D {
       if(this.boxSettings.debug) {
         result.t = 5;
         let box = boxResult[boxResult.length-1];
-        (<TextureBasic>this.material.texture).colour = box.debugColour.copy();
+        (<any>this.material.texture).colour = box.debugColour.copy();
         return result;
       }
 
