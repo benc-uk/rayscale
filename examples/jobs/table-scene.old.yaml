@@ -1,0 +1,407 @@
+#
+# Note. This is an extremely complex scene do not render at hires or with antiAliasing
+# - render time will be *slow* unless you have at least 16 tracers
+#
+
+name: Table Scene
+width: 700
+height: 400
+#antiAlias: true
+#maxDepth: 7
+tasks: 32
+scene:
+  backgroundColour: [4, 22, 53]
+  ambientLevel: 0.1
+  cameraFov: 28
+  cameraPos: [0, 19, 5]
+  cameraLookAt: [0, 0, -30]   
+  
+  lights:
+    - pos: [7, 25, 3]
+      radius: 80
+      brightness: 1.7
+      colour: [249, 238, 174]
+    - pos: [-20, 50, -70]
+      radius: 190
+      brightness: 0.8
+      colour: [249, 216, 174]
+    - pos: [-50, 35, -20]
+      radius: 90
+      brightness: 1.2
+
+  objects:
+    # Skybox
+    - type: sphere
+      name: floor
+      pos: [0, 0, -20]
+      radius: 80
+      material:
+        preset: basic
+        noShade: true
+        texture: 
+          type: image
+          scaleV: 0.5
+          scaleU: 0.3
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/nebula.png
+
+    # Checked floor
+    - type: plane
+      name: floor
+      pos: [0, 0.0, 0]
+      rotate: [0, 20, 0]
+      material:
+        preset: basic
+        texture: 
+          type: check
+          scaleV: 11
+          scaleU: 11
+          colour1: [30, 80 ,30]
+          colour2: [220, 220, 200]
+
+    # Round table with stone base and wooden leg and top
+    - type: cylinder
+      name: tableleg
+      pos: [0, 0, -20]
+      rotate: [0, 0, 0]
+      radius: 1.5
+      length: 8
+      material:
+        preset: matte
+        texture: 
+          type: image
+          scaleV: 10
+          scaleU: 0.2
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+    - type: cylinder
+      name: tablebase
+      pos: [0, 0, -20]
+      rotate: [0, 70, 0]
+      radius: 3.2
+      length: 0.5
+      capped: true
+      material:
+        preset: matte
+        ks: 0.3
+        texture: 
+          type: image
+          scaleU: 4
+          scaleV: 40
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png
+    - type: cylinder
+      name: tabletop
+      pos: [0, 8, -20]
+      rotate: [0, 15, 0]
+      radius: 6
+      length: 0.3
+      capped: true
+      material:
+        preset: shiny
+        kr: 0.2
+        texture: 
+          type: image
+          scaleV: 8
+          scaleU: 5
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+          
+    # Shiny balls on table
+    - type: sphere
+      name: glass-ball
+      pos: [0.4, 9.6, -22]
+      rotate: [0, 0, 0]
+      radius: 1.3
+      material:
+        preset: shiny
+        hardness: 90
+        ks: 1.5
+        kr: 0.2
+        kt: 0.8
+        ior: 1.3
+        texture: 
+          colour: [40, 40, 80]
+    - type: sphere
+      name: mirror-ball
+      pos: [4.4, 9.1, -21]
+      rotate: [0, 0, 0]
+      radius: 0.8
+      material:
+        preset: shiny
+        hardness: 110
+        ks: 1.0
+        kd: 0.2
+        kr: 0.6
+        texture: 
+          colour: [20, 40, 20]          
+
+    # Wine bottle
+    - type: cylinder
+      name: bottlebase
+      pos: [-1.3, 8.3, -18]
+      rotate: [0, 40, 0]
+      length: 2
+      radius: 0.5
+      material:
+        type: shiny
+        hardness: 60
+        ks: 1.3  
+        kr: 0.15
+        texture:
+          scaleV: 2
+          type: image
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wine.png
+    - type: sphere
+      name: bottlemiddle
+      pos: [-1.3, 10.3, -18]
+      radius: 0.5
+      material:
+        hardness: 60
+        ks: 1.3  
+        kr: 0.15
+        type: shiny
+        texture:
+          colour: [10, 52, 0]  
+    - type: cylinder
+      name: bottleneck
+      pos: [-1.3, 10.3, -18]
+      rotate: [0, 0, 0]
+      length: 1.333
+      radius: 0.2
+      capped: true
+      material:
+        type: shiny
+        hardness: 60
+        kr: 0.15
+        ks: 1.3
+        texture:
+          colour: [10, 52, 0]  
+    - type: cylinder
+      name: bottlenecktop
+      pos: [-1.3, 11.5, -18]
+      rotate: [0, 0, 0]
+      length: 0.11
+      radius: 0.22
+      capped: true
+      material:
+        type: shiny
+        hardness: 60
+        kr: 0.15
+        ks: 1.3
+        texture:
+          colour: [10, 52, 0]  
+    - type: cylinder
+      name: bottlecork
+      pos: [-1.3, 11.6, -18]
+      rotate: [0, 0, 0]
+      length: 0.133
+      radius: 0.15
+      capped: true
+      material:
+        type: matte
+        texture:
+          colour: [221, 188, 117]    
+    
+    # A cup 1
+    - type: cylinder
+      name: cup1
+      pos: [1.1, 9.59, -15.7]
+      rotate: [180, 0, 0]
+      radius: 0.4
+      length: 1.3
+      material:
+        preset: shiny
+        hardness: 11
+        ks: 1.2
+        kt: 0.8
+        ior: 1.2
+        texture: 
+          type: basic
+          colour: [10, 60, 60]
+    # A cup 2
+    - type: cylinder
+      name: cup2
+      pos: [-3.8, 9.59, -17.6]
+      rotate: [180, 0, 0]
+      radius: 0.4
+      length: 1.3
+      material:
+        preset: shiny
+        hardness: 11
+        ks: 1.2
+        kt: 0.8
+        ior: 1.2
+        texture: 
+          type: basic
+          colour: [10, 60, 60]
+          
+    # A blue marble "box" with gold button clasp
+    - type: cuboid
+      name: box
+      pos: [-0.8, 8.6, -15]
+      rotate: [0, 70, 0]
+      size: [1, 0.6, 1.6]
+      material:
+        preset: matte
+        kd: 1.1
+        ka: 0.001
+        texture: 
+          type: image
+          scaleU: 2
+          scaleV: 2
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/marb-blue.png      
+    - type: sphere
+      name: boxstud
+      pos: [-0.9, 8.88, -14.55]
+      radius: 0.10
+      material:
+        preset: shiny
+        hardness: 11
+        ks: 1.5
+        texture: 
+          type: basic
+          colour: [200, 150, 20]
+    
+    # Utah Teapot!
+    - type: mesh
+      name: teapot
+      src: https://github.com/benc-uk/rayscale/raw/master/examples/obj/teapot-high.obj
+      pos: [2.8, 8.3, -18]
+      rotate: [0, -25, 0]
+      scale: 0.7
+      #debug: true
+      boundingSettings: [6, 50, 0.07]
+      material:
+        preset: shiny
+        hardness: 90
+        kr: 0.3
+        texture: 
+          colour: [201, 193, 165]    
+          
+    # Globe type object on a stick!
+    - type: cuboid
+      name: globe-base
+      pos: [-3.5, 7.6, -19.1]
+      rotate: [45, 0, 45]
+      size: [1.5, 1.5, 1.5]
+      material:
+        preset: matte
+        texture: 
+          type: basic
+          colour: [181, 49, 23]
+    - type: cylinder
+      name: globe-stem
+      pos: [-3.5, 8.4, -19]
+      rotate: [0, 0, 0]
+      radius: 0.2
+      length: 4
+      material:
+        preset: shiny
+        kr: 0.35
+        texture: 
+          type: basic
+          colour: [10, 10, 10]     
+    - type: sphere
+      name: globe-earth
+      pos: [-3.5, 11.5, -19]
+      rotate: [0, 0, 0]
+      radius: 1.2
+      material:
+        preset: matte
+        kd: 1.3
+        texture: 
+          type: image
+          scaleV: 1
+          scaleU: 0.8
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/earth.png      
+    
+    # Wall with mirror
+    - type: plane
+      name: wall
+      pos: [15, 0.0, 0]
+      rotate: [0, 20, 90]
+      material:
+        preset: matte
+        kd: 0.7
+        texture: 
+          type: image
+          scaleV: 10
+          scaleU: 10
+          swapUV: true
+          flipU: true
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall-2.png
+    - type: cuboid
+      name: mirror
+      pos: [8.6, 11, -17.5]
+      rotate: [0, 20, 0]
+      size: [0.1, 4, 10]
+      material:
+        preset: shiny
+        kr: 0.9
+        texture: 
+          type: basic
+          colour: [50, 50, 50]  
+
+          
+    # Chair with cushions
+    - type: cuboid
+      name: chairback
+      pos: [-10, 3.5, -19]
+      rotate: [0, 0, 0]
+      size: [0.5, 13, 3.5]
+      material:
+        preset: matte
+        texture: 
+          type: image
+          swapUV: true
+          scaleU: 4
+          scaleV: 3
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png  
+    - type: cuboid
+      name: chairfront
+      pos: [-6, 2.5, -19]
+      rotate: [0, 0, 0]
+      size: [0.5, 5, 3.5]
+      material:
+        preset: matte
+        texture: 
+          type: image
+          swapUV: true
+          scaleU: 3
+          scaleV: 5          
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png     
+    - type: cuboid
+      name: chairbase
+      pos: [-7.9, 4.752, -19]
+      rotate: [0, 0, 0]
+      size: [3.9, 0.5, 3.5]
+      material:
+        preset: matte
+        texture: 
+          type: image
+          scaleU: 3
+          scaleV: 3
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png
+    - type: cuboid
+      name: chaircushion
+      pos: [-7.9, 4.85, -19]
+      rotate: [0, 0, 0]
+      size: [3.5, 0.5, 3.1]
+      material:
+        preset: matte
+        kd: 1
+        texture: 
+          type: image
+          scaleU: 5
+          scaleV: 5
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/red-fabric.png
+    - type: cuboid
+      name: chaircushionback
+      pos: [-9.85, 7.9, -19]
+      rotate: [0, 0, 90]
+      size: [3.5, 0.5, 3.1]
+      material:
+        preset: matte
+        kd: 1
+        texture: 
+          type: image
+          scaleU: 5
+          scaleV: 5
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/red-fabric.png          

@@ -1,14 +1,15 @@
 name: Transparency Demo
-width: 1920
-height: 1080
+width: 800
+height: 600
 maxDepth: 6
-antiAlias: true
+#antiAlias: true
+tasks: 8
 scene:
   backgroundColour: [10, 90, 30]
   ambientLevel: 0.2
   cameraFov: 30
   cameraPos: [2, 18, 0]
-  cameraLookAt: [1.5, 5, -30]
+  cameraLookAt: [-0.5, 4, -30]
   lights:
     - pos: [-30, 80, 38]
       radius: 120
@@ -56,8 +57,7 @@ scene:
         preset: shiny
         hardness: 70
         texture:
-          colour: [10, 180, 15]    
-
+          colour: [10, 180, 15]
     - type: sphere
       name: crystal-ball
       pos: [-5, 4, -33]
@@ -69,7 +69,7 @@ scene:
         ior: 1.32
         kr: 0.2
         texture:
-          colour: [20, 5, 17]       
+          colour: [20, 5, 17]
     - type: cuboid
       name: wood-beam
       pos: [1, 1.5, -37.4]
@@ -84,7 +84,7 @@ scene:
           src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
     - type: cuboid
       name: rod
-      pos: [7.5, 2.502, -30]
+      pos: [7.5, 2.5, -30]
       rotate: [0, 17, 0]
       size: [5, 5, 5]
       material:
@@ -93,7 +93,7 @@ scene:
         kt: 0.7
         ior: 1.2
         texture:
-          colour: [20, 51, 33]              
+          colour: [20, 51, 33]
     - type: cone
       name: cone-1
       pos: [-8.8, 0.01, -28]
@@ -106,5 +106,4 @@ scene:
         kt: 0.7
         ior: 1.2
         texture:
-          colour: [60, 41, 33]              
-             
+          colour: [60, 41, 33]

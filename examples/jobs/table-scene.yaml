@@ -14,8 +14,23 @@ scene:
   ambientLevel: 0.1
   cameraFov: 28
   cameraPos: [0, 19, 5]
-  cameraLookAt: [0, 0, -30]   
-  
+  cameraLookAt: [0, 0, -30]
+
+  materials:
+    - name: wood1
+      preset: matte
+      ka: 0.3
+      texture:
+        type: wood
+        scale: [20, 20, 20]
+        colour2: [76, 53, 6]
+        colour1: [214, 187, 109]
+        period: 8
+        turbPower: 0.04
+        turbSize: 128
+        offset: [8, 0, 23]
+        axis: 0
+
   lights:
     - pos: [7, 25, 3]
       radius: 80
@@ -66,12 +81,12 @@ scene:
       radius: 1.5
       length: 8
       material:
-        preset: matte
-        texture: 
-          type: image
-          scaleV: 10
-          scaleU: 0.2
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+        preset: wood1
+        # texture: 
+        #   type: image
+        #   scaleV: 10
+        #   scaleU: 0.2
+        #   src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
     - type: cylinder
       name: tablebase
       pos: [0, 0, -20]
@@ -95,13 +110,13 @@ scene:
       length: 0.3
       capped: true
       material:
-        preset: shiny
-        kr: 0.2
-        texture: 
-          type: image
-          scaleV: 8
-          scaleU: 5
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+        preset: wood1
+        # kr: 0.2
+        # texture: 
+        #   type: image
+        #   scaleV: 8
+        #   scaleU: 5
+        #   src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
           
     # Shiny balls on table
     - type: sphere
@@ -260,20 +275,20 @@ scene:
           colour: [200, 150, 20]
     
     # Utah Teapot!
-    - type: mesh
-      name: teapot
-      src: https://github.com/benc-uk/rayscale/raw/master/examples/obj/teapot-high.obj
-      pos: [2.8, 8.3, -18]
-      rotate: [0, -25, 0]
-      scale: 0.7
-      #debug: true
-      boundingSettings: [6, 50, 0.07]
-      material:
-        preset: shiny
-        hardness: 90
-        kr: 0.3
-        texture: 
-          colour: [201, 193, 165]    
+    # - type: mesh
+    #   name: teapot
+    #   src: https://github.com/benc-uk/rayscale/raw/master/examples/obj/teapot-high.obj
+    #   pos: [2.8, 8.3, -18]
+    #   rotate: [0, -25, 0]
+    #   scale: 0.7
+    #   #debug: true
+    #   boundingSettings: [6, 50, 0.07]
+    #   material:
+    #     preset: shiny
+    #     hardness: 90
+    #     kr: 0.3
+    #     texture: 
+    #       colour: [201, 193, 165]    
           
     # Globe type object on a stick!
     - type: cuboid
@@ -341,67 +356,67 @@ scene:
 
           
     # Chair with cushions
-    - type: cuboid
-      name: chairback
-      pos: [-10, 3.5, -19]
-      rotate: [0, 0, 0]
-      size: [0.5, 13, 3.5]
-      material:
-        preset: matte
-        texture: 
-          type: image
-          swapUV: true
-          scaleU: 4
-          scaleV: 3
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png  
-    - type: cuboid
-      name: chairfront
-      pos: [-6, 2.5, -19]
-      rotate: [0, 0, 0]
-      size: [0.5, 5, 3.5]
-      material:
-        preset: matte
-        texture: 
-          type: image
-          swapUV: true
-          scaleU: 3
-          scaleV: 5          
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png     
-    - type: cuboid
-      name: chairbase
-      pos: [-7.9, 4.752, -19]
-      rotate: [0, 0, 0]
-      size: [3.9, 0.5, 3.5]
-      material:
-        preset: matte
-        texture: 
-          type: image
-          scaleU: 3
-          scaleV: 3
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png
-    - type: cuboid
-      name: chaircushion
-      pos: [-7.9, 4.85, -19]
-      rotate: [0, 0, 0]
-      size: [3.5, 0.5, 3.1]
-      material:
-        preset: matte
-        kd: 1
-        texture: 
-          type: image
-          scaleU: 5
-          scaleV: 5
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/red-fabric.png
-    - type: cuboid
-      name: chaircushionback
-      pos: [-9.85, 7.9, -19]
-      rotate: [0, 0, 90]
-      size: [3.5, 0.5, 3.1]
-      material:
-        preset: matte
-        kd: 1
-        texture: 
-          type: image
-          scaleU: 5
-          scaleV: 5
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/red-fabric.png          
+    # - type: cuboid
+    #   name: chairback
+    #   pos: [-10, 3.5, -19]
+    #   rotate: [0, 0, 0]
+    #   size: [0.5, 13, 3.5]
+    #   material:
+    #     preset: matte
+    #     texture: 
+    #       type: image
+    #       swapUV: true
+    #       scaleU: 4
+    #       scaleV: 3
+    #       src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png  
+    # - type: cuboid
+    #   name: chairfront
+    #   pos: [-6, 2.5, -19]
+    #   rotate: [0, 0, 0]
+    #   size: [0.5, 5, 3.5]
+    #   material:
+    #     preset: matte
+    #     texture: 
+    #       type: image
+    #       swapUV: true
+    #       scaleU: 3
+    #       scaleV: 5          
+    #       src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png     
+    # - type: cuboid
+    #   name: chairbase
+    #   pos: [-7.9, 4.752, -19]
+    #   rotate: [0, 0, 0]
+    #   size: [3.9, 0.5, 3.5]
+    #   material:
+    #     preset: matte
+    #     texture: 
+    #       type: image
+    #       scaleU: 3
+    #       scaleV: 3
+    #       src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wood-pine.png
+    # - type: cuboid
+    #   name: chaircushion
+    #   pos: [-7.9, 4.85, -19]
+    #   rotate: [0, 0, 0]
+    #   size: [3.5, 0.5, 3.1]
+    #   material:
+    #     preset: matte
+    #     kd: 1
+    #     texture: 
+    #       type: image
+    #       scaleU: 5
+    #       scaleV: 5
+    #       src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/red-fabric.png
+    # - type: cuboid
+    #   name: chaircushionback
+    #   pos: [-9.85, 7.9, -19]
+    #   rotate: [0, 0, 90]
+    #   size: [3.5, 0.5, 3.1]
+    #   material:
+    #     preset: matte
+    #     kd: 1
+    #     texture: 
+    #       type: image
+    #       scaleU: 5
+    #       scaleV: 5
+    #       src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/red-fabric.png          

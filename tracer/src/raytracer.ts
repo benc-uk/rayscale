@@ -319,11 +319,11 @@ export class Raytracer {
         else
           transRay = new Ray(hit.intersection, hit.reflected);
 
-        // Slide ray a fraction along direction
+        // Move new ray inside object, use the normal at the hit
         // Reflections don't work otherwise
-        transRay.pos[0] += transRay.dir[0] * ObjectConsts.EPSILON2;
-        transRay.pos[1] += transRay.dir[1] * ObjectConsts.EPSILON2;
-        transRay.pos[2] += transRay.dir[2] * ObjectConsts.EPSILON2;
+        transRay.pos[0] -= hit.normal[0] * 0.2; //transRay.dir[0] * 0.1; //ObjectConsts.E5SILON2;
+        transRay.pos[1] -= hit.normal[1] * 0.2; //transRay.dir[1] * 0.1; //ObjectConsts.EPSILON2;
+        transRay.pos[2] -= hit.normal[2] * 0.2; //transRay.dir[2] * 0.1; //ObjectConsts.EPSILON2;
         transRay.depth = ray.depth + 1;
 
         // What is new ray inside?
