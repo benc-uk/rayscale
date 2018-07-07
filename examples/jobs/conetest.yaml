@@ -2,7 +2,6 @@ name: Cone Test
 width: 500
 height: 400
 scene:
-  name: cone
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.1
   cameraFov: 50

@@ -10,7 +10,7 @@ export class Job {
   id: string;               // GUID (NOT USED)
   width: number;            // Width of image to render in pixels (must be >= height)
   height: number;           // Height of image to render in pixels
-  status: string;           // e.g. "RUNNING"; 
+  status: string;           // e.g. "RUNNING", "FAILED", "CANCELLED"; 
   reason: string;           // Text description of current status
   rawScene: any;            // Unparsed scene as given to us from jobInput
   stats: any;               // General data bag for holding stats about the job
@@ -20,6 +20,10 @@ export class Job {
   taskQueue: string[];      // Ids of tasks not yet assigned
   tasks: Task[];            // Tasks this job has been split into
   tasksComplete: number;    // Tasks completed
+
+  // public static readonly RUNNING = 101;
+  // public static readonly FAILED = 201;
+  // public static readonly CANCELLED = 301;
 
   get totalTasks(): number {
     return this.tasks.length;

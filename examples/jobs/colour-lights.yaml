@@ -2,7 +2,6 @@ name: Coloured Lights
 width: 1200
 height: 800
 scene:
-  name: three-lights
   backgroundColour: [10, 10, 30]
   ambientLevel: 0.15
   cameraFov: 50

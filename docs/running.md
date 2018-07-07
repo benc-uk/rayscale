@@ -42,7 +42,7 @@ You can run both the *Controller* and *Tracer* locally using Node.js. To speed u
 ### Steps
 - Clone this repo into somewhere `git clone https://github.com/benc-uk/rayscale.git`
 - Create a terminal window (bash, PowerShell) in the cloned project directory
-- `cd etc/compose`
+- `cd etc/docker`
 - `docker-compose build`
 - `docker-compose up -d`
 - If you want to add more tracers simply scale them up with: `docker-compose up -d --scale tracer=4`
@@ -70,7 +70,7 @@ You can run both the *Controller* and *Tracer* locally using Node.js. To speed u
 
 ### Optional Image Build Steps
 - If you want to build the images and push to your own repo or registry follow these steps. Change `<your-registry>` as required. Note. this will require Docker CE installed
-- `cd etc/compose`
+- `cd etc/docker`
 - `docker-compose build`
 - `docker tag rayscale-tracer <your-registry>/rayscale/tracer`
 - `docker tag rayscale-controller <your-registry>/rayscale/controller`

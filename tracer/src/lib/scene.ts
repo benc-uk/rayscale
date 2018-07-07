@@ -3,11 +3,10 @@ import { Object3D } from './object3d';
 import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
-import { Texture } from './texture';
 import { TextureBasic } from './texture-basic';
 import { TextureCheck } from './texture-check';
 import { TextureImage } from './texture-image';
-import { TextureManager } from './texture-manager';
+import { PngManager } from './png-manager';
 import { Plane } from './plane';
 import { Sphere } from './sphere';
 import { Cuboid } from './cuboid';
@@ -15,7 +14,7 @@ import { Cylinder } from './cylinder';
 import { Cone } from './cone';
 import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './mesh';
-import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture } from './texture-noise';
+import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
 
 // ====================================================================================================
 // 
@@ -232,7 +231,7 @@ export class Scene {
         case 'image':
           if(!input.texture.src) throw(`Texture of type 'image' requires src`); 
           // The await here is super important, we can't carry on until all textures are loaded
-          await TextureManager.getInstance().loadTexture(input.texture.src);
+          await PngManager.getInstance().loadTexture(input.texture.src);
           texture = new TextureImage(input.texture.src);
           break;
         case 'noise':
@@ -270,7 +269,23 @@ export class Scene {
           texture = new MarbleTexture(input.texture.scale, 
             Colour.fromRGB(c1[0], c1[1], c1[2]), 
             Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.periods, input.texture.turbPower, input.texture.turbSize, input.texture.mult, input.texture.pow);
-          break;          
+          break;   
+        case 'wood':
+          if(!input.texture.colour1) throw(`Texture of type 'wood' requires colour1`);
+          if(!input.texture.colour2) throw(`Texture of type 'wood' requires colour2`);
+          if(!input.texture.period) { input.texture.period = 6 }
+          if(!input.texture.axis) { input.texture.axis = 1 }
+          if(!input.texture.offset) { input.texture.offset = [0, 0 ,0] }
+          if(!input.texture.turbPower) { input.texture.turbPower = 5 }
+          if(!input.texture.turbSize) { input.texture.turbSize = 32 }
+          if(!input.texture.mult) { input.texture.mult = 1 }
+          if(!input.texture.pow) { input.texture.pow = 1 }
+          var c1: any = input.texture.colour1;
+          var c2: any = input.texture.colour2;
+          texture = new WoodTexture(input.texture.scale, 
+            Colour.fromRGB(c1[0], c1[1], c1[2]), 
+            Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.period, input.texture.turbPower, input.texture.turbSize, input.texture.mult, input.texture.pow, input.texture.axis, input.texture.offset);
+          break;                  
         default:
           var c = input.texture.colour;
           texture = TextureBasic.fromRGB(c[0], c[1], c[2]);

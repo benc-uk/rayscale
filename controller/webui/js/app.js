@@ -37,7 +37,7 @@ function pageLoad() {
   // Ctrl+S starts job
   $(document).keydown(function(event) {
     if (!( String.fromCharCode(event.which).toLowerCase() == 's' && event.ctrlKey) && !(event.which == 19)) return true;
-    jobSubmitter();
+    jobSubmit();
     event.preventDefault();
     return false;
   });
@@ -46,7 +46,7 @@ function pageLoad() {
 //
 // Submit job to controller
 //
-function jobSubmitter() {
+function jobSubmit() {
   let job = editor.getValue();
   window.localStorage.setItem('rayScaleJob', job);
   fetch("/api/jobs", {
@@ -64,7 +64,7 @@ function jobSubmitter() {
     }
   })
   .catch(err => {
-    setStatusl('<i class="fas fa-exclamation-triangle"></i> Error occurred submitting job!')
+    setStatus('<i class="fas fa-exclamation-triangle"></i> Error occurred submitting job!')
   })
 }
 
@@ -154,6 +154,25 @@ function tracerRefresh() {
   })
   .catch(err => {
     err.json().then(j => { document.getElementById('resp').value=("err "+JSON.stringify(j)) });
+  })
+}
+
+function jobCancel() {
+  fetch("/api/jobs/cancel", {
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-yaml' },
+      method: "POST",
+      body: {}
+  })
+  .then(res => {
+    if(res.status == 200) {
+      res.json().then(data => { 
+        setStatus('<i class="fas fa-exclamation-triangle"></i> '+data.msg)
+        clearTimeout(updaterId);
+      });
+    }
+  })
+  .catch(err => {
+    setStatus('<i class="fas fa-exclamation-triangle"></i> Error occurred cancelling job!')
   })
 }
 

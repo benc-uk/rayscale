@@ -6,9 +6,7 @@
 import * as pngjs from 'pngjs';
 import { Texture } from './texture';
 import { Colour } from './colour';
-import { TextureManager } from './texture-manager';
-import { vec2, mat2 } from 'gl-matrix';
-import { Utils } from './utils';
+import { PngManager } from './png-manager';
 
 export class TextureImage extends Texture {
   swapUV: boolean;
@@ -19,16 +17,20 @@ export class TextureImage extends Texture {
   textureUrl: string;
   png: pngjs.PNG;
 
-  // NOTE! Important texture is loaded into TextureManager first
+  // ====================================================================================================
+  // !GOTCHA: Important texture is loaded into TextureManager first
   // We can't do that here, or we'd be in async/await/Promise hell
+  // ====================================================================================================
   constructor(url: string) {
     super();
     this.textureUrl = url;
-    this.png = TextureManager.getInstance().getTexturePNG(this.textureUrl);
+    this.png = PngManager.getInstance().getTexturePNG(this.textureUrl);
   }
 
+  // ====================================================================================================
   // This fetches pixel colour from texture at given uv point
   // Will carry out simple bilinear filter 
+  // ====================================================================================================
   getColourAt(u: number, v: number): Colour {
 
     if(this.flipU) u = (1 - u)

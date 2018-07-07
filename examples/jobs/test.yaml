@@ -4,7 +4,6 @@ height: 1000
 #antiAlias: true
 #tasks: 8
 scene:
-  name: pillar
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.15
   cameraFov: 30

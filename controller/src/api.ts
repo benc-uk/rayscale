@@ -58,12 +58,12 @@ export class API {
     console.log(`### New job request received`);
 
     // Check active job  
-    if(res.app.get('env').toLowerCase() == "production") {
+    //if(res.app.get('env').toLowerCase() == "production") {
       if(this.job && this.job.status == "RUNNING") {
         console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.totalTasks} of ${this.job.tasksRemaining} tasks remaining`);
         res.status(400).send({msg: "There is currently an active job"}); return;
       }
-    }
+    //}
 
     // Check if we have any tracers
     if(Object.keys(this.tracers).length <= 0) {
@@ -95,6 +95,13 @@ export class API {
   // API: Task results send back from tracer
   // ====================================================================================
   public taskComplete = (req: Request, res: Response) => {
+    // Ignore results if job not running (i.e CANCELLED or FAILED)
+    if(this.job.status != "RUNNING") { 
+      console.log(`### Task results '${req.params.id}' discared as job is ${this.job.status}`);
+      res.status(200).send({ msg: "OK, slice buffer discarded" });
+      return;
+    }
+
     let taskId = req.params.id;
     let taskIndex = req.headers['x-task-index'];
     let taskTracer: string = req.headers['x-tracer'].toString();
@@ -293,16 +300,29 @@ export class API {
   // ====================================================================================
   // Job completion, output image, gather stats etc
   // ====================================================================================
-  private completeJob() {
-    if(this.job.status != "RUNNING") {
-      return;
-    }
-    this.job.endDate = new Date();
-    this.job.durationTime = (new Date().getTime() - this.job.startTime) / 1000;
-
+  private completeJob(): void {
     let outDir = `${this.jobOutDir}/${this.job.name}`;
     if (!fs.existsSync(outDir)){
       fs.mkdirSync(outDir);
+    }
+
+    this.job.endDate = new Date();
+    this.job.durationTime = (new Date().getTime() - this.job.startTime) / 1000;
+
+    if(this.job.status == 'CANCELLED') {
+      fs.writeFileSync(`${outDir}/result.json`, JSON.stringify({
+        status: this.job.status,
+        reason: this.job.reason,
+        start: this.job.startDate,
+        end: this.job.endDate,
+        durationTime: this.job.durationTime
+      }, null, 2));
+      fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);  
+      return;      
+    }
+    
+    if(this.job.status != 'RUNNING') {
+      return;
     }
 
     // Write out result PNG file
@@ -375,5 +395,19 @@ export class API {
   public listTracers = (req: Request, res: Response) => {
     res.header("Cache-Control", "no-cache, no-store, must-revalidate");
     res.status(200).send(this.tracers)
-  }
+  } 
+
+  // ====================================================================================
+  // Cancel job!
+  // ====================================================================================
+  public cancelJob = (req: Request, res: Response) => {
+    if(this.job && this.job.status == "RUNNING") {
+      this.job.status = "CANCELLED";
+      this.job.reason = "Cancelled by user at "+(new Date().toDateString());
+      this.completeJob();
+      res.status(200).send({ msg: "Job cancelled" })
+    } else {
+      res.status(400).send({ msg: "No running job to cancel" })
+    }
+  }  
 }

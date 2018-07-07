@@ -1,10 +1,9 @@
-name: Transparent Test
+name: Transparency Demo
 width: 1920
 height: 1080
 maxDepth: 6
 antiAlias: true
 scene:
-  name: glass-objects
   backgroundColour: [10, 90, 30]
   ambientLevel: 0.2
   cameraFov: 30

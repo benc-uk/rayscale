@@ -38,15 +38,15 @@ export class NoiseTexture extends Texture {
     x *= this.scale[0];
     y *= this.scale[1];
     z *= this.scale[2];
-    let coloura = this.colour1.copy();
-    let colourb = this.colour2.copy();
 
-    var val = this.noise.noise3D(x, y, z);
+    var val = NoiseLib.noise(x, y, z);
     // Modify to range 0-1
     val = (val + 1) / 2;
-    val *= this.mult;
-    val = Math.pow(val, this.pow);
 
+    // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
+    let coloura = this.colour1.copy();
+    let colourb = this.colour2.copy();
+    val = Math.pow(val * this.mult, this.pow);
     coloura.mult(val);
     colourb.mult(1 - val);
     coloura.add(colourb);
@@ -84,28 +84,15 @@ export class TurbulenceTexture extends Texture {
     x *= this.scale[0];
     y *= this.scale[1];
     z *= this.scale[2];
-    // let val = 0.0;
-    // let size = this.size;
-    // let initialSize = size;
-    // while(size >= 1) {
-    //   if(this.abs)
-    //     val += Math.abs(this.noise.noise3D(x / size, y / size, z / size) * size);
-    //   else
-    //     val += this.noise.noise3D(x / size, y / size, z / size) * size;
-    //   size /= 2.0;
-    // }
-    // val = (val / (initialSize * 2));
 
     let val = NoiseLib.turb(x, y, z, this.size, this.abs);
-
     // Move to range 0~1
     val = (val + 1) / 2;
-    val *= this.mult;
-    val = Math.pow(val, this.pow);
     
+    // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
     let coloura = this.colour1.copy();
     let colourb = this.colour2.copy();
-
+    val = Math.pow(val * this.mult, this.pow);
     coloura.mult(val);
     colourb.mult(1 - val);
     coloura.add(colourb);
@@ -147,11 +134,12 @@ export class MarbleTexture extends Texture {
     z *= this.scale[2];
     let noiseSize = 256;
     let xyValue = x * this.periods[0] / noiseSize + y * this.periods[1] / noiseSize + z * this.periods[2] / noiseSize + this.turbPower * Math.abs(NoiseLib.turb(x, y, z, this.turbSize, false));
-    let val = Math.abs(Math.sin(xyValue * 3.14159));
+    let val = Math.abs(Math.sin(xyValue * Math.PI));
+
+    // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
     let coloura = this.colour1.copy();
     let colourb = this.colour2.copy();
     val = Math.pow(val * this.mult, this.pow);
-
     coloura.mult(val);
     colourb.mult(1 - val);
     coloura.add(colourb);
@@ -159,11 +147,86 @@ export class MarbleTexture extends Texture {
   }
 }
 
+// ====================================================================================================
+// Wood like effect created with turbulence
+// ====================================================================================================
+export class WoodTexture extends Texture {
+  solid: boolean = true;
+  scale: number[];
+  noise: SimplexNoise;
+  colour1: Colour;
+  colour2: Colour;
+  period: number;
+  turbPower: number;
+  turbSize: number;
+  mult: number;
+  pow: number;
+  axis: number;
+  offset: number[];
+
+  constructor(scale: number[], c1: Colour, c2: Colour, period: number, turbPower: number, turbSize: number, mult: number, pow: number, axis: number, offset: number[]) {
+    super();
+    this.noise = new SimplexNoise(Scene.randomSeed);
+    this.colour1 = c1;
+    this.colour2 = c2;
+    this.scale = scale;
+    this.period = period;
+    this.axis = axis;
+    this.offset = offset;
+    this.turbPower = turbPower;
+    this.turbSize = turbSize;
+    this.mult = mult;
+    this.pow = pow;
+  }
+
+  public getColourAtSolid(x: number, y: number, z: number): Colour {
+    x += this.offset[0]
+    y += this.offset[1]
+    z += this.offset[2]
+    x *= this.scale[0];
+    y *= this.scale[1];
+    z *= this.scale[2];
+    let noiseSize = 256;
+
+    let xValue = (x-(noiseSize/2)) / noiseSize;
+    let yValue = (y-(noiseSize/2)) / noiseSize;
+    let zValue = (z-(noiseSize/2)) / noiseSize;
+    let distValue = 0;
+    switch(this.axis) {
+      case 0:
+        distValue = Math.sqrt(xValue * xValue + yValue * yValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
+        break;
+      case 1:
+        distValue = Math.sqrt(xValue * xValue + zValue * zValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
+        break;
+      case 2:
+        distValue = Math.sqrt(yValue * yValue + zValue * zValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
+        break;
+    }
+    // let distValue = Math.sqrt(0 + yValue * yValue  + zValue * zValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
+    //let distValue = Math.sqrt(xValue * xValue + 0 + zValue * zValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
+    // let distValue = Math.sqrt(xValue * xValue + yValue * yValue  + 0) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
+    let val = Math.abs(Math.sin(2 * this.period * distValue * Math.PI));
+
+    // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
+    let coloura = this.colour1.copy();
+    let colourb = this.colour2.copy();
+    val = Math.pow(val * this.mult, this.pow);
+    coloura.mult(val);
+    colourb.mult(1 - val);
+    coloura.add(colourb);
+    return coloura;
+  }
+}
+
+// ====================================================================================================
+// Static library of functions used by all noise type textures
+// ====================================================================================================
 export class NoiseLib {
-  static noise: SimplexNoise;
+  static simplex: SimplexNoise;
 
   static initNoise(seed: string) {
-    NoiseLib.noise = new SimplexNoise(seed);
+    NoiseLib.simplex = new SimplexNoise(seed);
   }
 
   static turb(x: number, y: number, z: number, initialSize: number, abs: boolean): number {
@@ -172,12 +235,16 @@ export class NoiseLib {
     //let initialSize = size;
     while(size >= 1) {
       if(abs)
-        val += Math.abs(NoiseLib.noise.noise3D(x / size, y / size, z / size) * size);
+        val += Math.abs(NoiseLib.simplex.noise3D(x / size, y / size, z / size) * size);
       else
-        val += NoiseLib.noise.noise3D(x / size, y / size, z / size) * size;
+        val += NoiseLib.simplex.noise3D(x / size, y / size, z / size) * size;
       size /= 2.0;
     }
     val = (val / (initialSize * 2));
     return val;
+  }
+
+  static noise(x: number, y: number, z: number): number {
+    return NoiseLib.simplex.noise3D(x, y, z)
   }
 }

@@ -4,7 +4,6 @@ height: 480
 tasks: 6
 #antiAlias: true
 scene:
-  name: mesh-test
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.2
   cameraFov: 28

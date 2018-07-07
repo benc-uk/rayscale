@@ -5,7 +5,7 @@ import { Task } from './lib/task';
 import { Scene } from './lib/scene';
 import { Stats } from './lib/stats';
 import { Utils } from './lib/utils';
-import { TextureManager } from './lib/texture-manager';
+import { PngManager } from './lib/png-manager';
 import { ObjManager } from './lib/obj-manager';
 
 // =======================================================================================================
@@ -15,6 +15,7 @@ export class API {
   tracerEndPoint: string;
   lastJobId: string;
   lastScene: Scene;
+  raytracer: Raytracer;
 
   constructor(ep: string) {
     this.ctrlEndPoint = ep;
@@ -39,7 +40,7 @@ export class API {
       Stats.reset();
       // Clear out caches, or not 
       if(process.env.CLEAR_CACHE != "false") { 
-        TextureManager.getInstance().clearCache();  
+        PngManager.getInstance().clearCache();  
         ObjManager.getInstance().clearCache();
       }
 
@@ -68,7 +69,8 @@ export class API {
     // Start the ray tracer for the give task & scene
     try { 
       // Go!
-      let imgSlice = new Raytracer(task, scene).runRayTrace();
+      this.raytracer = new Raytracer(task, scene);
+      let imgSlice = this.raytracer.runRayTrace();
 
       // Log stats
       console.log(`### Task complete, sending image fragment back to controller`);
@@ -105,7 +107,10 @@ export class API {
     res.status(200).send({ msg: "Hello!" })
   }
 
-  public listTasks(req: Request, res: Response) {
-    console.log(req);
+  // stub
+  public listTasks(req
+    : Request, res: Response) {
+    console.log("### API stub");
   }
+
 }

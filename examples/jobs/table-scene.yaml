@@ -10,7 +10,6 @@ height: 400
 #maxDepth: 7
 tasks: 32
 scene:
-  name: complex-scene
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.1
   cameraFov: 28
