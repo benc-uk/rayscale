@@ -347,6 +347,15 @@ export class Raytracer {
       let ambientColour = outColour.multNew(hitObject.material.ka * this.scene.ambientLevel);
       outColour.add(ambientColour);
 
+      // Distance attenuation fog - it doesn't look very good
+      // let distAtt = (1 / (t)) * 90;
+      // distAtt = Utils.clamp(distAtt, 0, 1);
+      
+      // let fogColour = Colour.fromRGB(118, 129, 137);
+      // fogColour.mult(1-distAtt)
+      // outColour.mult(distAtt);
+      // outColour.add(fogColour);
+      
       // WOW! We're done, return resulting colour for this hit object
       return outColour;
     } // End of object loop

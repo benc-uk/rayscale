@@ -203,9 +203,6 @@ export class WoodTexture extends Texture {
         distValue = Math.sqrt(yValue * yValue + zValue * zValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
         break;
     }
-    // let distValue = Math.sqrt(0 + yValue * yValue  + zValue * zValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
-    //let distValue = Math.sqrt(xValue * xValue + 0 + zValue * zValue) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
-    // let distValue = Math.sqrt(xValue * xValue + yValue * yValue  + 0) + this.turbPower * NoiseLib.turb(x, y, z, this.turbSize, false);
     let val = Math.abs(Math.sin(2 * this.period * distValue * Math.PI));
 
     // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
