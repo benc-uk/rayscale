@@ -13,7 +13,6 @@ import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 import { ObjManager } from './obj-manager';
-import { TextureBasic } from './texture-basic';
 import { Colour } from './colour';
 
 // ====================================================================================================
@@ -29,7 +28,6 @@ export class Mesh implements Object3D {
   // Mesh properties
   public objModel: ObjModel;
   private boundingBox: BoundingBox;
-  //private debug: boolean = true;
   public boxSettings: BoundingBoxSettings;
 
   // ====================================================================================================
@@ -253,7 +251,7 @@ export class Mesh implements Object3D {
       let nx = (1.0 - (result.data.u + result.data.v)) * n1[0] + n0[0] * result.data.u + n2[0] * result.data.v;
       let ny = (1.0 - (result.data.u + result.data.v)) * n1[1] + n0[1] * result.data.u + n2[1] * result.data.v;
       let nz = (1.0 - (result.data.u + result.data.v)) * n1[2] + n0[2] * result.data.u + n2[2] * result.data.v;
-      n = vec4.fromValues(nx, ny, nz, 0);
+      n = n0;//vec4.fromValues(nx, ny, nz, 0);
     } else {
       // Debug, just make a normal up
       n = vec4.fromValues(0.33, 0.33, 0.33, 0);

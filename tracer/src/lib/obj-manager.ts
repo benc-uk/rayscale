@@ -43,6 +43,11 @@ export class ObjManager {
         
           // Parse OBJ and store in cache
           this.objs[url] = parser.parse();
+
+          // Validate some stuff
+          if(!this.objs[url].models[0]) throw "File must contain at least one model";
+          if(this.objs[url].models[0].vertexNormals.length <= 0) throw "File didn't contain any normals";
+
           resolve(respData.statusCode);
         } catch(e) {
           // Important we delete it for future runs, as we are singleton

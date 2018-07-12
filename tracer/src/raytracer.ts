@@ -314,10 +314,13 @@ export class Raytracer {
 
         let transRay: Ray;
         // Are we refracted or total internal reflection
-        if(newDir)
+        if(newDir) {
+          // Use refraction direction
           transRay = new Ray(hit.intersection, newDir);
-        else
+        } else {
+          // Use *reflection* ray direction
           transRay = new Ray(hit.intersection, hit.reflected);
+        }
 
         // Move new ray inside object, use the normal at the hit
         // Reflections don't work otherwise
@@ -388,6 +391,7 @@ export class Raytracer {
     let dirOut: vec4 = vec4.create();
 
     // Test for total internal reflection 
+    // Return null which means use a reflected ray instead
     if (cs2 < 0) {
 			return null;
 		}
