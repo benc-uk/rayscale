@@ -15,15 +15,15 @@ function pageLoad() {
     selectPage('jobEdit');
   }
 
-  // pass options to create ace editor
-  editor = ace.edit(document.getElementById('editor'), {
-    mode: "ace/mode/yaml",
-    selectionStyle: "text",
-    theme: "ace/theme/tomorrow_night",
-    fontSize: "19px",
-    tabSize: 2,
-    useSoftTabe: true
-  })
+  // Pass options to create Monaco editor
+	editor = monaco.editor.create(document.getElementById('editor'), {
+		language: 'javascript',
+		minimap: { enabled: false },
+		theme: 'vs-dark',
+		fontSize: '18px',
+		language: 'yaml',
+		useTabStops: false
+	});
 
   // Restore old job YAML
   let oldjob = window.localStorage.getItem('rayScaleJob');

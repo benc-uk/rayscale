@@ -4,7 +4,7 @@ import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
 import { TextureBasic } from './texture-basic';
-import { TextureCheck } from './texture-check';
+import { TextureCheckUV } from './texture-check-uv';
 import { TextureImage } from './texture-image';
 import { PngManager } from './png-manager';
 import { Plane } from './plane';
@@ -226,7 +226,7 @@ export class Scene {
           if(!input.texture.colour2) throw(`Texture of type 'check' requires colour2`);
           var c1: any = input.texture.colour1;
           var c2: any = input.texture.colour2;
-          texture = new TextureCheck(Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]));
+          texture = new TextureCheckUV(Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]));
           break;
         case 'image':
           if(!input.texture.src) throw(`Texture of type 'image' requires src`); 

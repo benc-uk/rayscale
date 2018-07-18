@@ -310,13 +310,13 @@ export class Raytracer {
       if(hitObject.material.kt > 0) {  
 
         // Find refracted direction
-        let newDir = this.calcRefractionDir(ray, hit, hitObject);
+        let refractDir = this.calcRefractionDir(ray, hit, hitObject);
 
         let transRay: Ray;
         // Are we refracted or total internal reflection
-        if(newDir) {
+        if(refractDir) {
           // Use refraction direction
-          transRay = new Ray(hit.intersection, newDir);
+          transRay = new Ray(hit.intersection, refractDir);
         } else {
           // Use *reflection* ray direction
           transRay = new Ray(hit.intersection, hit.reflected);
@@ -336,6 +336,10 @@ export class Raytracer {
           transRay.inside = hitObject;
           tFade = 0.8;
         } else {
+          // If we hit the same object while inside it, and refracted -> then we're outside again
+          if(ray.inside == hitObject && refractDir != null) {
+            transRay.inside = null;
+          }
           // Ray traversing inside object
           transRay.inside = ray.inside;
         }
@@ -359,7 +363,7 @@ export class Raytracer {
       // outColour.mult(distAtt);
       // outColour.add(fogColour);
       
-      // WOW! We're done, return resulting colour for this hit object
+      // WOW! We're done, return resulting colour !
       return outColour;
     } // End of object loop
 

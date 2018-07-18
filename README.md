@@ -95,7 +95,12 @@ The way *Scenes* are defined is in YAML, there's
 
 # Limitations and Design Constraints
 These constraints are either by design or known issues
- - The system only allows for a single *Job* to be running at any time
+ - The raytracer has some known issues, including:
+   - Cones can render incorrectly at certain angles
+   - Meshes don't support image texture mapping (requires UV mapping, deemed out of scope)
+   - Meshes assume a normals are smoothed all over the object (requires smoothing group support)
+   - Transparency hasn't been fully tested for accuracy  
+ - The system only allows for a single *Job* to be running at any time.
  - Failure of any one *Task*, will result in a failed/incomplete job. *Job* and *Task* recovery is considered out of scope, and unlikely to be resolvable.
  - *Tracers* do not check to see if the *Controller* is active, it is assumed the controller is online at all times. Should the *Controller* be restarted for any reason, all *Tracers* will also need to be terminated and restarted. 
 
