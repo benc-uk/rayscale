@@ -4,6 +4,6 @@ buttons:
   - text: Gallery
     href: http://rayscale.benco.io/examples/renders/
 header-colours: 
-  right: "#e5c422"
+  right: "#8d119b"
   left: "#96330f"
 favicon: https://github.com/benc-uk/rayscale/raw/master/controller/webui/favicon.png
