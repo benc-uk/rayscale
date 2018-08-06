@@ -1,2 +1,9 @@
-theme: jekyll-theme-slate
+remote_theme: benc-uk/theme-msdark
 title: RayScale - Ray Tracer
+buttons:
+  - text: Gallery
+    href: http://rayscale.benco.io/examples/renders/
+header-colours: 
+  right: "#8d119b"
+  left: "#96330f"
+favicon: https://github.com/benc-uk/rayscale/raw/master/controller/webui/favicon.png
