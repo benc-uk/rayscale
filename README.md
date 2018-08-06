@@ -32,7 +32,7 @@ These are some sample images rendered with RayScale
 
 ### [📷 Complete Gallery Here](examples/renders)
 
-<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table-scene.png"><img src="examples/renders/table-scene.png"></a>
+<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table-scene-v2.png"><img src="examples/renders/table-scene-v2.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/teapot-best.png"><img src="examples/renders/teapot-best.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/transparency.png"><img src="examples/renders/transparency.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
