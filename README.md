@@ -12,6 +12,8 @@ RayScale is a network distributed 3D graphics renderer based on ray tracing. Wri
 ## What Is Ray Tracing
 In computer graphics, ray tracing is a rendering technique for generating an image by tracing the path of light as pixels in an image plane and simulating the effects of its encounters with virtual objects. The technique is capable of producing a very high degree of visual realism, usually higher than that of typical polygon based scanline rendering methods, but at a greater computational cost.
 
+<img src="docs/diagram.png" style="width:600px">
+
 ## Ray Tracing Features
 It is not the goal of this project to create a completely fully featured ray tracer, as the scope of that is almost limitless. 
 RayScale currently provides:
@@ -98,7 +100,7 @@ These constraints are either by design or known issues
  - The raytracer has some known issues, including:
    - Cones can render incorrectly at certain angles
    - Meshes don't support image texture mapping (requires UV mapping, deemed out of scope)
-   - Meshes assume a normals are smoothed all over the object (requires smoothing group support)
+   - Meshes assume a normals are smoothed all over the object (requires smoothing group support,not going to happen any time soon)
    - Transparency hasn't been fully tested for accuracy  
  - The system only allows for a single *Job* to be running at any time.
  - Failure of any one *Task*, will result in a failed/incomplete job. *Job* and *Task* recovery is considered out of scope, and unlikely to be resolvable.
