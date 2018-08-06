@@ -1,9 +1,9 @@
 remote_theme: benc-uk/theme-msdark
-title: RayScale - Ray Tracer
-buttons:
-  - name: Gallery
-    href: /examples/renders/
- header-colours: 
-  right: "#cc6613"
-  left: "#96330f"
-favicon: https://github.com/benc-uk/rayscale/raw/master/controller/webui/favicon.png
+# title: RayScale - Ray Tracer
+# buttons:
+#   - name: Gallery
+#     href: /examples/renders/
+#  header-colours: 
+#   right: "#cc6613"
+#   left: "#96330f"
+# favicon: https://github.com/benc-uk/rayscale/raw/master/controller/webui/favicon.png
