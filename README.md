@@ -85,13 +85,13 @@ As RayScale uses Node.js and is also containerised there are numerous ways you c
 - In Kubernetes
 - In [Azure Container Instances](https://azure.microsoft.com/en-gb/services/container-instances/)
 
-### [📘 Full Docs - Running & Deploying RayScale](docs/running.md)
+#### [📘 Running & Deploying RayScale](docs/running.md)
 
 
 
 # Scene Definition Language
-The way *Scenes* and the *JobInput* are defined is yia YAML, there's 
-### [📘 Full Docs - Job & Scene Definition Reference](docs/reference.md)
+The way *Scenes* and the *JobInput* are defined is yia YAML, there's a full guide to the objects and their properties linked below. However it is recommend to use one of the included example jobs as a starting point rather than write a new job & scene YAML from scratch.
+#### [📘 Job & Scene Definition Reference](docs/reference.md)
 
 
 
