@@ -135,7 +135,7 @@ type:      The type of texture, one of: basic, check, image, noise, turbulence, 
 scaleV:    Scaling factor for texture V coords (applies to check and image texture types)
 flipU:     Boolean. Flip the direction of the texture U coords (applies to image texture types)
 flipV:     Boolean. Flip the direction of the texture V coords (applies to image texture types)
-swapUV:    Boolean. Swap U & V texture coords, equates to a 90deg rotation (applies to image texture types)
+swapUV:    Boolean. Swap U & V texture coords, equates to a 90deg rotation (applies to image texture types)</span>
 </pre>
 
 ### type: basic
