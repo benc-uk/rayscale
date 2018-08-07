@@ -1,10 +1,10 @@
 # RayScale
-RayScale is a network distributed 3D graphics renderer based on ray tracing. Written in Node.js, RayScale is designed for scaling out using containers. The objective of RayScale as a project is to demonstrate several points:
+RayScale is a network distributed, 3D renderer based on ray tracing. Written in Node.js, RayScale is designed for scaling out using containers. The objectives of RayScale as a working project is to demonstrate several points:
 
- - Parallel batch processing to break a slow & complex operation into smaller chunks, to gain performance benefits
- - How containers can be scaled extremely easily 
- - Microservices architecture
- - Scaling containers over a cluster such as Kubernetes
+ - Parallel batch processing, gain performance by break a slow & complex operation into smaller chunks
+ - The simplicity of using containers when scaling out
+ - A microservices based architecture
+ - Using a container cluster such as Kubernetes
  - Use of Azure services such as Azure Container Instances to serverlessly provide massive scale
  - RESTful APIs
  - Use of TypeScript with Node.js and Express
@@ -49,11 +49,11 @@ RayScale is intended to be run with a single *Controller* and one or more *Trace
 ![diagram](https://user-images.githubusercontent.com/14982936/40764441-fbed1ee0-64a0-11e8-86e8-b861c13f11b4.png)
 
 ## Controller
-Acts as control point and main interface with RayScale. It provides the API and Web UI for submitting jobs. It also coordinates the *Tracers*, keeps tracks on which tracers are online etc. The *Controller* splits up jobs into tasks and sends them to *Tracers*, and also reassembles & saves the results as they are sent back
+Acts as control point and the user's main interface with RayScale. It provides the API and Web UI for submitting jobs. It also coordinates the *Tracers*, keeps tracks of which tracers are online etc. The *Controller* splits up jobs into tasks and sends them to *Tracers*, and also reassembles & saves the results as they are sent back
 ### [📘 Controller documentation](controller/readme.md)
 
 ## Tracer 
-Renders and ray traces tasks given to it via the *Controller*. Each *Tracer* registers itself with the *Controller* on startup. The *Tracer* carries out scene parsing and also the work of actually computing the ray tracing algorithm of the task it has been given. Once completed, the results are POSTed back to the controller as a binary buffer of image data
+*Tracers* do the actual rendering work, by ray tracing the tasks given to it via the *Controller*. Each *Tracer* registers itself with the *Controller* on startup. The *Tracer* carries out scene parsing and also the work of actually computing the ray tracing algorithm of the task it has been given. Once completed, the results are POSTed back to the controller as a binary buffer of image data
 ### [📘 Tracer documentation](tracer/readme.md)
 
 
@@ -69,11 +69,11 @@ The *Controller* provides a simple web UI, available at `http://<controler-addre
 
 
 # Objects & Terms 
-As well as *Controller* & *Tracer* RayScale has several named objects and concepts which it's worth understanding:
+As well as the *Controller* & *Tracer*, RayScale has several named objects and concepts which it's worth understanding:
 - **JobInput** - A YAML document passed to the Controller to start a *Job*, at a high level it contains three things; job name, image dimensions and a scene definition. Full details are in the [job & scene reference guide](docs/reference.md)
 - **Job** - Internal representation of a *Job*, managed by the controller, holding its status, an array of tasks, start time etc. When a job is completed most of this information is placed in `result.json`
 - **Scene** - A description of what is to be rendered, consists of sets of parameters defining the camera position, lights and most importantly all the objects that make up the scene. The objects are described by type, position, size and their appearance. Full details are in the [job & scene reference guide](docs/reference.md)
-- **Tasks** - The controller divides a *Job* into *Tasks*. You can specify how many tasks you want your job split into, if you don't the system will simply allocate one task per tracer. A good rule of thumb for quickest rendering is to split the scene into twice as many tasks as you have tracers.  
+- **Tasks** - The controller divides a *Job* into *Tasks*. You can specify the number of tasks you want your job split into, if no number is given, the system will simply allocate one task per tracer. A good rule of thumb for quickest rendering is to split the scene into twice as many tasks as you have tracers.  
 The *Controller* schedules *Tasks* by creating a queue and sending them off the queue to idle *Tracers*. Only a single *Task* is allocated to a *Tracer* at a time, once a *Task* is completed another will be sent to the *Tracer* off the queue.  
 The *Task* contains the above *Scene* definition, the overall image size, and also the size of the sub-slice the task is to generate. The *Tracer* will only render the portion of the overall image given to it in the *Task*
 
@@ -90,7 +90,7 @@ As RayScale uses Node.js and is also containerised there are numerous ways you c
 
 
 # Scene Definition Language
-The way *Scenes* are defined is in YAML, there's 
+The way *Scenes* and the *JobInput* are defined is yia YAML, there's 
 ### [📘 Full Docs - Job & Scene Definition Reference](docs/reference.md)
 
 
