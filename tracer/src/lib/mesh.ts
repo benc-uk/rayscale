@@ -102,7 +102,7 @@ export class Mesh implements Object3D {
       }
 
       let maxt: number = Number.MAX_VALUE;
-      // Loop through all hot boxes, and the faces within them
+      // Loop through all hit boxes, and the faces within them
       for(let box of boxResult) {
         for(let face of box.faces) {
           let v0: vec3 = vec3.fromValues(this.objModel.vertices[face.vertices[0].vertexIndex - 1].x,

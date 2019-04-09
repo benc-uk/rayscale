@@ -3,13 +3,13 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "tracerCount": {
-      "value": 12
+      "value": 10
     },
     "dnsPrefix": {
       "value": "rayscale"
     },
     "tracerRestart": {
-      "value": "3"
+      "value": "2"
     }
   }
 }

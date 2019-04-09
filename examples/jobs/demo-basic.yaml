@@ -1,8 +1,8 @@
 name: Basic Demo 
 width: 1200
 height: 800
-tasks: 8
-antiAlias: true
+#tasks: 8
+antiAlias: false
 scene:
   backgroundColour: [10, 10, 30]
   ambientLevel: 0.6
