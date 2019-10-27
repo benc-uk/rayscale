@@ -22,7 +22,7 @@ spec:
         - containerPort: 9000
         env:     
         - name: HEALTH_CHECK_INTERVAL
-          value: "90"
+          value: "10"
 
 ---
 
@@ -33,7 +33,7 @@ metadata:
   labels:
     app: tracer
 spec:
-  replicas: 12
+  replicas: 8
   selector:
     matchLabels:
       app: tracer
@@ -76,10 +76,32 @@ apiVersion: v1
 metadata:
   name: controller-ui
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - protocol: TCP
     port: 80
     targetPort: 9000
   selector:
     app: controller
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: controller-ui
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  tls:
+  - hosts:
+    - rayscale.kube.benco.io
+    secretName: kube-benco-io-cert
+  rules:
+  - host: rayscale.kube.benco.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: controller-ui
+          servicePort: 80
