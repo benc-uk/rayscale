@@ -3,14 +3,14 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec4 } from 'gl-matrix'
+import { vec4 } from 'gl-matrix';
 
 export class Hit {
   public intersection: vec4;  // Intersection point in world space (point with w=1)
   public normal: vec4;        // Normal at intersection point (normalized vector)
   public reflected: vec4;     // Reflected ray direction (normalized vector)
-  public u: number = 1;       // Texture coords; u
-  public v: number = 1;       // Texture coords; v
+  public u = 1;       // Texture coords; u
+  public v = 1;       // Texture coords; v
 
   constructor(int: vec4, norm: vec4, refl: vec4, texu: number, texv: number) {
     this.intersection = int;

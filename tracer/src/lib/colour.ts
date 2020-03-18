@@ -6,7 +6,7 @@
 export class Colour {
   r: number; g: number; b: number;
 
-  constructor(r: number = 0, g: number = 0, b: number = 0) {
+  constructor(r = 0, g = 0, b = 0) {
     this.r = Math.min(Math.max(r, 0), 1);
     this.g = Math.min(Math.max(g, 0), 1);
     this.b = Math.min(Math.max(b, 0), 1);
@@ -16,51 +16,51 @@ export class Colour {
     return new Colour(r / 255, g / 255, b / 255);
   }
 
-  public toString() {
-    return `r:${this.r}, g:${this.g}, b:${this.b}`
+  public toString(): string {
+    return `r:${this.r}, g:${this.g}, b:${this.b}`;
   }
 
-  public writePixeltoBuffer(img: Buffer, width: number, x: number, y: number) {
-    let idx = (width * y + x) * 3;
+  public writePixeltoBuffer(img: Buffer, width: number, x: number, y: number): void {
+    const idx = (width * y + x) * 3;
     img[idx + 0] = this.r * 255;
     img[idx + 1] = this.g * 255;
     img[idx + 2] = this.b * 255;
   }
 
   public static fromPNGBuffer(img: Buffer, width: number, x: number, y: number): Colour {
-    let idx = (width * y + x) << 2;
+    const idx = (width * y + x) << 2;
     return Colour.fromRGB(img[idx], img[idx+1], img[idx+2]);
   }
 
   public multNew(v: number): Colour {
-    return new Colour(this.r * v, this.g * v, this.b * v)
+    return new Colour(this.r * v, this.g * v, this.b * v);
   }
 
-  public mult(v: number) {
-    this.r *= v; 
-    this.g *= v; 
+  public mult(v: number): void {
+    this.r *= v;
+    this.g *= v;
     this.b *= v;
     this.r = Math.min(1, Math.max(0, this.r));
     this.g = Math.min(1, Math.max(0, this.g));
-    this.b = Math.min(1, Math.max(0, this.b));    
+    this.b = Math.min(1, Math.max(0, this.b));
   }
 
-  public multColour(c: Colour) {
+  public multColour(c: Colour): void {
     this.r = this.r * c.r; this.g = this.g * c.g; this.b = this.b * c.b;
     this.r = Math.min(1, this.r);
     this.g = Math.min(1, this.g);
-    this.b = Math.min(1, this.b);    
+    this.b = Math.min(1, this.b);
   }
 
-  public multRGB(r: number, g: number, b: number) {
+  public multRGB(r: number, g: number, b: number): void {
     this.r = this.r * r; this.g = this.g * g; this.b = this.b * b;
     this.r = Math.min(1, this.r);
     this.g = Math.min(1, this.g);
-    this.b = Math.min(1, this.b);    
+    this.b = Math.min(1, this.b);
   }
 
   public static add(c1: Colour, c2: Colour): Colour {
-    let c = new Colour;
+    const c = new Colour;
     c.r = c1.r+c2.r;
     c.g = c1.g+c2.g;
     c.b = c1.b+c2.b;
@@ -70,7 +70,7 @@ export class Colour {
     return c;
   }
 
-  public add(c: Colour) {
+  public add(c: Colour): void {
     this.r += c.r;
     this.g += c.g;
     this.b += c.b;
@@ -84,7 +84,7 @@ export class Colour {
     return new Colour(this.r, this.g, this.b);
   }
 
-  public blend(v: number) {
+  public blend(v: number): void {
     this.r = this.r * (1 - v) + v;
     this.g = this.g * (1 - v) + v;
     this.b = this.b * (1 - v) + v;
@@ -94,7 +94,7 @@ export class Colour {
     this.b = Math.min(1, this.b);
   }
 
-  public blendRGB(r: number, g: number, b: number) {
+  public blendRGB(r: number, g: number, b: number): void {
     this.r = this.r * (1 - r) + r;
     this.g = this.g * (1 - g) + g;
     this.b = this.b * (1 - b) + b;

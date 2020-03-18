@@ -25,35 +25,36 @@ export class API {
   //
   // Respond to health pings with HTTP 200 and a simple JSON message
   //
-  public healthPing(req: Request, res: Response) {
-    res.status(200).send({ resp: "Hello! I am alive" })
+  public healthPing(req: Request, res: Response): void {
+    res.status(200).send({ resp: 'Hello! I am alive' });
   }
 
-  public newTask = async (req: Request, res: Response) => {
+  public newTask = async (req: Request, res: Response): Promise<void> => {
     // All starts here!
-    let task: Task = req.body.task;
+    const task: Task = req.body.task;
     let scene: Scene = null;
 
-    // We only parse the scene on new jobs, this way the tracer 
+    // We only parse the scene on new jobs, this way the tracer
     // can accept multiple tasks for the same job without re-parsing the scene
     if(task.jobId != this.lastJobId) {
       Stats.reset();
-      // Clear out caches, or not 
-      if(process.env.CLEAR_CACHE != "false") { 
-        PngManager.getInstance().clearCache();  
+      // Clear out caches, or not
+      if(process.env.CLEAR_CACHE != 'false') {
+        PngManager.getInstance().clearCache();
         ObjManager.getInstance().clearCache();
       }
 
       // Parse scene
-      scene = await Scene.parseScene(req.body.scene, task.jobId)
-      .catch(err => {
+      try {
+        scene = await Scene.parseScene(req.body.scene, task.jobId);
+      } catch(err) {
         console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
-        res.contentType('application/json'); 
+        res.contentType('application/json');
         res.status(460).send({ error: `Scene did not parse correctly: ${err}. Task rejected` });
-      });
+      }
 
       if(!scene) {
-        return;  
+        return;
       }
       this.lastJobId = task.jobId;
       this.lastScene = scene;
@@ -61,19 +62,19 @@ export class API {
       console.log(`### Scene parsing skipped for job: ${task.jobId}`);
       scene = this.lastScene;
     }
-    console.log(`### Starting task...`);
+    console.log('### Starting task...');
 
     // Send OK back before starting tracing
-    res.status(202).send({ msg: "Task accepted" });
+    res.status(202).send({ msg: 'Task accepted' });
 
     // Start the ray tracer for the give task & scene
-    try { 
+    try {
       // Go!
       this.raytracer = new Raytracer(task, scene);
-      let imgSlice = this.raytracer.runRayTrace();
+      const imgSlice = this.raytracer.runRayTrace();
 
       // Log stats
-      console.log(`### Task complete, sending image fragment back to controller`);
+      console.log('### Task complete, sending image fragment back to controller');
       console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
       console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
       console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
@@ -84,7 +85,7 @@ export class API {
       request.post({
         url: `${this.ctrlEndPoint}/tasks/${task.id}`,
         body: imgSlice,
-        headers: { 
+        headers: {
           'content-type': 'application/octet-stream',
           'x-tracer': this.tracerEndPoint,
           'x-task-id': task.id,
@@ -96,21 +97,20 @@ export class API {
           'x-stats-meshtests': Stats.meshFaceTests
         }
       })
-      .then()
-      .catch(err => { throw(err) })
+        .then()
+        .catch(err => { throw(err); });
     } catch(e) {
       console.log(`### ERROR! ${e}. Ray tracing failed, task & job have failed`);
     }
-  }
+  };
 
-  public getStatus(req: Request, res: Response) {
-    res.status(200).send({ msg: "Hello!" })
+  public getStatus(req: Request, res: Response): void {
+    res.status(200).send({ msg: 'Hello!' });
   }
 
   // stub
-  public listTasks(req
-    : Request, res: Response) {
-    console.log("### API stub");
+  public listTasks(req: Request, res: Response): void {
+    console.log('### API stub');
   }
 
 }

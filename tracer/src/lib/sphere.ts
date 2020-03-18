@@ -38,8 +38,8 @@ export class Sphere implements Object3D {
 
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());
-    let rot: quat = quat.identity(quat.create());    
-    // We cheat here, and scale by 1, and do the scaling in the calcT (using r2) 
+    const rot: quat = quat.identity(quat.create());
+    // We cheat here, and scale by 1, and do the scaling in the calcT (using r2)
     mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
     mat4.invert(this.trans, this.transFwd);
     //mat4.transpose(this.transNormal, this.transFwd);
@@ -50,28 +50,28 @@ export class Sphere implements Object3D {
   // ====================================================================================
   public calcT(inray: Ray): TResult {
     Stats.objectTests++;
-    let ray: Ray = inray.transformNewRay(this.trans);
-    let tresult = new TResult(0.0, ray);
+    const ray: Ray = inray.transformNewRay(this.trans);
+    const tresult = new TResult(0.0, ray);
 
     // Sphere at origin (0,0,0) so L simply becomes ray.pos, but with w=0
-    let b: number = 2 * vec4.dot(ray.pos, ray.dir);
-    let c: number = vec4.dot([ray.px, ray.py, ray.pz, 0], [ray.px, ray.py, ray.pz, 0]) - this.r2;
+    const b: number = 2 * vec4.dot(ray.pos, ray.dir);
+    const c: number = vec4.dot([ray.px, ray.py, ray.pz, 0], [ray.px, ray.py, ray.pz, 0]) - this.r2;
     let d: number = b * b - 4 * c;
 
     // Miss
     if (d <= 0.0)
       return tresult;
-    
+
     d = Math.sqrt(d);
-    let t1: number = (-b + d) / 2.0;
-    let t2: number = (-b - d) / 2.0;
+    const t1: number = (-b + d) / 2.0;
+    const t2: number = (-b - d) / 2.0;
 
     // Ray is inside if there is only 1 positive root
     // Added for refractive transparency
     if(t1 < 0 || t2 < 0) {
       tresult.inside = true;
     }
-    
+
     // Work out root to return
     if (t1 < 0 && t2 > 0) {
       tresult.t = t2; return tresult;
@@ -79,8 +79,8 @@ export class Sphere implements Object3D {
     if (t2 < 0 && t1 > 0) {
       tresult.t = t1; return tresult;
     }
-  
-    if(t1 < t2) { tresult.t = t1 } else { tresult.t = t2 };
+
+    if(t1 < t2) { tresult.t = t1; } else { tresult.t = t2; }
     return tresult;
   }
 
@@ -90,12 +90,12 @@ export class Sphere implements Object3D {
   // ====================================================================================
   public getHitPoint(result: TResult): Hit {
     // Intersection point
-    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON3);
+    const i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON3);
 
     // Normal is pointing from center of sphere (0,0,0) to intersect (i)
-    let n: vec4 = vec4.fromValues(0, 0, 0, 1);  //vec4.sub(vec4.create(), i, [0, 0, 0, 1]);
+    const n: vec4 = vec4.fromValues(0, 0, 0, 1);  //vec4.sub(vec4.create(), i, [0, 0, 0, 1]);
     vec4.div(n, i, [this.radius, this.radius, this.radius, 1]);
-    n[3] = 0; 
+    n[3] = 0;
 
     if(result.inside) {
       n[0] = -n[0];
@@ -113,15 +113,15 @@ export class Sphere implements Object3D {
     vec4.transformMat4(i, i, this.transFwd);
 
     // Calc reflected ray about the normal, & move to world
-    let r: vec4 = result.ray.reflect(n);
+    const r: vec4 = result.ray.reflect(n);
     vec4.transformMat4(r, r, this.transFwd);
-    vec4.normalize(r, r);   
+    vec4.normalize(r, r);
 
     // Move normal into world
     vec4.transformMat4(n, n, this.transFwd);
     vec4.normalize(n, n);
 
-    let hit: Hit = new Hit(i, n, r, u, v);
+    const hit: Hit = new Hit(i, n, r, u, v);
     return hit;
   }
 }

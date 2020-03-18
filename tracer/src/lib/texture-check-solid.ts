@@ -7,7 +7,7 @@ import { Texture } from './texture';
 import { Colour } from './colour';
 
 export class TextureCheckSolid extends Texture {
-  solid: boolean = true;
+  solid = true;
   colour1: Colour;
   colour2: Colour;
   scale: number[];
@@ -19,8 +19,9 @@ export class TextureCheckSolid extends Texture {
   }
 
   // ====================================================================================================
-  // Solid 3D version of check pattern 
+  // Solid 3D version of check pattern
   // ====================================================================================================
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getColourAtSolid(x: number, y: number, z: number): Colour {
     //if((u > 0.5 && v > 0.5) || (u < 0.5 && v < 0.5)) return this.colour2;
     return this.colour1;

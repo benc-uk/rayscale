@@ -6,5 +6,5 @@ export class JobInput {
   height:    number;     // Output image height
   maxDepth:  number;     // Maximum recursion depth when ray tracing, default is 4
   antiAlias: boolean;    // Enable anti-aliasing, default is false
-  scene:     any;        // Scene to be rendered, unparsed JSON 
+  scene:     object;     // Scene to be rendered, unparsed JSON
 }

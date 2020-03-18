@@ -29,7 +29,7 @@ export class API {
   private checkInterval: number;
 
   constructor(outDir: string, checkInterval: number) {
-    // Tracers starts as empty dict  
+    // Tracers starts as empty dict
     this.tracers = {};
     this.jobOutDir = outDir;
     this.checkInterval = checkInterval;
@@ -38,41 +38,41 @@ export class API {
   // ====================================================================================
   // API: Register a new tracer/worker
   // ====================================================================================
-  public addTracer = (req: Request, res: Response) => {
-    let tracer = new Tracer(req.body.endPoint, req.body.id);
+  public addTracer = (req: Request, res: Response): void => {
+    const tracer = new Tracer(req.body.endPoint, req.body.id);
 
     this.tracers[tracer.endPoint] = tracer;
     console.log(`### Tracer registered: ${tracer.endPoint}`);
 
     res.contentType('application.json');
-    res.status(200).send({ msg: "Tracer registered" });
-  
+    res.status(200).send({ msg: 'Tracer registered' });
+
     console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
-  }
-  
+  };
+
   // ====================================================================================
   // API: Start a new job, POST data is inital job data
   // ====================================================================================
-  public startJob = (req: Request, res: Response) => {
+  public startJob = (req: Request, res: Response): void => {
     res.type('application/json');
-    console.log(`### New job request received`);
+    console.log('### New job request received');
 
-    // Check active job  
+    // Check active job
     //if(res.app.get('env').toLowerCase() == "production") {
-      if(this.job && this.job.status == "RUNNING") {
-        console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.totalTasks} of ${this.job.tasksRemaining} tasks remaining`);
-        res.status(400).send({msg: "There is currently an active job"}); return;
-      }
+    if(this.job && this.job.status == 'RUNNING') {
+      console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.totalTasks} of ${this.job.tasksRemaining} tasks remaining`);
+      res.status(400).send({msg: 'There is currently an active job'}); return;
+    }
     //}
 
     // Check if we have any tracers
     if(Object.keys(this.tracers).length <= 0) {
-      console.log(`### Job rejected. No tracers online, unable to start job`);
-      res.status(400).send({msg: "No tracers online"}); return;
+      console.log('### Job rejected. No tracers online, unable to start job');
+      res.status(400).send({msg: 'No tracers online'}); return;
     }
 
     // Convert YAML to JSON
-    let jobInput: any = null;
+    let jobInput: JobInput = null;
     try {
       jobInput = yaml.safeLoad(req.body.toString());
       this.inputJobYaml = req.body.toString();
@@ -83,28 +83,28 @@ export class API {
 
     // Create complete job object and kick everything off
     try {
-      this.createJob(jobInput)
+      this.createJob(jobInput);
     } catch(e) {
       res.status(400).send({msg: `Job invalid ${e}`});
       return;
     }
-    res.status(200).send({msg: "Job started", id: this.job.id});
-  }
+    res.status(200).send({msg: 'Job started', id: this.job.id});
+  };
 
   // ====================================================================================
   // API: Task results send back from tracer
   // ====================================================================================
-  public taskComplete = (req: Request, res: Response) => {
+  public taskComplete = (req: Request, res: Response): void => {
     // Ignore results if job not running (i.e CANCELLED or FAILED)
-    if(this.job.status != "RUNNING") { 
+    if(this.job.status != 'RUNNING') {
       console.log(`### Task results '${req.params.id}' discared as job is ${this.job.status}`);
-      res.status(200).send({ msg: "OK, slice buffer discarded" });
+      res.status(200).send({ msg: 'OK, slice buffer discarded' });
       return;
     }
 
-    let taskId = req.params.id;
-    let taskIndex = req.headers['x-task-index'];
-    let taskTracer: string = req.headers['x-tracer'].toString();
+    const taskId = req.params.id;
+    const taskIndex = req.headers['x-task-index'];
+    const taskTracer: string = req.headers['x-tracer'].toString();
     this.job.stats.raysCreated += parseInt(req.headers['x-stats-rayscreated'].toString());
     this.job.stats.raysCast += parseInt(req.headers['x-stats-rayscast'].toString());
     this.job.stats.shadowRays += parseInt(req.headers['x-stats-shadowrays'].toString());
@@ -114,32 +114,32 @@ export class API {
     // If we get anything other than binary data, that's a failure
     if(req.headers['content-type'] != 'application/octet-stream') {
       console.error(`### ERROR! Task ${taskId} has failed, job will not complete`);
-      this.job.status = "FAILED";
+      this.job.status = 'FAILED';
       this.job.reason = `Ray tracing failed, task ${taskIndex} had an error`;
-      res.status(200).send({msg: "OK, you failed"});
+      res.status(200).send({msg: 'OK, you failed'});
       return;
     }
     console.log(`### Image buffer received from ${taskTracer} for task: ${taskIndex}`);
 
     // Raw buffer (binary) body
-    let buff = req.body;
+    const buff = req.body;
     // Locate the task by taskId, we could also use taskIndex
-    let task = this.job.tasks.find(t => t.id == taskId);
+    const task = this.job.tasks.find(t => t.id == taskId);
 
     this.job.tasksComplete++;
     console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.totalTasks}`);
 
-    for (var x = 0; x < this.job.width; x++) {
+    for (let x = 0; x < this.job.width; x++) {
       let yBuff = 0;
 
-      for (var y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y++) {
-        let pngIdx = (this.job.width * y + x) << 2;
-        let buffIndx = ((this.job.width * yBuff + x) * 3);
+      for (let y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y++) {
+        const pngIdx = (this.job.width * y + x) << 2;
+        const buffIndx = ((this.job.width * yBuff + x) * 3);
 
         this.job.png.data[pngIdx + 0] = buff[buffIndx + 0];
         this.job.png.data[pngIdx + 1] = buff[buffIndx + 1];
         this.job.png.data[pngIdx + 2] = buff[buffIndx + 2];
-        this.job.png.data[pngIdx + 3] = 255
+        this.job.png.data[pngIdx + 3] = 255;
         yBuff++;
       }
     }
@@ -149,50 +149,50 @@ export class API {
       this.completeJob();
     } else {
       if(this.job.tasksInQueue > 0) {
-        let tracer: Tracer = this.tracers[taskTracer];
+        const tracer: Tracer = this.tracers[taskTracer];
         this.assignTaskToTracer(tracer);
       }
     }
-    
-    res.status(200).send({ msg: "OK, slice buffer stored" });
-  }
-  
+
+    res.status(200).send({ msg: 'OK, slice buffer stored' });
+  };
+
   // ====================================================================================
-  // Regular tracer health check, remove tracers that are not contactable 
+  // Regular tracer health check, remove tracers that are not contactable
   // ====================================================================================
-  public tracerHealthCheck = () => {
+  public tracerHealthCheck = (): void => {
     // Skip checks when rendering a job
     // With very long/intense jobs the health checks would fail, due to API stops responding during render
-    if(this.job && this.job.status == "RUNNING") {
+    if(this.job && this.job.status == 'RUNNING') {
       return;
     }
 
-    for(let tid in this.tracers) {
-      let endPoint = this.tracers[tid].endPoint;
-  
+    for(const tid in this.tracers) {
+      const endPoint = this.tracers[tid].endPoint;
+
       // Call health ping API on tracer, expect 200 and nothing more
       request({ uri: `${endPoint}/ping` }) //, timeout: this.checkInterval - 1 })
-      .then(resp => { /* Do nothing */ })
-      .catch(err => {
-        console.log(`### Health check failed for ${endPoint} - Unregistering tracer`);
-        delete this.tracers[tid];
+        .then(() => { /* Do nothing */ })
+        .catch(() => {
+          console.log(`### Health check failed for ${endPoint} - Unregistering tracer`);
+          delete this.tracers[tid];
 
-        // If we had a job in progress we're probably screwed, so fail the job
-        // if(this.job && this.job.status == "RUNNING") {
-        //   console.log(`### ERROR! One or more tracers went offline while job was running`);
-        //   this.job.status = "FAILED";
-        //   this.job.reason = `One or more tracers went offline while job was running`;
-        // }
+          // If we had a job in progress we're probably screwed, so fail the job
+          // if(this.job && this.job.status == "RUNNING") {
+          //   console.log(`### ERROR! One or more tracers went offline while job was running`);
+          //   this.job.status = "FAILED";
+          //   this.job.reason = `One or more tracers went offline while job was running`;
+          // }
 
-        console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
-      });
+          console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
+        });
     }
-  }
+  };
 
   // ====================================================================================
   // Create a new render job, with sub tasks fired off to tracers
   // ====================================================================================
-  private createJob(jobInput: JobInput) {
+  private createJob(jobInput: JobInput): void {
     // Job object holds a lot of state
     this.job = new Job();
 
@@ -211,8 +211,8 @@ export class API {
     this.job.startDate = new Date();
     this.job.startTime = new Date().getTime();
     this.job.id = randstr.generate(5);
-    this.job.status = "RUNNING"; 
-    this.job.reason = ""; 
+    this.job.status = 'RUNNING';
+    this.job.reason = '';
     //this.job.tasksComplete = 0;
     this.job.png = new PNG.PNG({ width: this.job.width, height: this.job.height });
     this.job.stats = {
@@ -223,7 +223,7 @@ export class API {
       meshFaceTests: 0
     };
     this.job.rawScene = jobInput.scene;
-  
+
     // Create tasks
     // Logic to slice image into sub-regions is here
     this.job.tasks = [];
@@ -239,10 +239,10 @@ export class API {
         throw 'Error! Can not request more tasks than image height!';
       }
     }
-    // Using ceil here removes rounding bug where image height not divisible by number tasks 
-    let sliceHeight = Math.ceil(this.job.height / requestedTaskCount);
+    // Using ceil here removes rounding bug where image height not divisible by number tasks
+    const sliceHeight = Math.ceil(this.job.height / requestedTaskCount);
     for(let taskIndex = 0; taskIndex < requestedTaskCount; taskIndex++) {
-      let task = new Task();
+      const task = new Task();
       task.id = randstr.generate(5);
       task.jobId = this.job.id;
       task.imageWidth = this.job.width;
@@ -253,15 +253,15 @@ export class API {
       task.maxDepth = jobInput.maxDepth || 4;
       task.antiAlias = jobInput.antiAlias || false;
 
-      this.job.tasks.push(task); 
+      this.job.tasks.push(task);
       this.job.taskQueue.push(task.id);
     }
 
     console.log(`### New job created: '${this.job.name}' with ${this.job.totalTasks} tasks`);
 
     // First pass, send one task out to each tracer online
-    for(let tid in this.tracers) {
-      let tracer = this.tracers[tid];
+    for(const tid in this.tracers) {
+      const tracer = this.tracers[tid];
       this.assignTaskToTracer(tracer);
     }
   }
@@ -270,15 +270,15 @@ export class API {
   // Assign a random unassigned task to a remote tracer via the REST API
   // Payload is simple JSON object with two members, task and scene
   // ====================================================================================================
-  private assignTaskToTracer(tracer: Tracer) {
+  private assignTaskToTracer(tracer: Tracer): void {
     // Get random task not yet assigned
     if(this.job.tasksRemaining <= 0) return;
 
-    let unassignedTaskIndex = Math.floor(Math.random() * this.job.taskQueue.length)
-    let taskId = this.job.taskQueue[unassignedTaskIndex];
+    const unassignedTaskIndex = Math.floor(Math.random() * this.job.taskQueue.length);
+    const taskId = this.job.taskQueue[unassignedTaskIndex];
     // Remember to remove from array!
-    this.job.taskQueue.splice(unassignedTaskIndex, 1) 
-    let task = this.job.tasks.find(t => t.id == taskId);
+    this.job.taskQueue.splice(unassignedTaskIndex, 1);
+    const task = this.job.tasks.find(t => t.id == taskId);
 
     // Send to tracer
     console.log(`### Sending task ${task.id}:${task.index} to ${tracer.endPoint}`);
@@ -287,21 +287,21 @@ export class API {
       body: JSON.stringify({ task: task, scene: this.job.rawScene }),
       headers: { 'content-type': 'application/json' }
     })
-    .then(() => {
-
-    })
-    .catch(err => {
-      console.error(`### ERROR! Unable to send task to tracer ${err}`);
-      this.job.status = "FAILED";
-      this.job.reason = err.message;
-    })
+      .then(() => {
+        // Nothing
+      })
+      .catch(err => {
+        console.error(`### ERROR! Unable to send task to tracer ${err}`);
+        this.job.status = 'FAILED';
+        this.job.reason = err.message;
+      });
   }
 
   // ====================================================================================
   // Job completion, output image, gather stats etc
   // ====================================================================================
   private completeJob(): void {
-    let outDir = `${this.jobOutDir}/${this.job.name}`;
+    const outDir = `${this.jobOutDir}/${this.job.name}`;
     if (!fs.existsSync(outDir)){
       fs.mkdirSync(outDir);
     }
@@ -317,49 +317,49 @@ export class API {
         end: this.job.endDate,
         durationTime: this.job.durationTime
       }, null, 2));
-      fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);  
-      return;      
+      fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);
+      return;
     }
-    
+
     if(this.job.status != 'RUNNING') {
       return;
     }
 
     // Write out result PNG file
     this.job.png.pack()
-    .pipe(fs.createWriteStream(`${outDir}/${this.job.name}.png`))
-    .on('finish', () => {
+      .pipe(fs.createWriteStream(`${outDir}/${this.job.name}.png`))
+      .on('finish', () => {
       // Output debug info and stats JSON
-      this.job.status = "COMPLETE";
-      this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
-      let results: any = {
-        status: this.job.status,
-        reason: this.job.reason,
-        start: this.job.startDate,
-        end: this.job.endDate,
-        durationTime: this.job.durationTime,
-        imageWidth: this.job.width,
-        imageHeight: this.job.height,
-        pixels: this.job.width * this.job.height,
-        tasks: this.job.totalTasks,
-        tracersUsed: Object.keys(this.tracers).length,
-        RPP: this.job.stats.raysCast / (this.job.width * this.job.height),
-        stats: this.job.stats
-      };
-      console.log('### Results details: ', results);
-      console.log(`### Render complete, ${outDir}/${this.job.name}.png saved`);
-      console.log(`### Job completed in ${this.job.durationTime} seconds`);
-  
-      // Supplementary result files
-      fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));
-      fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);      
-    });
+        this.job.status = 'COMPLETE';
+        this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
+        const results = {
+          status: this.job.status,
+          reason: this.job.reason,
+          start: this.job.startDate,
+          end: this.job.endDate,
+          durationTime: this.job.durationTime,
+          imageWidth: this.job.width,
+          imageHeight: this.job.height,
+          pixels: this.job.width * this.job.height,
+          tasks: this.job.totalTasks,
+          tracersUsed: Object.keys(this.tracers).length,
+          RPP: this.job.stats.raysCast / (this.job.width * this.job.height),
+          stats: this.job.stats
+        };
+        console.log('### Results details: ', results);
+        console.log(`### Render complete, ${outDir}/${this.job.name}.png saved`);
+        console.log(`### Job completed in ${this.job.durationTime} seconds`);
+
+        // Supplementary result files
+        fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));
+        fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);
+      });
   }
 
   // ====================================================================================
   // API: Provide current status
   // ====================================================================================
-  public getStatus = (req: Request, res: Response) => {
+  public getStatus = (req: Request, res: Response): void => {
     if(this.job) {
       res.status(200).send({
         job: {
@@ -370,44 +370,44 @@ export class API {
           tasksComplete: this.job.tasksComplete,
           taskCount: this.job.totalTasks
         }
-      })
+      });
     } else {
-      res.status(200).send({ msg: "Controller has no job, maybe nothing has run yet" });
+      res.status(200).send({ msg: 'Controller has no job, maybe nothing has run yet' });
     }
-  }
-  
+  };
+
   // ====================================================================================
   // List out the jobs directory, used by the UI
   // ====================================================================================
-  public listJobs = (req: Request, res: Response) => {
-    let jobData: any = {jobs:[]};
+  public listJobs = (req: Request, res: Response): void => {
+    const jobData = { jobs: [] as string[] };
     fs.readdirSync(this.jobOutDir).forEach(file => {
       jobData.jobs.push(file);
-    })
+    });
 
-    res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.status(200).send(jobData)
-  }
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.status(200).send(jobData);
+  };
 
   // ====================================================================================
   // List online tracers, used by the UI
   // ====================================================================================
-  public listTracers = (req: Request, res: Response) => {
-    res.header("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.status(200).send(this.tracers)
-  } 
+  public listTracers = (req: Request, res: Response): void => {
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.status(200).send(this.tracers);
+  };
 
   // ====================================================================================
   // Cancel job!
   // ====================================================================================
-  public cancelJob = (req: Request, res: Response) => {
-    if(this.job && this.job.status == "RUNNING") {
-      this.job.status = "CANCELLED";
-      this.job.reason = "Cancelled by user at "+(new Date().toDateString());
+  public cancelJob = (req: Request, res: Response): void => {
+    if(this.job && this.job.status == 'RUNNING') {
+      this.job.status = 'CANCELLED';
+      this.job.reason = 'Cancelled by user at '+(new Date().toDateString());
       this.completeJob();
-      res.status(200).send({ msg: "Job cancelled" })
+      res.status(200).send({ msg: 'Job cancelled' });
     } else {
-      res.status(400).send({ msg: "No running job to cancel" })
+      res.status(400).send({ msg: 'No running job to cancel' });
     }
-  }  
+  };
 }

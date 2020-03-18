@@ -4,7 +4,7 @@
 //
 
 import request from 'request-promise-native';
-import ObjFileParser from 'obj-file-parser'
+import ObjFileParser from 'obj-file-parser';
 
 export class ObjManager {
   // Singleton!
@@ -28,44 +28,44 @@ export class ObjManager {
   public loadObjFile(url: string): Promise<string> {
     // skip already loaded objs
     if(this.objs[url]) {
-      return
+      return;
     }
-    
+
     console.log(`### Loading obj file mesh from: ${url}`);
 
     return new Promise((resolve, reject) => {
       request({uri: url, resolveWithFullResponse: true, encoding: null})
-      .then(respData => {
+        .then(respData => {
         // Convert to PNG and store
-        try {
+          try {
           // We use the url as object key
-          let parser = new ObjFileParser(respData.body.toString());
-        
-          // Parse OBJ and store in cache
-          this.objs[url] = parser.parse();
+            const parser = new ObjFileParser(respData.body.toString());
 
-          // Validate some stuff
-          if(!this.objs[url].models[0]) throw "File must contain at least one model";
-          if(this.objs[url].models[0].vertexNormals.length <= 0) throw "File didn't contain any normals";
+            // Parse OBJ and store in cache
+            this.objs[url] = parser.parse();
 
-          resolve(respData.statusCode);
-        } catch(e) {
+            // Validate some stuff
+            if(!this.objs[url].models[0]) throw 'File must contain at least one model';
+            if(this.objs[url].models[0].vertexNormals.length <= 0) throw 'File didn\'t contain any normals';
+
+            resolve(respData.statusCode);
+          } catch(e) {
           // Important we delete it for future runs, as we are singleton
-          delete this.objs[url];
-          reject(`OBJ file did not parse. ${e}`);
-        }
-      })
-      .catch(err => {
-        reject(err.statusCode);
-        console.error(`### ERROR! Failed to load obj from ${url}. Status code: ${err.statusCode}`);
-      })
+            delete this.objs[url];
+            reject(`OBJ file did not parse. ${e}`);
+          }
+        })
+        .catch(err => {
+          reject(err.statusCode);
+          console.error(`### ERROR! Failed to load obj from ${url}. Status code: ${err.statusCode}`);
+        });
 
     });
   }
 
   // Wipe out cache
-  public clearCache() {
-    console.log(`### ObjManager is clearing cached obj meshes`);
+  public clearCache(): void {
+    console.log('### ObjManager is clearing cached obj meshes');
     delete this.objs;
     this.objs = {};
   }

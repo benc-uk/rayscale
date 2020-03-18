@@ -2,7 +2,7 @@
 # ** CONTROLLER ** Dockerfile
 #
 
-FROM node:8-alpine AS build
+FROM node:12-alpine AS build
 
 WORKDIR /build
 
@@ -22,10 +22,10 @@ RUN node node_modules/typescript/bin/tsc
 
 ##############################################################
 
-FROM node:8-alpine
+FROM node:12-alpine
 LABEL org.label-schema.name="RayScale: Controller" \
       org.label-schema.description="Controller microservice for RayScale app" \    
-      org.label-schema.version="1.3.5" \
+      org.label-schema.version="1.3.6" \
       org.label-schema.vcs-url=https://github.com/benc-uk/rayscale
 
 WORKDIR /app/controller

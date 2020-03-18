@@ -25,7 +25,7 @@ export class Plane implements Object3D {
 
   // Plane properties
   norm: vec4;
-  
+
   // ====================================================================================================
   // Create a Plane (called by Scene parser)
   // ====================================================================================================
@@ -37,51 +37,51 @@ export class Plane implements Object3D {
 
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());
-    let rot: quat = quat.identity(quat.create());
+    const rot: quat = quat.identity(quat.create());
     quat.rotateX(rot, rot, Utils.degreeToRad(rotation[0]));
     quat.rotateY(rot, rot, Utils.degreeToRad(rotation[1]));
-    quat.rotateZ(rot, rot, Utils.degreeToRad(rotation[2])); 
+    quat.rotateZ(rot, rot, Utils.degreeToRad(rotation[2]));
     mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
     mat4.invert(this.trans, this.transFwd);
   }
 
   public calcT(inray: Ray): TResult {
     Stats.objectTests++;
-    let ray: Ray = inray.transformNewRay(this.trans);
+    const ray: Ray = inray.transformNewRay(this.trans);
 
-    let denom: number = vec4.dot(this.norm, ray.dir);
+    const denom: number = vec4.dot(this.norm, ray.dir);
     if (Math.abs(denom) > ObjectConsts.EPSILON3) {
-        let l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], ray.pos);
-        let t: number = vec4.dot(l0, this.norm) / denom;
-        if (t >= 0)  {
-          return new TResult(t, ray);
-        }
+      const l0: vec4 = vec4.sub(vec4.create(), [0, 0, 0, 1], ray.pos);
+      const t: number = vec4.dot(l0, this.norm) / denom;
+      if (t >= 0)  {
+        return new TResult(t, ray);
+      }
     }
     return new TResult(0.0, ray);
   }
 
   public getHitPoint(result: TResult): Hit {
-    let i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON4);
+    const i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON4);
 
     let u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
     if(i[0] < 0) u = 1 - u;
     let v = Math.abs((i[2] % this.material.texture.scaleV) / this.material.texture.scaleV);
     if(i[2] < 0) v = 1 - v;
-    
+
     // move i back to world space
     vec4.transformMat4(i, i, this.transFwd);
 
     // calc reflected ray about the normal, & move to world
-    let r: vec4 = result.ray.reflect(this.norm);
+    const r: vec4 = result.ray.reflect(this.norm);
     vec4.transformMat4(r, r, this.transFwd);
-    vec4.normalize(r, r);   
+    vec4.normalize(r, r);
 
     // Move normal into world
-    let n: vec4 = vec4.create();
+    const n: vec4 = vec4.create();
     vec4.transformMat4(n, this.norm, this.transFwd);
     vec4.normalize(n, this.norm);
-    
-    let hit: Hit = new Hit(i, this.norm, r, u, v);
+
+    const hit: Hit = new Hit(i, this.norm, r, u, v);
     return hit;
   }
 }

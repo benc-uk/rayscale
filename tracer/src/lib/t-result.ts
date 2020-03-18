@@ -9,13 +9,14 @@ export class TResult {
   t: number;        // t value
   ray: Ray;         // Transformed ray
   inside: boolean;  // Was calculated from inside object
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;        // Arbitrary info, used by some objects
 
-  static SIDE: number     = 500;
-  static INSIDE: number   = 501;
-  static TOP: number      = 502;
-  static BOTTOM: number   = 503;
-  static CAPS: number     = 504;
+  static SIDE     = 500;
+  static INSIDE   = 501;
+  static TOP      = 502;
+  static BOTTOM   = 503;
+  static CAPS     = 504;
 
   constructor(t: number, r: Ray) {
     this.t = t;

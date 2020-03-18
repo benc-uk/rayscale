@@ -6,23 +6,23 @@ export class Utils {
     return deg * (Math.PI/180);
   }
 
-  static clamp(v: number, min: number, max: number) {
+  static clamp(v: number, min: number, max: number): number {
     return Math.min(Math.max(v, min), max);
   }
 
-  static swap(a: number, b: number) {
-    let tmp: number = a;
+  static swap(a: number, b: number): void {
+    const tmp: number = a;
     a = b;
     b = tmp;
   }
 
-  static numberWithCommas = (x: number) => {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  static numberWithCommas(x: number): string {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   }
 
-  static getNetInterfaceIP() {
+  static getNetInterfaceIP(): string {
     let addr = null;
-    for(let iface in os.networkInterfaces()) {
+    for(const iface in os.networkInterfaces()) {
       if(iface.startsWith('eth')) {
         addr = os.networkInterfaces()[iface][0].address;
       }

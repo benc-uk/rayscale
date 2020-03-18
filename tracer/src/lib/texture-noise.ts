@@ -13,10 +13,40 @@ import { Scene } from './scene';
 // ====================================================================================================
 
 // ====================================================================================================
+// Static library of functions used by all noise type textures
+// ====================================================================================================
+export class NoiseLib {
+  static simplex: SimplexNoise;
+
+  static initNoise(seed: string): void {
+    NoiseLib.simplex = new SimplexNoise(seed);
+  }
+
+  static turb(x: number, y: number, z: number, initialSize: number, abs: boolean): number {
+    let val = 0.0;
+    let size = initialSize;
+    //let initialSize = size;
+    while(size >= 1) {
+      if(abs)
+        val += Math.abs(NoiseLib.simplex.noise3D(x / size, y / size, z / size) * size);
+      else
+        val += NoiseLib.simplex.noise3D(x / size, y / size, z / size) * size;
+      size /= 2.0;
+    }
+    val = (val / (initialSize * 2));
+    return val;
+  }
+
+  static noise(x: number, y: number, z: number): number {
+    return NoiseLib.simplex.noise3D(x, y, z);
+  }
+}
+
+// ====================================================================================================
 // Basic Simplex noise
 // ====================================================================================================
 export class NoiseTexture extends Texture {
-  solid: boolean = true;
+  solid = true;
   scale: number[];
   noise: SimplexNoise;
   colour1: Colour;
@@ -39,13 +69,13 @@ export class NoiseTexture extends Texture {
     y *= this.scale[1];
     z *= this.scale[2];
 
-    var val = NoiseLib.noise(x, y, z);
+    let val = NoiseLib.noise(x, y, z);
     // Modify to range 0-1
     val = (val + 1) / 2;
 
     // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
-    let coloura = this.colour1.copy();
-    let colourb = this.colour2.copy();
+    const coloura = this.colour1.copy();
+    const colourb = this.colour2.copy();
     val = Math.pow(val * this.mult, this.pow);
     coloura.mult(val);
     colourb.mult(1 - val);
@@ -58,7 +88,7 @@ export class NoiseTexture extends Texture {
 // Turbulence generated with fractal noise
 // ====================================================================================================
 export class TurbulenceTexture extends Texture {
-  solid: boolean = true;
+  solid = true;
   scale: number[];
   noise: SimplexNoise;
   colour1: Colour;
@@ -88,10 +118,10 @@ export class TurbulenceTexture extends Texture {
     let val = NoiseLib.turb(x, y, z, this.size, this.abs);
     // Move to range 0~1
     val = (val + 1) / 2;
-    
+
     // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
-    let coloura = this.colour1.copy();
-    let colourb = this.colour2.copy();
+    const coloura = this.colour1.copy();
+    const colourb = this.colour2.copy();
     val = Math.pow(val * this.mult, this.pow);
     coloura.mult(val);
     colourb.mult(1 - val);
@@ -104,7 +134,7 @@ export class TurbulenceTexture extends Texture {
 // Marble like effect created with turbulence
 // ====================================================================================================
 export class MarbleTexture extends Texture {
-  solid: boolean = true;
+  solid = true;
   scale: number[];
   noise: SimplexNoise;
   colour1: Colour;
@@ -132,13 +162,13 @@ export class MarbleTexture extends Texture {
     x *= this.scale[0];
     y *= this.scale[1];
     z *= this.scale[2];
-    let noiseSize = 256;
-    let xyValue = x * this.periods[0] / noiseSize + y * this.periods[1] / noiseSize + z * this.periods[2] / noiseSize + this.turbPower * Math.abs(NoiseLib.turb(x, y, z, this.turbSize, false));
+    const noiseSize = 256;
+    const xyValue = x * this.periods[0] / noiseSize + y * this.periods[1] / noiseSize + z * this.periods[2] / noiseSize + this.turbPower * Math.abs(NoiseLib.turb(x, y, z, this.turbSize, false));
     let val = Math.abs(Math.sin(xyValue * Math.PI));
 
     // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
-    let coloura = this.colour1.copy();
-    let colourb = this.colour2.copy();
+    const coloura = this.colour1.copy();
+    const colourb = this.colour2.copy();
     val = Math.pow(val * this.mult, this.pow);
     coloura.mult(val);
     colourb.mult(1 - val);
@@ -151,7 +181,7 @@ export class MarbleTexture extends Texture {
 // Wood like effect created with turbulence
 // ====================================================================================================
 export class WoodTexture extends Texture {
-  solid: boolean = true;
+  solid = true;
   scale: number[];
   noise: SimplexNoise;
   colour1: Colour;
@@ -180,17 +210,17 @@ export class WoodTexture extends Texture {
   }
 
   public getColourAtSolid(x: number, y: number, z: number): Colour {
-    x += this.offset[0]
-    y += this.offset[1]
-    z += this.offset[2]
+    x += this.offset[0];
+    y += this.offset[1];
+    z += this.offset[2];
     x *= this.scale[0];
     y *= this.scale[1];
     z *= this.scale[2];
-    let noiseSize = 256;
+    const noiseSize = 256;
 
-    let xValue = (x-(noiseSize/2)) / noiseSize;
-    let yValue = (y-(noiseSize/2)) / noiseSize;
-    let zValue = (z-(noiseSize/2)) / noiseSize;
+    const xValue = (x-(noiseSize/2)) / noiseSize;
+    const yValue = (y-(noiseSize/2)) / noiseSize;
+    const zValue = (z-(noiseSize/2)) / noiseSize;
     let distValue = 0;
     switch(this.axis) {
       case 0:
@@ -206,8 +236,8 @@ export class WoodTexture extends Texture {
     let val = Math.abs(Math.sin(2 * this.period * distValue * Math.PI));
 
     // Colouring as a lerp between colour1 and colour2, mult & pow affect shape
-    let coloura = this.colour1.copy();
-    let colourb = this.colour2.copy();
+    const coloura = this.colour1.copy();
+    const colourb = this.colour2.copy();
     val = Math.pow(val * this.mult, this.pow);
     coloura.mult(val);
     colourb.mult(1 - val);
@@ -216,32 +246,3 @@ export class WoodTexture extends Texture {
   }
 }
 
-// ====================================================================================================
-// Static library of functions used by all noise type textures
-// ====================================================================================================
-export class NoiseLib {
-  static simplex: SimplexNoise;
-
-  static initNoise(seed: string) {
-    NoiseLib.simplex = new SimplexNoise(seed);
-  }
-
-  static turb(x: number, y: number, z: number, initialSize: number, abs: boolean): number {
-    let val = 0.0;
-    let size = initialSize;
-    //let initialSize = size;
-    while(size >= 1) {
-      if(abs)
-        val += Math.abs(NoiseLib.simplex.noise3D(x / size, y / size, z / size) * size);
-      else
-        val += NoiseLib.simplex.noise3D(x / size, y / size, z / size) * size;
-      size /= 2.0;
-    }
-    val = (val / (initialSize * 2));
-    return val;
-  }
-
-  static noise(x: number, y: number, z: number): number {
-    return NoiseLib.simplex.noise3D(x, y, z)
-  }
-}
