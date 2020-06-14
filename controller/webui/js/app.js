@@ -1,4 +1,5 @@
 var editor;
+require.config({ paths: { 'vs': 'js/monaco' }});
 
 //
 // This is run on page load
@@ -17,17 +18,19 @@ function pageLoad() {
   }
 
   // Pass options to create Monaco editor
-  editor = monaco.editor.create(document.getElementById('editor'), {
-    minimap: { enabled: false },
-    theme: 'vs-dark',
-    fontSize: '18px',
-    language: 'yaml',
-    useTabStops: false
-  });
+  require(['vs/editor/editor.main'], function() {
+    editor = monaco.editor.create(document.getElementById('editor'), {
+      minimap: { enabled: false },
+      theme: 'vs-dark',
+      fontSize: '18px',
+      language: 'yaml',
+      useTabStops: false
+    });
 
-  // Restore old job YAML
-  let oldjob = window.localStorage.getItem('rayScaleJob');
-  editor.setValue(oldjob);
+    // Restore old job YAML
+    let oldjob = window.localStorage.getItem('rayScaleJob');
+    editor.setValue(oldjob);
+  });
 
   // And update tables
   jobRefresh();
