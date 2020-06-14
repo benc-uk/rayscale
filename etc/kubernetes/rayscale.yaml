@@ -33,7 +33,7 @@ metadata:
   labels:
     app: tracer
 spec:
-  replicas: 4
+  replicas: 3
   selector:
     matchLabels:
       app: tracer
@@ -42,6 +42,8 @@ spec:
       labels:
         app: tracer
     spec:
+      nodeSelector:
+        agentpool: compute    
       containers:
       - name: tracer-pods
         image: bencuk/rayscale-tracer:stable
