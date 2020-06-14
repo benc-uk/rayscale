@@ -9,7 +9,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 }from 'uuid';
 import request from 'request-promise-native';
 import os from 'os';
 import { Utils } from './lib/utils';
