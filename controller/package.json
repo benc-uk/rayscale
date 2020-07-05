@@ -1,6 +1,6 @@
 {
   "name": "rayscale",
-  "version": "1.3.7",
+  "version": "1.4.0",
   "description": "Container based distributed raytracer - controller",
   "main": "dist/server.js",
   "scripts": {
