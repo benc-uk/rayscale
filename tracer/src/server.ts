@@ -10,7 +10,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { v4 as uuidv4 }from 'uuid';
-import request from 'request-promise-native';
+import axios from 'axios';
 import os from 'os';
 import { Utils } from './lib/utils';
 import { API } from './api';
@@ -80,11 +80,11 @@ app.listen(port, async () => {
     id: uuidv4()
   };
 
-  await request.post({
-    url: `${ctrlEndpoint}/tracers`,
-    body: JSON.stringify(regRequest),
-    headers: {'content-type': 'application/json'}
-  })
+  await axios.post(
+    `${ctrlEndpoint}/tracers`,
+    JSON.stringify(regRequest),
+    { headers: {'content-type': 'application/json'} }
+  )
     .catch(err => {
       console.error('### ERROR! Unable to register with controller API');
       console.log(`### ERROR! ${err.message}, exiting!`);

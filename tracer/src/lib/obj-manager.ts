@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import request from 'request-promise-native';
+import axios from 'axios';
 import ObjFileParser from 'obj-file-parser';
 
 export class ObjManager {
@@ -25,7 +25,7 @@ export class ObjManager {
   }
 
   // Load a new remote OBJ file into manager
-  public loadObjFile(url: string): Promise<string> {
+  public loadObjFile(url: string): Promise<number> {
     // skip already loaded objs
     if(this.objs[url]) {
       return;
@@ -34,21 +34,19 @@ export class ObjManager {
     console.log(`### Loading obj file mesh from: ${url}`);
 
     return new Promise((resolve, reject) => {
-      request({uri: url, resolveWithFullResponse: true, encoding: null})
+      axios.get(url, {responseType: 'text'})
         .then(respData => {
-        // Convert to PNG and store
           try {
-          // We use the url as object key
-            const parser = new ObjFileParser(respData.body.toString());
-
             // Parse OBJ and store in cache
+            // We use the url as object key
+            const parser = new ObjFileParser(respData.data.toString());
             this.objs[url] = parser.parse();
 
             // Validate some stuff
             if(!this.objs[url].models[0]) throw 'File must contain at least one model';
             if(this.objs[url].models[0].vertexNormals.length <= 0) throw 'File didn\'t contain any normals';
 
-            resolve(respData.statusCode);
+            resolve(respData.status);
           } catch(e) {
           // Important we delete it for future runs, as we are singleton
             delete this.objs[url];
@@ -56,10 +54,9 @@ export class ObjManager {
           }
         })
         .catch(err => {
-          reject(err.statusCode);
+          reject(err.status);
           console.error(`### ERROR! Failed to load obj from ${url}. Status code: ${err.statusCode}`);
         });
-
     });
   }
 

@@ -2,10 +2,10 @@
 // API controller for all routes and core app logic
 // ------------------------------------------------
 // Ben C, May 2018
+// Updated: July 2020
 //
 
 import { Request, Response } from 'express';
-import request from 'request-promise-native';
 import randstr from 'randomstring';
 import * as PNG from 'pngjs';
 import * as yaml from 'js-yaml';
@@ -14,6 +14,7 @@ import { Job } from './lib/job';
 import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
+import axios from 'axios';
 
 // ====================================================================================================
 // Class acts as a holder for all API route handlers and some private functions they need
@@ -148,6 +149,7 @@ export class API {
       // We're DONE!
       this.completeJob();
     } else {
+      // If there's more work left in the job, assign to this tracer
       if(this.job.tasksInQueue > 0) {
         const tracer: Tracer = this.tracers[taskTracer];
         this.assignTaskToTracer(tracer);
@@ -160,9 +162,8 @@ export class API {
   // ====================================================================================
   // Regular tracer health check, remove tracers that are not contactable
   // ====================================================================================
-  public tracerHealthCheck = (): void => {
-    // Skip checks when rendering a job
-    // With very long/intense jobs the health checks would fail, due to API stops responding during render
+  public tracerHealthCheck = async (): Promise<void> => {
+    // Skip checks when rendering a job, as that is synchronous and blocking
     if(this.job && this.job.status == 'RUNNING') {
       return;
     }
@@ -170,22 +171,18 @@ export class API {
     for(const tid in this.tracers) {
       const endPoint = this.tracers[tid].endPoint;
 
-      // Call health ping API on tracer, expect 200 and nothing more
-      request({ uri: `${endPoint}/ping` }) //, timeout: this.checkInterval - 1 })
-        .then(() => { /* Do nothing */ })
-        .catch(() => {
-          console.log(`### Health check failed for ${endPoint} - Unregistering tracer`);
-          delete this.tracers[tid];
-
-          // If we had a job in progress we're probably screwed, so fail the job
-          // if(this.job && this.job.status == "RUNNING") {
-          //   console.log(`### ERROR! One or more tracers went offline while job was running`);
-          //   this.job.status = "FAILED";
-          //   this.job.reason = `One or more tracers went offline while job was running`;
-          // }
-
-          console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
-        });
+      try {
+        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: 5000});
+        if(pingResp && pingResp.status == 200) {
+          continue;
+        } else {
+          throw new Error(`Tracer ${tid} failed healthcheck`);
+        }
+      } catch(err) {
+        console.log(`### Health check ${tid} failed, Unregistering tracer`);
+        delete this.tracers[tid];
+        console.log(`### Tracers online: ${Object.keys(this.tracers).length}`);
+      }
     }
   };
 
@@ -230,13 +227,18 @@ export class API {
     this.job.taskQueue = [];
     this.job.tasksComplete = 0;
     let requestedTaskCount = 0;
-    if(!jobInput.tasks) {
+    if(!jobInput.tasks || typeof jobInput.tasks !== 'number') {
       requestedTaskCount = Object.keys(this.tracers).length;
       console.log(`### WARNING! Task count not supplied, using default: ${requestedTaskCount}`);
     } else {
       requestedTaskCount = jobInput.tasks;
       if(requestedTaskCount > jobInput.height) {
+        this.job.status = 'FAILED';
         throw 'Error! Can not request more tasks than image height!';
+      }
+      if(requestedTaskCount < Object.keys(this.tracers).length) {
+        this.job.status = 'FAILED';
+        throw 'Error! Task count should at least be equal to number of tracers';
       }
     }
     // Using ceil here removes rounding bug where image height not divisible by number tasks
@@ -270,10 +272,11 @@ export class API {
   // Assign a random unassigned task to a remote tracer via the REST API
   // Payload is simple JSON object with two members, task and scene
   // ====================================================================================================
-  private assignTaskToTracer(tracer: Tracer): void {
-    // Get random task not yet assigned
+  private async assignTaskToTracer(tracer: Tracer): Promise<void> {
+    // Sanity/edge case check
     if(this.job.tasksRemaining <= 0) return;
 
+    // Get random task not yet assigned
     const unassignedTaskIndex = Math.floor(Math.random() * this.job.taskQueue.length);
     const taskId = this.job.taskQueue[unassignedTaskIndex];
     // Remember to remove from array!
@@ -282,19 +285,23 @@ export class API {
 
     // Send to tracer
     console.log(`### Sending task ${task.id}:${task.index} to ${tracer.endPoint}`);
-    request.post({
-      uri: `${tracer.endPoint}/tasks`,
-      body: JSON.stringify({ task: task, scene: this.job.rawScene }),
-      headers: { 'content-type': 'application/json' }
-    })
-      .then(() => {
-        // Nothing
-      })
-      .catch(err => {
-        console.error(`### ERROR! Unable to send task to tracer ${err}`);
-        this.job.status = 'FAILED';
-        this.job.reason = err.message;
-      });
+    try {
+      await axios.post(
+        `${tracer.endPoint}/tasks`,
+        JSON.stringify({ task: task, scene: this.job.rawScene }),
+        { headers: { 'content-type': 'application/json' } }
+      );
+      console.log(`axios.post done ${task.id}`);
+
+    } catch (err) {
+      let details = '';
+      if(err.response && err.response.data) {
+        details = JSON.stringify(err.response.data);
+      }
+      console.error(`### ERROR! Unable to send task to tracer ${err} ${details}`);
+      this.job.status = 'FAILED';
+      this.job.reason = err.message;
+    }
   }
 
   // ====================================================================================

@@ -4,7 +4,7 @@
 //
 
 import * as pngjs from 'pngjs';
-import request from 'request-promise-native';
+import axios from 'axios';
 
 export class PngManager {
   // Singleton!
@@ -25,7 +25,7 @@ export class PngManager {
   }
 
   // Load a new remote PNG texture into manager
-  public loadTexture(url: string): Promise<string> {
+  public loadTexture(url: string): Promise<number> {
     // skip already loaded textures
     if(this.textures[url]) {
       return;
@@ -34,15 +34,15 @@ export class PngManager {
     console.log(`### Loading texture from: ${url}`);
 
     return new Promise((resolve, reject) => {
-      request({uri: url, resolveWithFullResponse: true, encoding: null})
+      axios.get(url, { responseType: 'arraybuffer' })
         .then(respData => {
-        // Convert to PNG and store
           try {
-          // We use the url as object key
-            this.textures[url] = pngjs.PNG.sync.read(respData.body);
-            resolve(respData.statusCode);
+            // Convert to PNG and store
+            // We use the url as object key
+            this.textures[url] = pngjs.PNG.sync.read(respData.data);
+            resolve(respData.status);
           } catch(e) {
-          // Important we delete it for future runs, as we are singleton
+            // Important we delete it for future runs, as we are singleton
             delete this.textures[url];
             reject(`PNG did not parse. ${e}`);
           }
@@ -51,7 +51,6 @@ export class PngManager {
           reject(err.statusCode);
           console.error(`### ERROR! Failed to load texture from ${url}. Status code: ${err.statusCode}`);
         });
-
     });
   }
 

@@ -56,6 +56,7 @@ app.listen(port, function () {
   console.log(`### Web UI serving static content from: ${webUIDir}`);
 
   console.log(`### Tracer health checks run every ${checkInterval/1000} seconds`);
+
   // Setup polling of tracers with good old setInterval
   setInterval(api.tracerHealthCheck, checkInterval);
 });

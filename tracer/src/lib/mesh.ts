@@ -321,7 +321,7 @@ class BoundingBox {
     this.children = new Array<BoundingBox>();
     this.debugColour = new Colour(Math.random(), Math.random(), Math.random());
 
-    console.log(`### Creating bounding box, depth ${this.depth}: [${min[0]}, ${min[1]}, ${min[2]}] -> [${max[0]}, ${max[1]}, ${max[2]}]`);
+    //console.log(`### Creating bounding box, depth ${this.depth}: [${min[0]}, ${min[1]}, ${min[2]}] -> [${max[0]}, ${max[1]}, ${max[2]}]`);
 
     if(depth == 0) {
       // Special case, no need to check for top level box, it always contains ALL faces
@@ -339,7 +339,7 @@ class BoundingBox {
         }
       }
     }
-    console.log(`### Bounding box contains ${this.faces.length} faces`);
+    //console.log(`### Bounding box contains ${this.faces.length} faces`);
 
     // Recursion!
     // Sub divide this box if contains more faces than our threshold

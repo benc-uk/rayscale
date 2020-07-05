@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import request from 'request-promise-native';
+import axios from 'axios';
+import os from 'os';
 import { Raytracer } from './raytracer';
 import { Task } from './lib/task';
 import { Scene } from './lib/scene';
@@ -26,7 +27,11 @@ export class API {
   // Respond to health pings with HTTP 200 and a simple JSON message
   //
   public healthPing(req: Request, res: Response): void {
-    res.status(200).send({ resp: 'Hello! I am alive' });
+    res.status(200).send({
+      message: 'Hello! I am alive',
+      host: os.hostname(),
+      port: req.socket.localPort
+    });
   }
 
   public newTask = async (req: Request, res: Response): Promise<void> => {
@@ -72,7 +77,6 @@ export class API {
       // Go!
       this.raytracer = new Raytracer(task, scene);
       const imgSlice = this.raytracer.runRayTrace();
-
       // Log stats
       console.log('### Task complete, sending image fragment back to controller');
       console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
@@ -82,10 +86,10 @@ export class API {
       console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
 
       // Send image buffer to controller as binary (octet-stream)
-      request.post({
-        url: `${this.ctrlEndPoint}/tasks/${task.id}`,
-        body: imgSlice,
-        headers: {
+      axios.post(
+        `${this.ctrlEndPoint}/tasks/${task.id}`,
+        imgSlice,
+        { headers: {
           'content-type': 'application/octet-stream',
           'x-tracer': this.tracerEndPoint,
           'x-task-id': task.id,
@@ -96,9 +100,7 @@ export class API {
           'x-stats-objtests': Stats.objectTests,
           'x-stats-meshtests': Stats.meshFaceTests
         }
-      })
-        .then()
-        .catch(err => { throw(err); });
+        });
     } catch(e) {
       console.log(`### ERROR! ${e}. Ray tracing failed, task & job have failed`);
     }
