@@ -102,7 +102,12 @@ export class API {
         }
         });
     } catch(e) {
-      console.log(`### ERROR! ${e}. Ray tracing failed, task & job have failed`);
+      console.log(`### ERROR! ${e}. Ray tracing task failed`);
+      axios.post(
+        `${this.ctrlEndPoint}/tasks/${task.id}`,
+        { error: e.toString(), taskIndex: task.index },
+        { headers: { 'content-type': 'application/json'}}
+      );
     }
   };
 

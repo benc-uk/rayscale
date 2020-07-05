@@ -98,8 +98,17 @@ export class API {
   public taskComplete = (req: Request, res: Response): void => {
     // Ignore results if job not running (i.e CANCELLED or FAILED)
     if(this.job.status != 'RUNNING') {
-      console.log(`### Task results '${req.params.id}' discared as job is ${this.job.status}`);
-      res.status(200).send({ msg: 'OK, slice buffer discarded' });
+      console.log(`### Task results '${req.params.id}' discarded as job is ${this.job.status}`);
+      res.status(200).send({ msg: 'Task data discarded' });
+      return;
+    }
+
+    // If we get anything other than binary data, that's a failure
+    if(req.headers['content-type'] != 'application/octet-stream') {
+      this.job.status = 'FAILED';
+      this.job.reason = `Ray tracing failed, task ${req.body.taskIndex} had an error, ${req.body.error}`;
+      console.error(`### ERROR! ${this.job.reason}`);
+      res.status(200).send({msg: this.job.reason});
       return;
     }
 
@@ -112,14 +121,6 @@ export class API {
     this.job.stats.objectTests += parseInt(req.headers['x-stats-objtests'].toString());
     this.job.stats.meshFaceTests += parseInt(req.headers['x-stats-meshtests'].toString());
 
-    // If we get anything other than binary data, that's a failure
-    if(req.headers['content-type'] != 'application/octet-stream') {
-      console.error(`### ERROR! Task ${taskId} has failed, job will not complete`);
-      this.job.status = 'FAILED';
-      this.job.reason = `Ray tracing failed, task ${taskIndex} had an error`;
-      res.status(200).send({msg: 'OK, you failed'});
-      return;
-    }
     console.log(`### Image buffer received from ${taskTracer} for task: ${taskIndex}`);
 
     // Raw buffer (binary) body
@@ -164,7 +165,7 @@ export class API {
   // ====================================================================================
   public tracerHealthCheck = async (): Promise<void> => {
     // Skip checks when rendering a job, as that is synchronous and blocking
-    if(this.job && this.job.status == 'RUNNING') {
+    if(this.job && (this.job.status == 'RUNNING' || this.job.status == 'FAILED')) {
       return;
     }
 
@@ -291,8 +292,6 @@ export class API {
         JSON.stringify({ task: task, scene: this.job.rawScene }),
         { headers: { 'content-type': 'application/json' } }
       );
-      console.log(`axios.post done ${task.id}`);
-
     } catch (err) {
       let details = '';
       if(err.response && err.response.data) {
