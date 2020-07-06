@@ -86,7 +86,7 @@ export class API {
       console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
 
       // Send image buffer to controller as binary (octet-stream)
-      axios.post(
+      await axios.post(
         `${this.ctrlEndPoint}/tasks/${task.id}`,
         imgSlice,
         { headers: {
@@ -99,11 +99,12 @@ export class API {
           'x-stats-shadowrays': Stats.shadowRays,
           'x-stats-objtests': Stats.objectTests,
           'x-stats-meshtests': Stats.meshFaceTests
-        }
+        },
+        maxContentLength: Infinity // Apparently this is a thing
         });
     } catch(e) {
       console.log(`### ERROR! ${e}. Ray tracing task failed`);
-      axios.post(
+      await axios.post(
         `${this.ctrlEndPoint}/tasks/${task.id}`,
         { error: e.toString(), taskIndex: task.index },
         { headers: { 'content-type': 'application/json'}}

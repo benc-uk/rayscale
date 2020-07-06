@@ -44,6 +44,7 @@
     "typescript": "^3.9.6",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
-    "eslint": "^7.4.0"
+    "eslint": "^7.4.0",
+    "eslint-plugin-vue": "^6.2.2"
   }
 }

@@ -1,0 +1,98 @@
+:root {
+  --grey-lighter: #dbdee0;
+  --grey-light: #8c9b9d;
+  --grey: #5e6d6f;
+  --grey-dark: #343c3d;
+  --grey-darker: #282f2f;
+  --grey-darkest: #171b1b;
+
+  --orange: #e67e22;
+  --yellow: #f1b70e;
+  --green: #2ecc71;
+  --turquoise: #1abc9c;
+  --blue: #3498db;
+  --purple: #8e44ad;
+  --red: #e74c3c;
+  --white-ter: #ecf0f1;
+  --primary: #375a7f;
+  --yellow-invert: #fff;
+}
+
+html, body {
+  height: 100%;
+}
+
+.i {
+  width: 1.5rem;
+  vertical-align: middle;
+  line-height: 1.5rem;
+}
+
+.mb-1 {
+  margin: 1rem;
+}
+
+#editor {
+  flex: 1 1 auto;
+  height: 100%;
+  margin: 0;
+}
+
+.flexcol {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.grid-container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 7rem auto;
+  grid-template-rows: auto 3rem;
+  gap: 0px 0px;
+  grid-template-areas: "menu main" "statusbar statusbar";
+  /* overflow: hidden; */
+}
+
+.statusbar { 
+  grid-area: statusbar; 
+  background-color: var(--turquoise);
+  line-height: 3rem;
+  color: var(--grey-darkest);
+  font-size: 1.2rem;
+}
+
+.menu { 
+  grid-area: menu; 
+  height: 100%;
+}
+
+.main { 
+  height: 100%;
+  grid-area: main; 
+  background-color: var(--grey-darkest);
+  resize: vertical;
+}
+.spinner {
+  height: 2.5rem; 
+  vertical-align: middle;
+  padding-left: 0.5rem;
+}
+
+/* ======= Bulma overrides ====== */
+
+.menu-list a {
+  color: var(--grey-light);
+  line-height: 3rem;
+}
+
+.menu-list a:hover {
+  background-color: var(--grey-dark);
+  color: #fff
+}
+
+.menu-list a.is-active {
+  color: #fff;
+  background-color: var(--primary);
+  border-radius: 0px;
+}
