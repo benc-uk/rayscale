@@ -60,12 +60,10 @@ export class API {
     console.log('### New job request received');
 
     // Check active job
-    //if(res.app.get('env').toLowerCase() == "production") {
     if(this.job && this.job.status == 'RUNNING') {
       console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.totalTasks} of ${this.job.tasksRemaining} tasks remaining`);
       res.status(400).send({msg: 'There is currently an active job'}); return;
     }
-    //}
 
     // Check if we have any tracers
     if(Object.keys(this.tracers).length <= 0) {
@@ -76,7 +74,7 @@ export class API {
     // Convert YAML to JSON
     let jobInput: JobInput = null;
     try {
-      jobInput = yaml.safeLoad(req.body.toString());
+      jobInput = <JobInput>yaml.safeLoad(req.body.toString());
       this.inputJobYaml = req.body.toString();
     } catch(err) {
       console.error(`### ERROR! YAML conversion failed ${err.message}`);
@@ -429,7 +427,7 @@ export class API {
   };
 
   // ====================================================================================
-  // Return all server logs
+  // Return server logs, starting at offset line
   // ====================================================================================
   public getLogs = (req: Request, res: Response): void => {
     if(req.params.offset) {
