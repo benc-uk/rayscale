@@ -21,13 +21,13 @@ jobs:
     - name: Check tracer code linting
       working-directory: tracer
       run: |
-        npm run install
+        npm install
         npm run lint
 
     - name: Check controller code linting
       working-directory: controller
       run: |
-        npm run install
+        npm install
         npm run lint
 
     - name: Build the tracer image
