@@ -1,8 +1,12 @@
+import error from './error.js'
+
 let editor
 require.config({ paths: { 'vs': 'js/monaco' } })
 
 export default {
   name: 'editor',
+
+  components: { error },
 
   props: {
     running: {
@@ -14,28 +18,19 @@ export default {
   template: `
   <div class="flexcol">
     <div class="mb-1">
-      <button class="button is-success is-medium" @click="jobSubmit" v-if="!running">Start Job 🏃‍♂️</button>
-      <button class="button is-warning is-medium" @click="jobCancel" v-if="running">Cancel Job ❌</button>
+      <button class="button is-success is-medium" @click="jobSubmit" v-show="!running">Start Job &nbsp;<i class="fas fa-play fa-fw"></i></button>
+      <button class="button is-warning is-medium" @click="jobCancel" v-show="running">Cancel Job &nbsp;<i class="fas fa-stop fa-fw"></i></button>
+      <button class="button is-loading is-medium is-dark" v-show="running">Loading</button>
+
+      <div class="is-pulled-right">
+        <a href="https://github.com/benc-uk/rayscale/tree/master/examples/jobs" target="_blank" class="button is-medium is-info">Sample Scenes&nbsp;<i class="fas fa-eye fa-fw"></i></a>
+        <a href="http://rayscale.benco.io/docs/reference.html" target="_blank" class="button is-medium is-info">Docs&nbsp;<i class="fas fa-book fa-fw"></i></a>
+      </div>
     </div>
     
     <div id="editor" name="editor" />
-
-    <div class="modal" :class="{ 'is-active': errorMsg }">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <header class="modal-card-head has-background-danger">
-          <p class="modal-card-title">Job Control Failed</p>
-        </header>
-        <section class="modal-card-body">
-          {{ errorMsg }}
-        </section>
-        <footer class="modal-card-foot">
-          <button class="button" @click="errorMsg = ''">OK</button>
-        </footer>
-      </div>
-    </div>
-  </div>
-  `,
+    <error title="Job Submission Error" :message="errorMsg" @closed="errorMsg=''"/>
+  </div>`,
 
   data () {
     return {
@@ -44,9 +39,9 @@ export default {
   },
 
   mounted() {
-    window.addEventListener('resize', (e) => {
+    /*window.addEventListener('resize', (e) => {
       editor.layout()
-    })
+    })*/
 
     require(['vs/editor/editor.main'], function() {
       editor = monaco.editor.create(document.getElementById('editor'), {
@@ -69,9 +64,9 @@ export default {
       try {
         const job = editor.getValue();
         window.localStorage.setItem('rayScaleJob', job);
-        const submitResp = await fetch("/api/jobs", {
+        const submitResp = await fetch('/api/jobs', {
           headers: { 'Accept': 'application/json', 'Content-Type': 'application/x-yaml' },
-          method: "POST",
+          method: 'POST',
           body: job
         })
         if(!submitResp.ok) {

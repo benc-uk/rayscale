@@ -32,19 +32,36 @@ if (!fs.existsSync(jobOutDir)){
 
 // API and app routing here
 const api = new API(jobOutDir, checkInterval);
-app.get('/api/status',      api.getStatus);
-app.get('/api/jobs',        api.listJobs);
-app.post('/api/jobs',        api.startJob);
-app.post('/api/jobs/cancel', api.cancelJob);
-app.post('/api/tracers',     api.addTracer);
-app.get('/api/tracers',     api.listTracers);
-app.post('/api/tasks/:id',   api.taskComplete);
+app.get('/api/status',        api.getStatus);
+app.get('/api/jobs',          api.listJobs);
+app.post('/api/jobs',         api.startJob);
+app.delete('/api/jobs/:job',  api.deleteJob);
+app.post('/api/jobs/cancel',  api.cancelJob);
+app.post('/api/tracers',      api.addTracer);
+app.get('/api/tracers',       api.listTracers);
+app.get('/api/logs/:offset?', api.getLogs);
+app.post('/api/tasks/:id',    api.taskComplete);
 app.get('/', function(req, res) {
   res.redirect('/ui');
 });
 
 app.use('/ui', express.static(webUIDir, { etag: false, maxAge: 0 }));
 app.use('/jobs', express.static(jobOutDir));
+
+// Silly stuff to intercept calls to console.log
+export const allLogs: string[] = [];
+const cl = console.log;
+console.log = function(...args: any) {
+  let line = '';
+  for(const arg of args) {
+    if(typeof arg === 'object')
+      line += JSON.stringify(arg, null, 2);
+    else
+      line += arg.toString();
+  }
+  allLogs.push(`${line}\n`);
+  cl.apply(console, args);
+};
 
 // Start server
 const port = process.env.PORT || 9000;

@@ -9,37 +9,42 @@ export default {
     <div class="menu">
       <ul class="menu-list">
         <li>
-          <router-link to="/edit"><img src="icons/edit.svg" class="i"> Job Edit</router-link>
+          <router-link to="/edit"><i class="fas fa-edit fa-fw fa-lg"></i> Job Edit</router-link>
         </li>
         <li>
-          <router-link to="/jobs"><img src="icons/camera.svg" class="i"> Results</router-link>
+          <router-link to="/jobs"><i class="fas fa-camera fa-fw fa-lg"></i> Results</router-link>
         </li>
         <li>
-          <router-link to="/logs"><img src="icons/scroll.svg" class="i"> Logs</router-link>
+          <router-link to="/logs"><i class="fas fa-scroll fa-fw fa-lg"></i> Logs</router-link>
         </li>        
         <li>
-          <router-link to="/tracers"><img src="icons/cogs.svg" class="i"> Tracers</router-link>
+          <router-link to="/tracers"><i class="fas fa-cogs fa-fw fa-lg"></i> Tracers</router-link>
         </li>
         <li>
-          <router-link to="/about"><img src="icons/sparkles.svg" class="i"> About</router-link>
+          <router-link to="/about"><i class="fas fa-comment-dots fa-fw fa-lg"></i> About</router-link>
         </li>
       </ul>
     </div>
 
   <div class="main">
     <!-- route outlet, component matched by the route will render here -->    
-    <router-view @updateStatus="updateStatus" @statusRefresh="statusRefresh" :running="running"></router-view>
+    <router-view @statusRefresh="statusRefresh" :running="running"></router-view>
   </div>
-
+  
   <div class="statusbar">
-    <img src="img/spin.png" class="spinner" v-if="running">&nbsp;{{ status }}
+    <img src="img/spin.png" class="spinner" v-if="running">
+    &nbsp;{{ status }}
+    <progress class="progress is-white" :value="tasksComplete" :max="taskCount" v-if="running"></progress>
   </div>
 </div>`,
 
   data() {
     return {
       status: 'Idle...',
-      running: false
+      running: false,
+      taskCount: 0,
+      tasksComplete: 0,
+      prevStatus: ''
     }
   },
 
@@ -61,10 +66,17 @@ export default {
         let data = await statusResp.json()
         if(data.job && data.job.status == 'RUNNING') {
           this.running = true
+          this.taskCount = data.job.taskCount
+          this.tasksComplete = data.job.tasksComplete
           this.status = `Job: ${data.job.name} is running. Completed ${data.job.tasksComplete} of ${data.job.taskCount} tasks...`;
+          this.prevStatus = data.job.status
         } else if(data.job) {
           this.running = false
           this.status = `Job: ${data.job.name} is ${data.job.status}. ${data.job.reason}`;
+          if(this.prevStatus == 'RUNNING' && data.job.status == 'COMPLETE') {
+            this.$root.$emit('refreshJobs')
+          }
+          this.prevStatus = data.job.status
         }
         // Fall back
         if(data.msg) this.status = data.msg

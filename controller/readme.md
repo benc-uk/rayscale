@@ -17,9 +17,11 @@ All configuration is done via environmental variables. When running locally dote
 |/api/status|GET|getStatus()|Provide current status of the controller, active job, tracers online etc|
 |/api/jobs|GET|listJob()|Lists completed and active jobs, by examining the jobs output folder|
 |/api/jobs|POST|startJob()|Start a new job, POST body must contain a YAML job definition, and have content-type of `application/x-yaml`|
+|/api/jobs/{job}|DELETE|deleteJob()|Delete a job output directory from the jobs directory|
 |/api/tracers|POST|addTracer()|When a tracer is started, it registers with the controller using this|
 |/api/tracers|GET|listTracers()|List which tracers are online|
 |/api/tasks/{taskId}|POST|taskComplete()|Called by tracer on completion of its task, normally binary image data|
+|/api/logs/{offset}|GET|getLogs()|Fetches the controller logs (stdout)|
 
 
 ## Data Structures

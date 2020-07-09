@@ -6,7 +6,7 @@ module.exports = {
   },
   parserOptions: {
     ecmaVersion: 6,
-    sourceType: "module",
+    sourceType: 'module',
   },
   globals: {
     'monaco': 'readonly'
@@ -19,7 +19,6 @@ module.exports = {
     // Errors & best practices
     'no-var': 'error',
     'no-console': 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'no-unused-vars': ['error', { 'argsIgnorePattern': 'next|res|req' }],
     'curly': 'error',
 
@@ -47,4 +46,4 @@ module.exports = {
     'vue/html-closing-bracket-newline': 'off',
     'vue/max-attributes-per-line': 'off'
   }
-};
+}

@@ -19,7 +19,9 @@
 }
 
 html, body {
+  overflow: hidden;
   height: 100%;
+  overscroll-behavior-y: none;
 }
 
 .i {
@@ -34,8 +36,9 @@ html, body {
 
 #editor {
   flex: 1 1 auto;
-  height: 100%;
   margin: 0;
+  padding: 0;
+  width: 98%
 }
 
 .flexcol {
@@ -51,7 +54,10 @@ html, body {
   grid-template-rows: auto 3rem;
   gap: 0px 0px;
   grid-template-areas: "menu main" "statusbar statusbar";
-  /* overflow: hidden; */
+}
+
+pre {
+  font-size: 1rem;
 }
 
 .statusbar { 
@@ -60,6 +66,10 @@ html, body {
   line-height: 3rem;
   color: var(--grey-darkest);
   font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  padding-left: 0.6rem;
 }
 
 .menu { 
@@ -70,17 +80,66 @@ html, body {
 .main { 
   height: 100%;
   grid-area: main; 
-  background-color: var(--grey-darkest);
-  resize: vertical;
+  background-color: var(--grey-darkest); 
+  overflow-y: auto;
+  padding: 0;
+  margin: 0;
 }
+
 .spinner {
   height: 2.5rem; 
   vertical-align: middle;
-  padding-left: 0.5rem;
 }
 
+.thumb {
+  display: block;
+  max-width: 20rem;
+  max-height: 15rem;
+  width: auto;
+  height: auto;
+  box-shadow: 0px 8px 8px 2px rgba(0, 0, 0, 0.38);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.jobs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.jobcard {
+  margin: 0.5rem;
+  width: 25rem;
+}
+
+.logs {
+  height: 500px;
+  width: 100%;
+}
+
+.lightbox {
+  width: 100%; 
+  text-align:center
+}
+
+.about {
+  margin: 2rem;
+  font-size: 1.2rem;
+}
+
+.logo {
+  float: left;
+  width: 6rem;
+  margin-right: 2rem;
+}
 /* ======= Bulma overrides ====== */
 
+
+.progress {
+  width: 150px; 
+  margin-left: 1rem;
+}
 .menu-list a {
   color: var(--grey-light);
   line-height: 3rem;

@@ -15,6 +15,7 @@ import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
 import axios from 'axios';
+import { allLogs } from './server';
 
 // ====================================================================================================
 // Class acts as a holder for all API route handlers and some private functions they need
@@ -378,7 +379,7 @@ export class API {
         }
       });
     } else {
-      res.status(200).send({ msg: 'Controller has no job, maybe nothing has run yet' });
+      res.status(200).send({ msg: 'Idle. No jobs have run yet' });
     }
   };
 
@@ -393,6 +394,16 @@ export class API {
 
     res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.status(200).send(jobData);
+  };
+
+  // ====================================================================================
+  // Delete a job directory, used by the UI
+  // ====================================================================================
+  public deleteJob = (req: Request, res: Response): void => {
+    fs.rmdirSync(this.jobOutDir + '/' + req.params.job, { recursive: true });
+
+    res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.status(200).send({ msg: 'Job deleted' });
   };
 
   // ====================================================================================
@@ -415,5 +426,17 @@ export class API {
     } else {
       res.status(400).send({ msg: 'No running job to cancel' });
     }
+  };
+
+  // ====================================================================================
+  // Return all server logs
+  // ====================================================================================
+  public getLogs = (req: Request, res: Response): void => {
+    if(req.params.offset) {
+      const offset: number = parseInt(req.params.offset);
+      res.status(200).send(allLogs.slice(offset));
+      return;
+    }
+    res.status(200).send(allLogs);
   };
 }
