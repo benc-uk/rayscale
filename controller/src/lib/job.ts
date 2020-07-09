@@ -12,7 +12,7 @@ export class Job {
   height: number;           // Height of image to render in pixels
   status: string;           // e.g. "RUNNING", "FAILED", "CANCELLED";
   reason: string;           // Text description of current status
-  rawScene: object;        // Unparsed scene as given to us from jobInput
+  rawScene: Record<string, unknown>;        // Unparsed scene as given to us from jobInput
   stats: JobStats;          // General data bag for holding stats about the job
 
   png: PNG.PNG;             // Output PNG image buffer

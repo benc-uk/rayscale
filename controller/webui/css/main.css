@@ -133,13 +133,19 @@ pre {
   width: 6rem;
   margin-right: 2rem;
 }
+
 /* ======= Bulma overrides ====== */
 
+.message {
+  width: 50%;
+  margin: 0 auto;
+}
 
 .progress {
   width: 150px; 
   margin-left: 1rem;
 }
+
 .menu-list a {
   color: var(--grey-light);
   line-height: 3rem;
