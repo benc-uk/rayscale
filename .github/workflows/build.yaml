@@ -2,7 +2,11 @@ name: Build Images
 
 on: 
   workflow_dispatch:
-    inputs: {}
+   inputs:
+      imageTag:
+        description: 'Image tag to deploy'     
+        required: true
+        default: 'latest'
   push: 
     branches: [master]
   pull_request:
