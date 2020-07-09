@@ -14,6 +14,7 @@ import axios from 'axios';
 import os from 'os';
 import { Utils } from './lib/utils';
 import { API } from './api';
+import * as packageJson from '../package.json';
 
 dotenv.config();
 
@@ -51,7 +52,7 @@ app.use('*', function (req, res, next) {
 // Start server
 const port = process.env.PORT || 8500;
 app.listen(port, async () => {
-  console.log(`### Tracer version ${require('../package.json').version} starting`);
+  console.log(`### Tracer version ${packageJson.version} starting`);
   console.log(`### Tracer server listening on ${port}`);
 
   // Get hostname / IP address or used fixed name

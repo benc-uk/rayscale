@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Colour } from './colour';
 import { Object3D } from './object3d';
 import { Light } from './light';
