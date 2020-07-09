@@ -36,10 +36,10 @@ jobs:
         npm run lint
 
     - name: Build the tracer image
-      run: docker build . -f tracer/Dockerfile--tag $dockerUser/rayscale-tracer:$imageTag
+      run: docker build . -f tracer/Dockerfile --tag $dockerUser/rayscale-tracer:$imageTag
 
     - name: Build the controller image
-      run: docker build . -f controller/Dockerfile--tag $dockerUser/rayscale-controller:$imageTag
+      run: docker build . -f controller/Dockerfile --tag $dockerUser/rayscale-controller:$imageTag
 
     - name: Push to Dockerhub
       if: github.ref == 'master' && github.event_name == 'push'
