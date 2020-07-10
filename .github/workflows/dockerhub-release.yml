@@ -1,0 +1,36 @@
+name: Release Dockerhub Images
+
+on:
+  release:
+    types: [published]
+    
+env:
+  DOCKER_USER: bencuk
+  DOCKER_REG: docker.io
+  
+jobs:
+  releaseToDockerhub:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      
+    - name: Build the tracer image
+      run: |
+        docker build . -f tracer/Dockerfile \
+        --tag $DOCKER_USER/rayscale-tracer:${{ github.event.release.tag_name }} \
+        --tag $DOCKER_USER/rayscale-tracer:latest
+
+    - name: Build the controller image
+      run: |
+        docker build . -f controller/Dockerfile \
+        --tag $DOCKER_USER/rayscale-controller:${{ github.event.release.tag_name }} \
+        --tag $DOCKER_USER/rayscale-controller:latest
+
+    - name: Push to latest & versioned tags Dockerhub
+      run: |
+        docker login -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
+        docker push $DOCKER_USER/rayscale-tracer:${{ github.event.release.tag_name }}
+        docker push $DOCKER_USER/rayscale-controller:${{ github.event.release.tag_name }}
+        docker push $DOCKER_USER/rayscale-tracer:latest
+        docker push $DOCKER_USER/rayscale-controller:latest     

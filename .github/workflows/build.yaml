@@ -1,0 +1,44 @@
+name: Build Images
+
+on: 
+  workflow_dispatch:
+  push: 
+    branches: [master]
+  pull_request:
+    branches: [master]
+      
+env:
+  DOCKER_USER: bencuk
+  IMAGE_TAG: dev
+  
+jobs:
+  buildDevImage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Run linting on tracer
+      working-directory: tracer
+      run: |
+        npm install
+        npm run lint
+
+    - name: Run linting on controller
+      working-directory: controller
+      run: |
+        npm install
+        npm run lint
+
+    - name: Build the tracer image
+      run: docker build . -f tracer/Dockerfile --tag $DOCKER_USER/rayscale-tracer:$IMAGE_TAG
+
+    - name: Build the controller image
+      run: docker build . -f controller/Dockerfile --tag $DOCKER_USER/rayscale-controller:$IMAGE_TAG
+
+    - name: Push to dev tag Dockerhub
+      if: github.ref == 'refs/heads/master' # && github.event_name == 'push'
+      run: |
+        docker login -u $DOCKER_USER -p ${{ secrets.DOCKER_PASSWORD }} 
+        docker push $DOCKER_USER/rayscale-tracer:$IMAGE_TAG
+        docker push $DOCKER_USER/rayscale-controller:$IMAGE_TAG
