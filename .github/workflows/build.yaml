@@ -18,6 +18,12 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
+    - name: Cache node modules
+      uses: actions/cache@v2
+      with:
+        path: ./node_modules
+        key: ${{ runner.os }}-cache-node-modules-${{ hashFiles('**/package-lock.json') }}
+
     - name: Run linting on tracer
       working-directory: tracer
       run: |

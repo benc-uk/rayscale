@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: controller-pods
-        image: bencuk/rayscale-controller:dev
+        image: bencuk/rayscale-controller:1.4.1
         imagePullPolicy: Always
         ports:
         - containerPort: 9000
@@ -33,7 +33,7 @@ metadata:
   labels:
     app: tracer
 spec:
-  replicas: 6
+  replicas: 2
   selector:
     matchLabels:
       app: tracer
@@ -46,7 +46,7 @@ spec:
       #  agentpool: compute    
       containers:
       - name: tracer-pods
-        image: bencuk/rayscale-tracer:dev
+        image: bencuk/rayscale-tracer:1.4.1
         imagePullPolicy: Always
         ports:
         - containerPort: 8500
