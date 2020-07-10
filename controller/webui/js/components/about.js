@@ -1,7 +1,6 @@
 export default {
   name: 'about',
 
-
   template: `
     <div>
       <section class="hero is-link is-bold">
@@ -29,7 +28,7 @@ export default {
         <a href="https://github.com/benc-uk/rayscale" class="button is-primary"><i class="fab fa-github"></i> &nbsp; Git Hub Project</a></p>
 
         <hr/>
-        <p>Version 1.4.0, July 2020</p>
+        <p>Version 1.4.1, July 2020</p>
         <p>&copy; Ben Coleman 2018 ~ 2020</p>        
       </div>
     </div>

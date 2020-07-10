@@ -15,6 +15,7 @@ import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
 import axios from 'axios';
+import { CancelToken } from 'cancel-token';
 import { allLogs } from './server';
 
 // ====================================================================================================
@@ -163,6 +164,8 @@ export class API {
   // Regular tracer health check, remove tracers that are not contactable
   // ====================================================================================
   public tracerHealthCheck = async (): Promise<void> => {
+    const TIMEOUT = 2000;
+    //console.log('### Health check pass BEGIN');
     // Skip checks when rendering a job, as that is synchronous and blocking
     if(this.job && (this.job.status == 'RUNNING' || this.job.status == 'FAILED')) {
       return;
@@ -172,8 +175,19 @@ export class API {
       const endPoint = this.tracers[tid].endPoint;
 
       try {
-        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: 5000});
+        // Loooong story but timeouts in Axios simply don't work...
+        // https://stackoverflow.com/a/54573024/1343261
+        const canTokensource = CancelToken.source();
+        setTimeout(() => {
+          canTokensource.cancel();
+        }, TIMEOUT);
+
+        //console.log(`### Health check START ${endPoint}`);
+        axios.defaults.timeout = TIMEOUT;
+        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, cancelToken: canTokensource.token});
+        //console.log(`### Health check DONE ${endPoint}`);
         if(pingResp && pingResp.status == 200) {
+          //console.log(`### Health check OK ${endPoint}`);
           continue;
         } else {
           throw new Error(`Tracer ${tid} failed healthcheck`);

@@ -76,7 +76,7 @@ app.listen(port, function () {
   console.log(`### Controller server listening on ${port}`);
   console.log(`### Web UI serving static content from: ${webUIDir}`);
 
-  console.log(`### Tracer health checks run every ${checkInterval/1000} seconds`);
+  console.log(`### Tracer health checks run every ${checkInterval/1000} seconds [${checkInterval}ms]`);
 
   // Setup polling of tracers with good old setInterval
   setInterval(api.tracerHealthCheck, checkInterval);
