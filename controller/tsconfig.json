@@ -8,8 +8,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "rootDirs": ["."],
-    "baseUrl": ".",
-    "resolveJsonModule": true
+    "baseUrl": "."
   },
   "exclude": [
     "**/node_modules",

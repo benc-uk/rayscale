@@ -14,7 +14,10 @@ import axios from 'axios';
 import os from 'os';
 import { Utils } from './lib/utils';
 import { API } from './api';
-import * as packageJson from '../package.json';
+import fs from 'fs';
+
+// Just to grab the version num
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
 dotenv.config();
 

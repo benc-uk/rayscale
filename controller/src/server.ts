@@ -11,7 +11,9 @@ import express from 'express';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { API } from './api';
-import * as packageJson from '../package.json';
+
+// Just to grab the version num
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
 // Config from dotenv ('.env') files
 dotenv.config();
