@@ -9,6 +9,7 @@
     "outDir": "./dist",
     "rootDirs": ["."],
     "baseUrl": ".",
+    "resolveJsonModule": true
   },
   "exclude": [
     "**/node_modules",
