@@ -42,8 +42,8 @@ spec:
       labels:
         app: tracer
     spec:
-      nodeSelector:
-        agentpool: compute    
+      #nodeSelector:
+      #  agentpool: compute    
       containers:
       - name: tracer-pods
         image: bencuk/rayscale-tracer:1.4.0
