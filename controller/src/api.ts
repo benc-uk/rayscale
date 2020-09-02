@@ -164,8 +164,8 @@ export class API {
   // Regular tracer health check, remove tracers that are not contactable
   // ====================================================================================
   public tracerHealthCheck = async (): Promise<void> => {
-    const TIMEOUT = 2000;
-    //console.log('### Health check pass BEGIN');
+    const TIMEOUT = 10000;
+
     // Skip checks when rendering a job, as that is synchronous and blocking
     if(this.job && (this.job.status == 'RUNNING' || this.job.status == 'FAILED')) {
       return;
@@ -182,12 +182,9 @@ export class API {
           canTokensource.cancel();
         }, TIMEOUT);
 
-        //console.log(`### Health check START ${endPoint}`);
         axios.defaults.timeout = TIMEOUT;
         const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, cancelToken: canTokensource.token});
-        //console.log(`### Health check DONE ${endPoint}`);
         if(pingResp && pingResp.status == 200) {
-          //console.log(`### Health check OK ${endPoint}`);
           continue;
         } else {
           throw new Error(`Tracer ${tid} failed healthcheck`);
