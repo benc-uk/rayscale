@@ -202,140 +202,151 @@ export class Scene {
   // ====================================================================================================
   static async parseMaterial(input: any): Promise<Material> {
     // Initialize the baseline/default material
-    const m: Material = new Material(0.1, 1, 0, 5, 0, 0);
+    const material: Material = new Material(0.1, 1, 0, 5, 0, 0);
 
     // Handle preset material lookup
     if(input.preset) {
       // A simple/brute force copy, why not use Object.assign or spread operator?
       // Because everything went to hell when I tried that, trust me, this is safer
-      m.ka = Scene.presetMaterials[input.preset].ka;
-      m.kd = Scene.presetMaterials[input.preset].kd;
-      m.ks = Scene.presetMaterials[input.preset].ks;
-      m.kr = Scene.presetMaterials[input.preset].kr;
-      m.hardness = Scene.presetMaterials[input.preset].hardness;
-      m.noShade = Scene.presetMaterials[input.preset].noShade;
-      m.kt = Scene.presetMaterials[input.preset].kt;
-      m.ior = Scene.presetMaterials[input.preset].ior;
+      material.ka = Scene.presetMaterials[input.preset].ka;
+      material.kd = Scene.presetMaterials[input.preset].kd;
+      material.ks = Scene.presetMaterials[input.preset].ks;
+      material.kr = Scene.presetMaterials[input.preset].kr;
+      material.hardness = Scene.presetMaterials[input.preset].hardness;
+      material.noShade = Scene.presetMaterials[input.preset].noShade;
+      material.kt = Scene.presetMaterials[input.preset].kt;
+      material.ior = Scene.presetMaterials[input.preset].ior;
 
-      m.textures = [];
+      material.textures = [];
       for(const tex of Scene.presetMaterials[input.preset].textures) {
-        m.textures.push(tex);
+        material.textures.push(tex);
       }
-      if(!m) throw(`Preset material ${input.preset} not found`);
+      if(!material) throw(`Preset material ${input.preset} not found`);
     }
 
     // Other material properties, override the preset if set
-    if(input.hasOwnProperty('ka')) m.ka = input.ka;
-    if(input.hasOwnProperty('kd')) m.kd = input.kd;
-    if(input.hasOwnProperty('ks')) m.ks = input.ks;
-    if(input.hasOwnProperty('kr')) m.kr = input.kr;
-    if(input.hasOwnProperty('kt')) m.kt = input.kt;
-    if(input.hasOwnProperty('ior')) m.ior = input.ior;
-    if(input.noShade) m.noShade = input.noShade;
-    if(input.hardness) m.hardness = input.hardness;
+    if(input.hasOwnProperty('ka')) material.ka = input.ka;
+    if(input.hasOwnProperty('kd')) material.kd = input.kd;
+    if(input.hasOwnProperty('ks')) material.ks = input.ks;
+    if(input.hasOwnProperty('kr')) material.kr = input.kr;
+    if(input.hasOwnProperty('kt')) material.kt = input.kt;
+    if(input.hasOwnProperty('ior')) material.ior = input.ior;
+    if(input.noShade) material.noShade = input.noShade;
+    if(input.hardness) material.hardness = input.hardness;
 
-    // Type of texture check here
-    let texture: Texture = null;
+    // Begin texture parsing
     if(input.texture) {
-      if(!input.texture.type) throw(`Texture missing type ${input.texture}`);
-      console.log(`### Parsing texture type: ${input.texture.type}`);
-      console.log(typeof input.texture);
-
-      switch (input.texture.type) {
-        case 'basic': {
-          if(!input.texture.colour) throw('Texture of type \'basic\' requires colour');
-          const c: number[] = input.texture.colour;
-          texture = TextureBasic.fromRGB(c[0], c[1], c[2]);
-          break;
+      // Texture can be an array OR a single object, just a convenience
+      if(Array.isArray(input.texture)) {
+        for(const textureInput of input.texture) {
+          material.textures.push(await this.parseTexture(textureInput));
         }
-        case 'check': {
-          if(!input.texture.colour1) throw('Texture of type \'check\' requires colour1');
-          if(!input.texture.colour2) throw('Texture of type \'check\' requires colour2');
-          const c1: number[] = input.texture.colour1;
-          const c2: number[] = input.texture.colour2;
-          texture = new TextureCheckUV(Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]));
-          break;
-        }
-        case 'image': {
-          if(!input.texture.src) throw('Texture of type \'image\' requires src');
-          // The await here is super important, we can't carry on until all textures are loaded
-          await PngManager.getInstance().loadTexture(input.texture.src);
-          texture = new TextureImage(input.texture.src);
-          break;
-        }
-        case 'noise': {
-          if(!input.texture.colour1) throw('Texture of type \'noise\' requires colour1');
-          if(!input.texture.colour2) throw('Texture of type \'noise\' requires colour2');
-          if(!input.texture.scale) { input.texture.scale = []; input.texture.scale[0] = 1; input.texture.scale[1] = 1; input.texture.scale[2] = 1; }
-          const c1: number[] = input.texture.colour1;
-          const c2: number[] = input.texture.colour2;
-          if(!input.texture.mult) { input.texture.mult = 1; }
-          if(!input.texture.pow) { input.texture.pow = 1; }
-          texture = new NoiseTexture(input.texture.scale, Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.mult, input.texture.pow);
-          break;
-        }
-        case 'turbulence': {
-          if(!input.texture.colour1) throw('Texture of type \'noise\' requires colour1');
-          if(!input.texture.colour2) throw('Texture of type \'noise\' requires colour2');
-          if(!input.texture.scale) { input.texture.scale = []; input.texture.scale[0] = 1; input.texture.scale[1] = 1; input.texture.scale[2] = 1; }
-          if(!input.texture.size) { input.texture.size = 32; }
-          if(!input.texture.mult) { input.texture.mult = 1; }
-          if(!input.texture.pow) { input.texture.pow = 1; }
-          if(!input.texture.abs) { input.texture.abs = false; }
-          const c1: number[] = input.texture.colour1;
-          const c2: number[] = input.texture.colour2;
-          texture = new TurbulenceTexture(input.texture.scale, Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.size, input.texture.mult, input.texture.pow, input.texture.abs);
-          break;
-        }
-        case 'marble': {
-          if(!input.texture.colour1) throw('Texture of type \'marble\' requires colour1');
-          if(!input.texture.colour2) throw('Texture of type \'marble\' requires colour2');
-          if(!input.texture.periods) { input.texture.periods = [10, 5, 5]; }
-          if(!input.texture.turbPower) { input.texture.turbPower = 5; }
-          if(!input.texture.turbSize) { input.texture.turbSize = 32; }
-          if(!input.texture.mult) { input.texture.mult = 1; }
-          if(!input.texture.pow) { input.texture.pow = 1; }
-          const c1: number[] = input.texture.colour1;
-          const c2: number[] = input.texture.colour2;
-          texture = new MarbleTexture(input.texture.scale,
-            Colour.fromRGB(c1[0], c1[1], c1[2]),
-            Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.periods, input.texture.turbPower, input.texture.turbSize, input.texture.mult, input.texture.pow);
-          break;
-        }
-        case 'wood': {
-          if(!input.texture.colour1) throw('Texture of type \'wood\' requires colour1');
-          if(!input.texture.colour2) throw('Texture of type \'wood\' requires colour2');
-          if(!input.texture.period) { input.texture.period = 6; }
-          if(!input.texture.axis) { input.texture.axis = 1; }
-          if(!input.texture.offset) { input.texture.offset = [0, 0, 0]; }
-          if(!input.texture.turbPower) { input.texture.turbPower = 5; }
-          if(!input.texture.turbSize) { input.texture.turbSize = 32; }
-          if(!input.texture.mult) { input.texture.mult = 1; }
-          if(!input.texture.pow) { input.texture.pow = 1; }
-          const c1: number[] = input.texture.colour1;
-          const c2: number[] = input.texture.colour2;
-          texture = new WoodTexture(input.texture.scale,
-            Colour.fromRGB(c1[0], c1[1], c1[2]),
-            Colour.fromRGB(c2[0], c2[1], c2[2]), input.texture.period, input.texture.turbPower, input.texture.turbSize, input.texture.mult, input.texture.pow, input.texture.axis, input.texture.offset);
-          break;
-        }
-        default: {
-          const c = input.texture.colour;
-          texture = TextureBasic.fromRGB(c[0], c[1], c[2]);
-          break;
-        }
+      } else {
+        material.textures[0] = await this.parseTexture(input.texture);
       }
-
-      if(input.texture.scaleU) texture.scaleU = input.texture.scaleU;
-      if(input.texture.scaleV) texture.scaleV = input.texture.scaleV;
-      if(input.texture.flipU) (texture as TextureImage).flipU = input.texture.flipU;
-      if(input.texture.flipV) (texture as TextureImage).flipV = input.texture.flipV;
-      if(input.texture.swapUV) (texture as TextureImage).swapUV = input.texture.swapUV;
-
-      // Simple assignment for single texture materials
-      m.textures[0] = texture;
     }
 
-    return m;
+    return material;
+  }
+
+  // ====================================================================================================
+  // Parse and return a texture
+  // ====================================================================================================
+  static async parseTexture(textureInput: any): Promise<Texture> {
+    let texture: Texture = null;
+    console.log(`### Parsing texture type: ${textureInput.type}`);
+
+    switch (textureInput.type) {
+      case 'basic': {
+        if(!textureInput.colour) throw('Texture of type \'basic\' requires colour');
+        const c: number[] = textureInput.colour;
+        texture = TextureBasic.fromRGB(c[0], c[1], c[2]);
+        break;
+      }
+      case 'check': {
+        if(!textureInput.colour1) throw('Texture of type \'check\' requires colour1');
+        if(!textureInput.colour2) throw('Texture of type \'check\' requires colour2');
+        const c1: number[] = textureInput.colour1;
+        const c2: number[] = textureInput.colour2;
+        texture = new TextureCheckUV(Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]));
+        break;
+      }
+      case 'image': {
+        if(!textureInput.src) throw('Texture of type \'image\' requires src');
+        // The await here is super important, we can't carry on until all textures are loaded
+        await PngManager.getInstance().loadTexture(textureInput.src);
+        texture = new TextureImage(textureInput.src);
+        break;
+      }
+      case 'noise': {
+        if(!textureInput.colour1) throw('Texture of type \'noise\' requires colour1');
+        if(!textureInput.colour2) throw('Texture of type \'noise\' requires colour2');
+        if(!textureInput.scale) { textureInput.scale = []; textureInput.scale[0] = 1; textureInput.scale[1] = 1; textureInput.scale[2] = 1; }
+        const c1: number[] = textureInput.colour1;
+        const c2: number[] = textureInput.colour2;
+        if(!textureInput.mult) { textureInput.mult = 1; }
+        if(!textureInput.pow) { textureInput.pow = 1; }
+        texture = new NoiseTexture(textureInput.scale, Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]), textureInput.mult, textureInput.pow);
+        break;
+      }
+      case 'turbulence': {
+        if(!textureInput.colour1) throw('Texture of type \'noise\' requires colour1');
+        if(!textureInput.colour2) throw('Texture of type \'noise\' requires colour2');
+        if(!textureInput.scale) { textureInput.scale = []; textureInput.scale[0] = 1; textureInput.scale[1] = 1; textureInput.scale[2] = 1; }
+        if(!textureInput.size) { textureInput.size = 32; }
+        if(!textureInput.mult) { textureInput.mult = 1; }
+        if(!textureInput.pow) { textureInput.pow = 1; }
+        if(!textureInput.abs) { textureInput.abs = false; }
+        const c1: number[] = textureInput.colour1;
+        const c2: number[] = textureInput.colour2;
+        texture = new TurbulenceTexture(textureInput.scale, Colour.fromRGB(c1[0], c1[1], c1[2]), Colour.fromRGB(c2[0], c2[1], c2[2]), textureInput.size, textureInput.mult, textureInput.pow, textureInput.abs);
+        break;
+      }
+      case 'marble': {
+        if(!textureInput.colour1) throw('Texture of type \'marble\' requires colour1');
+        if(!textureInput.colour2) throw('Texture of type \'marble\' requires colour2');
+        if(!textureInput.periods) { textureInput.periods = [10, 5, 5]; }
+        if(!textureInput.turbPower) { textureInput.turbPower = 5; }
+        if(!textureInput.turbSize) { textureInput.turbSize = 32; }
+        if(!textureInput.mult) { textureInput.mult = 1; }
+        if(!textureInput.pow) { textureInput.pow = 1; }
+        const c1: number[] = textureInput.colour1;
+        const c2: number[] = textureInput.colour2;
+        texture = new MarbleTexture(textureInput.scale,
+          Colour.fromRGB(c1[0], c1[1], c1[2]),
+          Colour.fromRGB(c2[0], c2[1], c2[2]), textureInput.periods, textureInput.turbPower, textureInput.turbSize, textureInput.mult, textureInput.pow);
+        break;
+      }
+      case 'wood': {
+        if(!textureInput.colour1) throw('Texture of type \'wood\' requires colour1');
+        if(!textureInput.colour2) throw('Texture of type \'wood\' requires colour2');
+        if(!textureInput.period) { textureInput.period = 6; }
+        if(!textureInput.axis) { textureInput.axis = 1; }
+        if(!textureInput.offset) { textureInput.offset = [0, 0, 0]; }
+        if(!textureInput.turbPower) { textureInput.turbPower = 5; }
+        if(!textureInput.turbSize) { textureInput.turbSize = 32; }
+        if(!textureInput.mult) { textureInput.mult = 1; }
+        if(!textureInput.pow) { textureInput.pow = 1; }
+        const c1: number[] = textureInput.colour1;
+        const c2: number[] = textureInput.colour2;
+        texture = new WoodTexture(textureInput.scale,
+          Colour.fromRGB(c1[0], c1[1], c1[2]),
+          Colour.fromRGB(c2[0], c2[1], c2[2]), textureInput.period, textureInput.turbPower, textureInput.turbSize, textureInput.mult, textureInput.pow, textureInput.axis, textureInput.offset);
+        break;
+      }
+      default: {
+        const c = textureInput.colour;
+        texture = TextureBasic.fromRGB(c[0], c[1], c[2]);
+        break;
+      }
+    }
+
+    if(textureInput.scaleU) texture.scaleU = textureInput.scaleU;
+    if(textureInput.scaleV) texture.scaleV = textureInput.scaleV;
+    if(textureInput.flipU) (texture as TextureImage).flipU = textureInput.flipU;
+    if(textureInput.flipV) (texture as TextureImage).flipV = textureInput.flipV;
+    if(textureInput.swapUV) (texture as TextureImage).swapUV = textureInput.swapUV;
+
+    return texture;
   }
 }
