@@ -12,6 +12,8 @@ export class TextureBasic extends Texture {
   constructor(c: Colour) {
     super();
     this.colour = c;
+    this.scaleU = 1;
+    this.scaleV = 1;
   }
 
   static fromRGB(r: number, g: number, b: number): TextureBasic {

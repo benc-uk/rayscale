@@ -1,0 +1,124 @@
+name: Simple 1
+width: 1920
+height: 1080
+antiAlias: true
+tasks: 16
+scene:
+  backgroundColour: [4, 22, 53]
+  ambientLevel: 0.5
+  cameraFov: 30
+  cameraPos: [-40, 7, -7]
+  cameraLookAt: [0, 2, -20]
+
+  lights:
+    - pos: [-180, 100, 180]
+      radius: 9000
+      brightness: 1.2
+    # - pos: [-9, 67, -37]
+    #   radius: 1000
+    #   brightness: 0.5
+
+  objects:
+    - type: sphere
+      name: ball
+      pos: [0, 3, -18]
+      rotate: [0, 0, 0]
+      radius: 6
+      material:
+        preset: shiny
+        hardness: 45
+        ks: 0.8
+        kr: 0.8
+        texture:
+          colour: [10, 10, 10]
+
+    - type: plane
+      name: floor
+      pos: [0, -3, 0]
+      rotate: [0, 45, 0]
+      material:
+        preset: matte
+        texture:
+          type: check
+          ks: 0
+          scaleU: 5
+          scaleV: 5
+          colour1: [82, 32, 99]
+          colour2: [41, 196, 200]
+
+    - type: cuboid
+      name: sb_t
+      pos: [0, 500, 0]
+      rotate: [0, 0, 0]
+      size: [1000, 2, 1000]
+      material:
+        preset: matte
+        noShade: true
+        texture:
+          type: image
+          src: http://127.0.0.1:8080/stormydays_up.png
+          scaleU: 1000
+          scaleV: 1000
+          swapUV: true
+          flipU: false
+          flipV: true
+
+    - type: cuboid
+      name: sb_b
+      pos: [0, 0, -500]
+      rotate: [0, 0, 0]
+      size: [1000, 1000, 2]
+      material:
+        preset: matte
+        noShade: true
+        texture:
+          type: image
+          src: http://127.0.0.1:8080/stormydays_bk.png
+          scaleU: 1000
+          scaleV: 1000
+          flipV: false
+
+    - type: cuboid
+      name: sb_f
+      pos: [0, 0, 500]
+      rotate: [0, 0, 0]
+      size: [1000, 1000, 2]
+      material:
+        preset: matte
+        noShade: true
+        texture:
+          type: image
+          src: http://127.0.0.1:8080/stormydays_ft.png
+          scaleU: 1000
+          scaleV: 1000
+          flipU: true
+
+    - type: cuboid
+      name: sb_r
+      pos: [500, 0, 0]
+      rotate: [0, 0, 0]
+      size: [2, 1000, 1000]
+      material:
+        preset: matte
+        noShade: true
+        texture:
+          type: image
+          src: http://127.0.0.1:8080/stormydays_lf.png
+          scaleU: 1000
+          scaleV: 1000
+          flipU: false
+
+    - type: cuboid
+      name: sb_l
+      pos: [-500, 0, 0]
+      rotate: [0, 0, 0]
+      size: [2, 1000, 1000]
+      material:
+        preset: matte
+        noShade: true
+        texture:
+          type: image
+          src: http://127.0.0.1:8080/stormydays_rt.png
+          scaleU: 1000
+          scaleV: 1000
+          flipU: true

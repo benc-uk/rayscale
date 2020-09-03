@@ -19,6 +19,7 @@ import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './mesh';
 import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
 import { Texture } from './texture';
+//import * as _ from 'lodash';
 
 // ====================================================================================================
 //
@@ -85,6 +86,7 @@ export class Scene {
         Scene.presetMaterials.matte  = new Material(0.2,  0.8, 0,   2,  0, 0);
         Scene.presetMaterials.rubber = new Material(0.05, 0.9, 0.3, 2,  0, 0);
         Scene.presetMaterials.shiny  = new Material(0.05, 0.9, 1.2, 20, 0, 0);
+
         if(input.materials) {
           for(const rawMat of input.materials) {
             Scene.presetMaterials[rawMat.name] = await Scene.parseMaterial(rawMat);
@@ -199,9 +201,26 @@ export class Scene {
   // Parse a preset or inline material
   // ====================================================================================================
   static async parseMaterial(input: any): Promise<Material> {
-    let m = new Material(0.1, 1, 0, 5, 0, 0);
+    // Initialize the baseline/default material
+    const m: Material = new Material(0.1, 1, 0, 5, 0, 0);
+
+    // Handle preset material lookup
     if(input.preset) {
-      m = Object.assign({}, Scene.presetMaterials[input.preset]);
+      // A simple/brute force copy, why not use Object.assign or spread operator?
+      // Because everything went to hell when I tried that, trust me, this is safer
+      m.ka = Scene.presetMaterials[input.preset].ka;
+      m.kd = Scene.presetMaterials[input.preset].kd;
+      m.ks = Scene.presetMaterials[input.preset].ks;
+      m.kr = Scene.presetMaterials[input.preset].kr;
+      m.hardness = Scene.presetMaterials[input.preset].hardness;
+      m.noShade = Scene.presetMaterials[input.preset].noShade;
+      m.kt = Scene.presetMaterials[input.preset].kt;
+      m.ior = Scene.presetMaterials[input.preset].ior;
+
+      m.textures = [];
+      for(const tex of Scene.presetMaterials[input.preset].textures) {
+        m.textures.push(tex);
+      }
       if(!m) throw(`Preset material ${input.preset} not found`);
     }
 
@@ -218,8 +237,10 @@ export class Scene {
     // Type of texture check here
     let texture: Texture = null;
     if(input.texture) {
-      //if(!input.texture.type) throw(`Texture missing type ${input.texture}`);
-      //console.log(`### Parsing texture type: ${input.texture.type}`);
+      if(!input.texture.type) throw(`Texture missing type ${input.texture}`);
+      console.log(`### Parsing texture type: ${input.texture.type}`);
+      console.log(typeof input.texture);
+
       switch (input.texture.type) {
         case 'basic': {
           if(!input.texture.colour) throw('Texture of type \'basic\' requires colour');
@@ -310,10 +331,11 @@ export class Scene {
       if(input.texture.flipU) (texture as TextureImage).flipU = input.texture.flipU;
       if(input.texture.flipV) (texture as TextureImage).flipV = input.texture.flipV;
       if(input.texture.swapUV) (texture as TextureImage).swapUV = input.texture.swapUV;
-      m.texture = texture;
+
+      // Simple assignment for single texture materials
+      m.textures[0] = texture;
     }
 
-    //console.log(`### Parsed material`);
     return m;
   }
 }

@@ -32,7 +32,6 @@ export class TextureImage extends Texture {
   // Will carry out simple bilinear filter
   // ====================================================================================================
   getColourAt(u: number, v: number): Colour {
-
     if(this.flipU) u = (1 - u);
     if(this.flipV) v = (1 - v);
 

@@ -99,7 +99,7 @@ export class Mesh implements Object3D {
         result.t = 5;
         const box = boxResult[boxResult.length-1];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (this.material.texture as any).colour = box.debugColour.copy();
+        (this.material.getTexture(0) as any).colour = box.debugColour.copy();
         return result;
       }
 
@@ -271,6 +271,7 @@ export class Mesh implements Object3D {
     vec4.transformMat4(n, n, this.transFwd);
     vec4.normalize(n, n);
 
+    // TODO: Support textures other than basic colour
     // u & v set to zero/ignored
     const hit: Hit = new Hit(i, n, r, 0, 0);
     return hit;

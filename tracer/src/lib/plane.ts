@@ -63,9 +63,11 @@ export class Plane implements Object3D {
   public getHitPoint(result: TResult): Hit {
     const i: vec4 = result.ray.getPoint(result.t - ObjectConsts.EPSILON4);
 
-    let u = Math.abs((i[0] % this.material.texture.scaleU) / this.material.texture.scaleU);
+    const texture = this.material.getTexture();
+
+    let u = Math.abs((i[0] % texture.scaleU) / texture.scaleU);
     if(i[0] < 0) u = 1 - u;
-    let v = Math.abs((i[2] % this.material.texture.scaleV) / this.material.texture.scaleV);
+    let v = Math.abs((i[2] % texture.scaleV) / texture.scaleV);
     if(i[2] < 0) v = 1 - v;
 
     // move i back to world space

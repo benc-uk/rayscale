@@ -6,5 +6,12 @@
     "[typescript]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
-    "eslint.workingDirectories": ["./tracer", "./controller", "./controller/webui"]
+    "eslint.workingDirectories": [
+        "./tracer",
+        "./controller",
+        "./controller/webui"
+    ],
+    "todo-tree.filtering.excludeGlobs": [
+        "**/monaco/**"
+    ]
 }
