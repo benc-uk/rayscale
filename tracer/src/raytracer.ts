@@ -65,7 +65,7 @@ export class Raytracer {
           // All this  weird rubbish casts additional rays but also uses cached values
           // The cache consists of corner values of the previous pixel on the current row
           // - and the bottom corner pixels of the previous row above
-          // !GOTCHA: We call copy on the colours, which solved some bugs
+          // NOTE: We call copy on the colours, which solved some bugs
           let outPixel1: Colour;
           let outPixel2: Colour;
           let outPixel3: Colour;

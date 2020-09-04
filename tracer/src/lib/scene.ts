@@ -54,7 +54,7 @@ export class Scene {
         if(!input.cameraPos) throw('Scene cameraPos missing');
         if(!input.cameraLookAt) throw('Scene cameraLookAt missing');
 
-        // !GOTCHA: We need to use the same random seed across all tracers otherwise
+        // NOTE: We need to use the same random seed across all tracers otherwise
         // We'll get banding with noiseTextures
         if(!input.seed)
           scene.seed = jobId;
