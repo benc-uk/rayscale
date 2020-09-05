@@ -3,9 +3,8 @@
 // (C) Ben Coleman 2018
 //
 
+const r =2;
 import { Texture } from './texture';
-import { TextureBasic } from './texture-basic';
-import { Colour } from './colour';
 
 export class Material {
   textures: Texture[];   // Texture object

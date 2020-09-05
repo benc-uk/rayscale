@@ -24,5 +24,3 @@ All configuration is done via environmental variables. When running locally dote
 ## Data Structures
 
 !TODO!
-
-Test

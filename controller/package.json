@@ -10,9 +10,11 @@
     "watch": "node node_modules/typescript/bin/tsc -w & nodemon dist/server.js --ignore jobs --ignore webui",
     "lint": "eslint --ext ts src"
   },
-  "pre-commit": [
-    "lint"
-  ],
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run lint"
+    }
+  },
   "repository": {
     "url": "git+https://github.com/benc-uk/rayscale.git"
   },

@@ -18,7 +18,7 @@ In computer graphics, ray tracing is a rendering technique for generating an ima
 ## Ray Tracing Features
 It is not the goal of this project to create a completely fully featured ray tracer, as the scope of that is almost limitless. 
 RayScale currently provides:
-- Primitive objects: Spheres, planes, cubeboids & cylinders
+- Primitive objects: Spheres, planes, cuboids, cones & cylinders
 - Complex polygon meshes in .obj format
 - Texture mapping; images (PNG) and checker pattern
 - Procedural solid textures based on Perlin/Simplex noise and turbulence
