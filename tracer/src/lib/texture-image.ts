@@ -18,7 +18,7 @@ export class TextureImage extends Texture {
   png: pngjs.PNG;
 
   // ====================================================================================================
-  // !GOTCHA: Important texture is loaded into TextureManager first
+  // NOTE: Important texture is loaded into TextureManager first
   // We can't do that here, or we'd be in async/await/Promise hell
   // ====================================================================================================
   constructor(url: string) {
@@ -32,7 +32,6 @@ export class TextureImage extends Texture {
   // Will carry out simple bilinear filter
   // ====================================================================================================
   getColourAt(u: number, v: number): Colour {
-
     if(this.flipU) u = (1 - u);
     if(this.flipV) v = (1 - v);
 

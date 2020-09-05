@@ -65,7 +65,7 @@ export class Raytracer {
           // All this  weird rubbish casts additional rays but also uses cached values
           // The cache consists of corner values of the previous pixel on the current row
           // - and the bottom corner pixels of the previous row above
-          // !GOTCHA: We call copy on the colours, which solved some bugs
+          // NOTE: We call copy on the colours, which solved some bugs
           let outPixel1: Colour;
           let outPixel2: Colour;
           let outPixel3: Colour;
@@ -179,12 +179,11 @@ export class Raytracer {
       // hitColour is the base colour of the object we've hit,
       // - We get this by finding the texture colour at the u,v coords of the hit
       let hitColour: Colour;
-      if(hitObject.material.texture.solid) {
-        //console.log(`calling ${hitObject.name} solid`);
-
-        hitColour = hitObject.material.texture.getColourAtSolid(hit.intersection[0], hit.intersection[1], hit.intersection[2]).copy();
+      const texture = hitObject.material.getTexture(hit.textureIndex);
+      if(texture.solid) {
+        hitColour = texture.getColourAtSolid(hit.intersection[0], hit.intersection[1], hit.intersection[2]).copy();
       } else {
-        hitColour = hitObject.material.texture.getColourAt(hit.u, hit.v).copy();
+        hitColour = texture.getColourAt(hit.u, hit.v).copy();
       }
 
       // noShade disables all illumination & shading

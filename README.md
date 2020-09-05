@@ -21,6 +21,7 @@ RayScale currently provides:
 - Primitive objects: Spheres, planes, cubeboids & cylinders
 - Complex polygon meshes in .obj format
 - Texture mapping; images (PNG) and checker pattern
+- Procedural solid textures based on Perlin/Simplex noise and turbulence
 - [Blinn-Phong illumination model](https://en.wikipedia.org/wiki/Phong_reflection_model) with per object surface properties
 - Multiple coloured light sources
 - Refractive transparency

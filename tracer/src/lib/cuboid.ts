@@ -93,18 +93,31 @@ export class Cuboid implements Object3D {
     // Code stolen from
     // http://ray-tracing-conept.blogspot.com/2015/01/ray-box-intersection-and-normal.html
     let n: vec4 = vec4.create();
-    if(Math.abs(i[0] - this.b1[0]) < ObjectConsts.EPSILON4)
+    let texIndex = 0;
+    if(Math.abs(i[0] - this.b1[0]) < ObjectConsts.EPSILON4) {
       n = vec4.fromValues(-1, 0, 0, 0);
-    else if(Math.abs(i[0] - this.b2[0]) < ObjectConsts.EPSILON4)
+      texIndex = 0;
+    }
+    else if(Math.abs(i[0] - this.b2[0]) < ObjectConsts.EPSILON4) {
       n = vec4.fromValues(1, 0, 0, 0);
-    else if(Math.abs(i[1] - this.b1[1]) < ObjectConsts.EPSILON4)
+      texIndex = 1;
+    }
+    else if(Math.abs(i[1] - this.b1[1]) < ObjectConsts.EPSILON4) {
       n = vec4.fromValues(0, -1, 0, 0);
-    else if(Math.abs(i[1] - this.b2[1]) < ObjectConsts.EPSILON4)
+      texIndex = 2;
+    }
+    else if(Math.abs(i[1] - this.b2[1]) < ObjectConsts.EPSILON4) {
       n = vec4.fromValues(0, 1, 0, 0);
-    else if(Math.abs(i[2] - this.b1[2]) < ObjectConsts.EPSILON4)
+      texIndex = 3;
+    }
+    else if(Math.abs(i[2] - this.b1[2]) < ObjectConsts.EPSILON4) {
       n = vec4.fromValues(0, 0, -1, 0);
-    else if(Math.abs(i[2] - this.b2[2]) < ObjectConsts.EPSILON4)
+      texIndex = 4;
+    }
+    else if(Math.abs(i[2] - this.b2[2]) < ObjectConsts.EPSILON4) {
       n = vec4.fromValues(0, 0, 1, 0);
+      texIndex = 5;
+    }
 
     // Flip normals if inside
     if(result.inside) {
@@ -113,22 +126,24 @@ export class Cuboid implements Object3D {
       n[2] = -n[2];
     }
 
-    // Best orientation of u & V on the sides I can manage
+    const texture = this.material.getTexture(texIndex);
+
+    // Best orientation of u & v on the sides I can manage
     let u, v = 0;
     if(Math.abs(n[0]) > 0) {
       const iz = i[2] - this.b2[2]; const iy = i[1] - this.b2[1];
-      u = Math.abs((iz % this.material.texture.scaleU) / this.material.texture.scaleU);
-      v = Math.abs((iy % this.material.texture.scaleV) / this.material.texture.scaleV);
+      u = Math.abs((iz % texture.scaleU) / texture.scaleU);
+      v = Math.abs((iy % texture.scaleV) / texture.scaleV);
     }
     else if(Math.abs(n[1]) > 0) {
       const ix = i[0] - this.b2[0]; const iz = i[2] - this.b2[2];
-      u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);
-      v = Math.abs((iz  % this.material.texture.scaleV) / this.material.texture.scaleV);
+      u = Math.abs((ix  % texture.scaleU) / texture.scaleU);
+      v = Math.abs((iz  % texture.scaleV) / texture.scaleV);
     }
     else if(Math.abs(n[2]) > 0) {
       const ix = i[0] - this.b2[0]; const iy = i[1] - this.b2[1];
-      u = Math.abs((ix % this.material.texture.scaleU) / this.material.texture.scaleU);
-      v = Math.abs((iy % this.material.texture.scaleV) / this.material.texture.scaleV);
+      u = Math.abs((ix % texture.scaleU) / texture.scaleU);
+      v = Math.abs((iy % texture.scaleV) / texture.scaleV);
     }
 
     // move i back to world space
@@ -143,7 +158,7 @@ export class Cuboid implements Object3D {
     vec4.transformMat4(n, n, this.transFwd);
     //vec4.normalize(n, n);
 
-    const hit: Hit = new Hit(i, n, r, u, v);
+    const hit: Hit = new Hit(i, n, r, u, v, texIndex);
     return hit;
   }
 }

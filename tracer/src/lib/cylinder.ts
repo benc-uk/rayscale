@@ -192,13 +192,16 @@ export class Cylinder implements Object3D {
     n[1] = 0;
     n[3] = 0;
 
+    let texIndex = 0;
     // Hit the top cap, the normal will just point up
     if(result.data == TResult.TOP) {
       n = vec4.fromValues(0, 1, 0, 0);
+      texIndex = 1;
     }
     // Hit the bottom cap, the normal will just point down
     if(result.data == TResult.BOTTOM) {
       n = vec4.fromValues(0, -1, 0, 0);
+      texIndex = 2;
     }
 
     // Hit the inside of cylinder, flip normal
@@ -208,19 +211,21 @@ export class Cylinder implements Object3D {
       n[2] = -n[2];
     }
 
+    const texture = this.material.getTexture(texIndex);
+
     // Calc u,v texture coords
     let u = 0, v = 0;
     if(result.data == TResult.TOP) {
       // Treat the cap as a plane
       const ix = i[0] - this.radius; const iz = i[2] - this.radius;
-      u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);
-      v = Math.abs((iz  % this.material.texture.scaleV) / this.material.texture.scaleV);
+      u = Math.abs((ix % texture.scaleU) / texture.scaleU);
+      v = Math.abs((iz % texture.scaleV) / texture.scaleV);
     } else {
       // Treat the sides as a sphere where v = i.y
       u = Math.atan2(n[0], n[2]) / (2*Math.PI) + 0.5;
-      u = (u % this.material.texture.scaleU) / this.material.texture.scaleU;
+      u = (u % texture.scaleU) / texture.scaleU;
       v = i[1];
-      v = 1 - ((v % this.material.texture.scaleV) / this.material.texture.scaleV);
+      v = 1 - ((v % texture.scaleV) / texture.scaleV);
       if(i[1] < 0) v = 1 - v;
     }
 
@@ -236,7 +241,7 @@ export class Cylinder implements Object3D {
     vec4.transformMat4(n, n, this.transFwd);
     vec4.normalize(n, n);
 
-    const hit: Hit = new Hit(i, n, r, u, v);
+    const hit: Hit = new Hit(i, n, r, u, v, texIndex);
     return hit;
   }
 }

@@ -1,0 +1,82 @@
+name: Simple 1
+width: 640
+height: 480
+# antiAlias: true
+tasks: 1
+scene:
+  backgroundColour: [4, 22, 53]
+  ambientLevel: 0.5
+  cameraFov: 30
+  cameraPos: [0, 10, -50]
+  cameraLookAt: [0, 0, 0]
+
+  lights:
+    - pos: [-8, 30, -38]
+      radius: 9000
+      brightness: 1.2
+
+  objects:
+    - type: cuboid
+      name: skybox
+      pos: [0, 0, 0]
+      rotate: [0, 0, 0]
+      size: [1000, 1000, 1000]
+      material:
+        noShade: true
+        texture:
+          - type: image
+            src: http://127.0.0.1:8080/envmap_stormydays/stormydays_lf.png
+            scaleU: 1000
+            scaleV: 1000
+          - type: image
+            src: http://127.0.0.1:8080/envmap_stormydays/stormydays_rt.png
+            scaleU: 1000
+            scaleV: 1000
+            flipU: true
+          - type: image
+            src: http://127.0.0.1:8080/envmap_stormydays/stormydays_dn.png
+            scaleU: 1000
+            scaleV: 1000
+            flipV: true
+            swapUV: true
+          - type: image
+            src: http://127.0.0.1:8080/envmap_stormydays/stormydays_up.png
+            scaleU: 1000
+            scaleV: 1000
+            flipU: true
+            flipV: true
+            swapUV: true
+          - type: image
+            src: http://127.0.0.1:8080/envmap_stormydays/stormydays_bk.png
+            scaleU: 1000
+            scaleV: 1000
+            flipU: true
+          - type: image
+            src: http://127.0.0.1:8080/envmap_stormydays/stormydays_ft.png
+            scaleU: 1000
+            scaleV: 1000
+
+    - type: sphere
+      name: ball
+      pos: [3, 0, 0]
+      rotate: [0, 0, 0]
+      radius: 8
+      material:
+        preset: basic
+        kr: 0.9
+        ks: 0.7
+        hardness: 70
+        texture:
+          type: basic
+          colour: [0, 0, 0]
+
+    - type: plane
+      name: floor
+      pos: [0, -8, 0]
+      material:
+        texture:
+          type: check
+          scaleU: 20
+          scaleV: 20
+          colour1: [80, 0, 0]
+          colour2: [200, 200, 200]

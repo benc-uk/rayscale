@@ -147,9 +147,11 @@ export class Cone implements Object3D {
     n[1] = -(this.radius / this.length);
     n[2] = (i[2] / m) * (this.length * this.radius);
 
+    let texIndex = 0;
     // Hit the bottom cap, the normal will just point down
     if(result.data == TResult.TOP) {
       n = vec4.fromValues(0, 1, 0, 0);
+      texIndex = 1;
     }
 
     // Hit the inside of cone, flip normal
@@ -159,19 +161,21 @@ export class Cone implements Object3D {
       n[2] = -n[2];
     }
 
+    const texture = this.material.getTexture(texIndex);
+
     // Calc u,v texture coords
     let u = 0, v = 0;
     if(result.data == TResult.TOP) {
       // Treat the cap as a plane
       const ix = i[0] - this.radius; const iz = i[2] - this.radius;
-      u = Math.abs((ix  % this.material.texture.scaleU) / this.material.texture.scaleU);
-      v = Math.abs((iz  % this.material.texture.scaleV) / this.material.texture.scaleV);
+      u = Math.abs((ix  % texture.scaleU) / texture.scaleU);
+      v = Math.abs((iz  % texture.scaleV) / texture.scaleV);
     } else {
       // Treat the sides as a sphere where v = i.y
       u = Math.atan2(n[0], n[2]) / (2*Math.PI) + 0.5;
-      u = (u % this.material.texture.scaleU) / this.material.texture.scaleU;
+      u = (u % texture.scaleU) / texture.scaleU;
       v = i[1];
-      v = 1 - ((v % this.material.texture.scaleV) / this.material.texture.scaleV);
+      v = 1 - ((v % texture.scaleV) / texture.scaleV);
       if(i[1] < 0) v = 1 - v;
     }
 

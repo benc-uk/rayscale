@@ -131,13 +131,16 @@ export class API {
     this.job.tasksComplete++;
     console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.totalTasks}`);
 
+    // Inject task's slice of returned image data into PNG data buffer
     for (let x = 0; x < this.job.width; x++) {
       let yBuff = 0;
 
-      for (let y = task.sliceStart; y < (task.sliceStart+task.sliceHeight); y++) {
-        const pngIdx = (this.job.width * y + x) << 2;
+      for (let y = task.sliceStart; y < (task.sliceStart + task.sliceHeight); y++) {
+        // Index into the returned buffer and the job's PNG data
+        const pngIdx = (this.job.width * y + x) << 2;         // I'll admit to not understanding this
         const buffIndx = ((this.job.width * yBuff + x) * 3);
 
+        // Standard RGBA tuple, discarding alpha
         this.job.png.data[pngIdx + 0] = buff[buffIndx + 0];
         this.job.png.data[pngIdx + 1] = buff[buffIndx + 1];
         this.job.png.data[pngIdx + 2] = buff[buffIndx + 2];
@@ -164,8 +167,8 @@ export class API {
   // Regular tracer health check, remove tracers that are not contactable
   // ====================================================================================
   public tracerHealthCheck = async (): Promise<void> => {
-    const TIMEOUT = 2000;
-    //console.log('### Health check pass BEGIN');
+    const TIMEOUT = parseInt(process.env.HEALTH_CHECK_TIMEOUT) || 20000;
+
     // Skip checks when rendering a job, as that is synchronous and blocking
     if(this.job && (this.job.status == 'RUNNING' || this.job.status == 'FAILED')) {
       return;
@@ -182,12 +185,9 @@ export class API {
           canTokensource.cancel();
         }, TIMEOUT);
 
-        //console.log(`### Health check START ${endPoint}`);
         axios.defaults.timeout = TIMEOUT;
         const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, cancelToken: canTokensource.token});
-        //console.log(`### Health check DONE ${endPoint}`);
         if(pingResp && pingResp.status == 200) {
-          //console.log(`### Health check OK ${endPoint}`);
           continue;
         } else {
           throw new Error(`Tracer ${tid} failed healthcheck`);
