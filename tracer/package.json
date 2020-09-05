@@ -10,6 +10,9 @@
     "watch": "node node_modules/typescript/bin/tsc -w & nodemon dist/server.js",
     "lint": "eslint --ext ts src"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "url": "git+https://github.com/benc-uk/rayscale.git"
   },
@@ -47,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "eslint": "^7.8.1",
+    "pre-commit": "^1.2.2",
     "typescript": "^4.0.2"
   }
 }
