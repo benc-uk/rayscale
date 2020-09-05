@@ -192,13 +192,16 @@ export class Cylinder implements Object3D {
     n[1] = 0;
     n[3] = 0;
 
+    let texIndex = 0;
     // Hit the top cap, the normal will just point up
     if(result.data == TResult.TOP) {
       n = vec4.fromValues(0, 1, 0, 0);
+      texIndex = 1;
     }
     // Hit the bottom cap, the normal will just point down
     if(result.data == TResult.BOTTOM) {
       n = vec4.fromValues(0, -1, 0, 0);
+      texIndex = 2;
     }
 
     // Hit the inside of cylinder, flip normal
@@ -208,8 +211,7 @@ export class Cylinder implements Object3D {
       n[2] = -n[2];
     }
 
-    // TODO: Support multi-textures
-    const texture = this.material.getTexture(0);
+    const texture = this.material.getTexture(texIndex);
 
     // Calc u,v texture coords
     let u = 0, v = 0;
@@ -239,7 +241,7 @@ export class Cylinder implements Object3D {
     vec4.transformMat4(n, n, this.transFwd);
     vec4.normalize(n, n);
 
-    const hit: Hit = new Hit(i, n, r, u, v);
+    const hit: Hit = new Hit(i, n, r, u, v, texIndex);
     return hit;
   }
 }

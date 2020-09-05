@@ -101,6 +101,7 @@ export class Scene {
           if(!rawObj.type) throw(`Object type missing ${JSON.stringify(rawObj)}`);
           if(!rawObj.name) throw(`Object name missing ${JSON.stringify(rawObj)}`);
           if(!rawObj.pos) throw(`Object pos missing ${JSON.stringify(rawObj)}`);
+          if(!rawObj.material) throw(`Object material: missing ${JSON.stringify(rawObj)}`);
 
           switch (rawObj.type.toLowerCase()) {
             case 'sphere':

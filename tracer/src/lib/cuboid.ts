@@ -126,7 +126,6 @@ export class Cuboid implements Object3D {
       n[2] = -n[2];
     }
 
-    // TODO: Support multi-textures
     const texture = this.material.getTexture(texIndex);
 
     // Best orientation of u & v on the sides I can manage

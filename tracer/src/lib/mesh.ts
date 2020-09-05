@@ -271,7 +271,7 @@ export class Mesh implements Object3D {
     vec4.transformMat4(n, n, this.transFwd);
     vec4.normalize(n, n);
 
-    // TODO: Support textures other than basic colour
+    // TODO: Support textures other than basic colour?
     // u & v set to zero/ignored
     const hit: Hit = new Hit(i, n, r, 0, 0);
     return hit;

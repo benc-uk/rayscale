@@ -147,9 +147,11 @@ export class Cone implements Object3D {
     n[1] = -(this.radius / this.length);
     n[2] = (i[2] / m) * (this.length * this.radius);
 
+    let texIndex = 0;
     // Hit the bottom cap, the normal will just point down
     if(result.data == TResult.TOP) {
       n = vec4.fromValues(0, 1, 0, 0);
+      texIndex = 1;
     }
 
     // Hit the inside of cone, flip normal
@@ -159,8 +161,7 @@ export class Cone implements Object3D {
       n[2] = -n[2];
     }
 
-    // TODO: Support multi-textures
-    const texture = this.material.getTexture();
+    const texture = this.material.getTexture(texIndex);
 
     // Calc u,v texture coords
     let u = 0, v = 0;
