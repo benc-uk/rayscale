@@ -3,7 +3,6 @@
 // (C) Ben Coleman 2018
 //
 
-const r =2;
 import { Texture } from './texture';
 
 export class Material {
