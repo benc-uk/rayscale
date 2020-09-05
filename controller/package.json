@@ -10,6 +10,9 @@
     "watch": "node node_modules/typescript/bin/tsc -w & nodemon dist/server.js --ignore jobs --ignore webui",
     "lint": "eslint --ext ts src"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "repository": {
     "url": "git+https://github.com/benc-uk/rayscale.git"
   },
@@ -33,7 +36,6 @@
     "randomstring": "^1.1.5"
   },
   "devDependencies": {
-    "@types/node": "^12.0.0",
     "@types/body-parser": "^1.19.0",
     "@types/cors": "^2.8.7",
     "@types/dotenv": "^8.2.0",
@@ -41,13 +43,15 @@
     "@types/gl-matrix": "^3.2.0",
     "@types/js-yaml": "^3.12.5",
     "@types/morgan": "^1.9.1",
+    "@types/node": "^12.0.0",
     "@types/pngjs": "^3.4.2",
     "@types/randomstring": "^1.1.6",
     "@types/request-promise-native": "^1.0.17",
-    "typescript": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
     "eslint": "^7.8.1",
-    "eslint-plugin-vue": "^6.2.2"
+    "eslint-plugin-vue": "^6.2.2",
+    "pre-commit": "^1.2.2",
+    "typescript": "^4.0.2"
   }
 }
