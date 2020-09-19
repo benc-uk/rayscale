@@ -21,6 +21,9 @@ export class Job {
   tasks: Task[];            // Tasks this job has been split into
   tasksComplete: number;    // Tasks completed
 
+  framerate: number;        // Animation framerate in frames per second (e.g. 30)
+  duration: number;         // Animation duration, in seconds
+
   // public static readonly RUNNING = 101;
   // public static readonly FAILED = 201;
   // public static readonly CANCELLED = 301;

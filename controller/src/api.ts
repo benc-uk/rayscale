@@ -54,7 +54,7 @@ export class API {
   };
 
   // ====================================================================================
-  // API: Start a new job, POST data is inital job data
+  // API: Start a new job, POST data is initial job data
   // ====================================================================================
   public startJob = (req: Request, res: Response): void => {
     res.type('application/json');
@@ -213,6 +213,19 @@ export class API {
     if(!jobInput.height) throw('Job must have a height');
     if(!jobInput.scene) throw('Job must have a scene');
 
+    if(jobInput.animation) {
+      if(!jobInput.animation.duration) throw('Job animation must have a duration');
+      this.job.duration = jobInput.animation.duration;
+
+      if(jobInput.animation.framerate)
+        this.job.framerate = jobInput.animation.framerate;
+      else
+        this.job.framerate = 30;
+    } else {
+      this.job.duration = 0;
+      this.job.framerate = 0;
+    }
+
     // Basic job info supplied to us
     this.job.name = jobInput.name;
     this.job.width = jobInput.width;
@@ -274,7 +287,7 @@ export class API {
     }
 
     console.log(`### New job created: '${this.job.name}' with ${this.job.totalTasks} tasks`);
-
+    console.log(this.job);
     // First pass, send one task out to each tracer online
     for(const tid in this.tracers) {
       const tracer = this.tracers[tid];

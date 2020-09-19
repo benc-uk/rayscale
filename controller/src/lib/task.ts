@@ -15,4 +15,8 @@ export class Task {
   // Slice is the horizontal sub-region across the image, the task will render
   sliceStart: number;     // Slice offset start from top of image in pixels
   sliceHeight: number;    // Height of slice to be rendered
+
+  // Animation
+  frame: number;          // Frame number integer
+  time: number;           // Time in seconds
 }
