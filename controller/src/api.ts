@@ -10,7 +10,7 @@ import randstr from 'randomstring';
 import * as PNG from 'pngjs';
 import * as yaml from 'js-yaml';
 import fs from 'fs';
-import { Job } from './lib/job';
+import { Frame, Job } from './lib/job';
 import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
@@ -62,7 +62,8 @@ export class API {
 
     // Check active job
     if(this.job && this.job.status == 'RUNNING') {
-      console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.totalTasks} of ${this.job.tasksRemaining} tasks remaining`);
+      //console.log(`### Job rejected. There is currently an active job '${this.job.name}' with ${this.job.totalTasks} of ${this.job.tasksRemaining} tasks remaining`);
+      console.log('### Job rejected. There is currently an active job');
       res.status(400).send({msg: 'There is currently an active job'}); return;
     }
 
@@ -96,6 +97,8 @@ export class API {
   // API: Task results send back from tracer
   // ====================================================================================
   public taskComplete = (req: Request, res: Response): void => {
+    console.log('!!! here');
+
     // Ignore results if job not running (i.e CANCELLED or FAILED)
     if(this.job.status != 'RUNNING') {
       console.log(`### Task results '${req.params.id}' discarded as job is ${this.job.status}`);
@@ -113,6 +116,7 @@ export class API {
     }
 
     const taskId = req.params.id;
+    const frameIndex = parseInt(req.params.frame);
     const taskIndex = req.headers['x-task-index'];
     const taskTracer: string = req.headers['x-tracer'].toString();
     this.job.stats.raysCreated += parseInt(req.headers['x-stats-rayscreated'].toString());
@@ -125,13 +129,17 @@ export class API {
 
     // Raw buffer (binary) body
     const buff = req.body;
+
+    // Get the frame for the frameIndex we've been sent
+    const frame = this.job.frames[frameIndex];
+
     // Locate the task by taskId, we could also use taskIndex
-    const task = this.job.tasks.find(t => t.id == taskId);
+    const task = frame.tasks.find(t => t.id == taskId);
 
-    this.job.tasksComplete++;
-    console.log(`### Tasks completed: ${this.job.tasksComplete} of ${this.job.totalTasks}`);
+    frame.tasksComplete++;
+    console.log(`### Frame: ${frameIndex} - tasks completed: ${frame.tasksComplete} of ${frame.totalTasks}`);
 
-    // Inject task's slice of returned image data into PNG data buffer
+    // Inject task's slice of returned image data into PNG data buffer for the frame
     for (let x = 0; x < this.job.width; x++) {
       let yBuff = 0;
 
@@ -141,22 +149,25 @@ export class API {
         const buffIndx = ((this.job.width * yBuff + x) * 3);
 
         // Standard RGBA tuple, discarding alpha
-        this.job.png.data[pngIdx + 0] = buff[buffIndx + 0];
-        this.job.png.data[pngIdx + 1] = buff[buffIndx + 1];
-        this.job.png.data[pngIdx + 2] = buff[buffIndx + 2];
-        this.job.png.data[pngIdx + 3] = 255;
+        frame.png.data[pngIdx + 0] = buff[buffIndx + 0];
+        frame.png.data[pngIdx + 1] = buff[buffIndx + 1];
+        frame.png.data[pngIdx + 2] = buff[buffIndx + 2];
+        frame.png.data[pngIdx + 3] = 255;
         yBuff++;
       }
     }
 
-    if(this.job.tasksRemaining <= 0) {
+    this.job.tasksComplete++;
+
+    if(frame.tasksRemaining <= 0) {
       // We're DONE!
       this.completeJob();
+      this.writeFrame(frameIndex);
     } else {
       // If there's more work left in the job, assign to this tracer
-      if(this.job.tasksInQueue > 0) {
+      if(frame.tasksInQueue > 0) {
         const tracer: Tracer = this.tracers[taskTracer];
-        this.assignTaskToTracer(tracer);
+        this.assignTaskToTracer(frameIndex, tracer);
       }
     }
 
@@ -206,6 +217,7 @@ export class API {
   private createJob(jobInput: JobInput): void {
     // Job object holds a lot of state
     this.job = new Job();
+    let frameCount;
 
     // Basic checks
     if(!jobInput.name) throw('Job must have a name');
@@ -221,9 +233,12 @@ export class API {
         this.job.framerate = jobInput.animation.framerate;
       else
         this.job.framerate = 30;
+
+      frameCount = this.job.duration * this.job.framerate;
     } else {
       this.job.duration = 0;
       this.job.framerate = 0;
+      frameCount = 1;
     }
 
     // Basic job info supplied to us
@@ -238,7 +253,7 @@ export class API {
     this.job.status = 'RUNNING';
     this.job.reason = '';
     //this.job.tasksComplete = 0;
-    this.job.png = new PNG.PNG({ width: this.job.width, height: this.job.height });
+    //this.job.png = new PNG.PNG({ width: this.job.width, height: this.job.height });
     this.job.stats = {
       raysCreated: 0,
       raysCast: 0,
@@ -248,50 +263,67 @@ export class API {
     };
     this.job.rawScene = jobInput.scene;
 
-    // Create tasks
-    // Logic to slice image into sub-regions is here
-    this.job.tasks = [];
-    this.job.taskQueue = [];
+    // Frames even for a static render we have 1
+    this.job.frames = new Array<Frame>(frameCount);
+    this.job.currentFrame = 0;
+    this.job.taskCount = 0;
     this.job.tasksComplete = 0;
-    let requestedTaskCount = 0;
-    if(!jobInput.tasks || typeof jobInput.tasks !== 'number') {
-      requestedTaskCount = Object.keys(this.tracers).length;
-      console.log(`### WARNING! Task count not supplied, using default: ${requestedTaskCount}`);
-    } else {
-      requestedTaskCount = jobInput.tasks;
-      if(requestedTaskCount > jobInput.height) {
-        this.job.status = 'FAILED';
-        throw 'Error! Can not request more tasks than image height!';
-      }
-      if(requestedTaskCount < Object.keys(this.tracers).length) {
-        this.job.status = 'FAILED';
-        throw 'Error! Task count should at least be equal to number of tracers';
-      }
-    }
-    // Using ceil here removes rounding bug where image height not divisible by number tasks
-    const sliceHeight = Math.ceil(this.job.height / requestedTaskCount);
-    for(let taskIndex = 0; taskIndex < requestedTaskCount; taskIndex++) {
-      const task = new Task();
-      task.id = randstr.generate(5);
-      task.jobId = this.job.id;
-      task.imageWidth = this.job.width;
-      task.imageHeight = this.job.height;
-      task.index = taskIndex;
-      task.sliceStart = taskIndex * sliceHeight;
-      task.sliceHeight = sliceHeight;
-      task.maxDepth = jobInput.maxDepth || 4;
-      task.antiAlias = jobInput.antiAlias || false;
 
-      this.job.tasks.push(task);
-      this.job.taskQueue.push(task.id);
+    for(let frameIndex = 0; frameIndex < frameCount; frameIndex++) {
+      const frame = new Frame();
+      frame.png = new PNG.PNG({ width: this.job.width, height: this.job.height });
+
+      // Create tasks
+      // Logic to slice image into sub-regions is here
+      frame.tasks = [];
+      frame.taskQueue = [];
+      frame.tasksComplete = 0;
+      let requestedTaskCount = 0;
+      if(!jobInput.tasks || typeof jobInput.tasks !== 'number') {
+        requestedTaskCount = Object.keys(this.tracers).length;
+        console.log(`### WARNING! Task count not supplied, using default: ${requestedTaskCount}`);
+      } else {
+        requestedTaskCount = jobInput.tasks;
+        if(requestedTaskCount > jobInput.height) {
+          this.job.status = 'FAILED';
+          throw 'Error! Can not request more tasks than image height!';
+        }
+        if(requestedTaskCount < Object.keys(this.tracers).length) {
+          this.job.status = 'FAILED';
+          throw 'Error! Task count should at least be equal to number of tracers';
+        }
+      }
+      // Using ceil here removes rounding bug where image height not divisible by number tasks
+      const sliceHeight = Math.ceil(this.job.height / requestedTaskCount);
+      for(let taskIndex = 0; taskIndex < requestedTaskCount; taskIndex++) {
+        const task = new Task();
+        task.id = randstr.generate(5);
+        task.jobId = this.job.id;
+        task.imageWidth = this.job.width;
+        task.imageHeight = this.job.height;
+        task.index = taskIndex;
+        task.sliceStart = taskIndex * sliceHeight;
+        task.sliceHeight = sliceHeight;
+        task.maxDepth = jobInput.maxDepth || 4;
+        task.antiAlias = jobInput.antiAlias || false;
+        task.frame = frameIndex;
+        task.time = (1/this.job.framerate) * frameIndex;
+
+        frame.tasks.push(task);
+        frame.taskQueue.push(task.id);
+        this.job.taskCount++;
+      }
+
+      this.job.frames[frameIndex] = frame;
     }
 
-    console.log(`### New job created: '${this.job.name}' with ${this.job.totalTasks} tasks`);
-    console.log(this.job);
+    console.log(`### New job created: '${this.job.name}' with ${this.job.taskCount} tasks`);
+    console.log(`### Job will render ${frameCount} frames`);
+
     // First pass, send one task out to each tracer online
     for(const tid in this.tracers) {
       const tracer = this.tracers[tid];
-      this.assignTaskToTracer(tracer);
+      this.assignTaskToTracer(this.job.currentFrame, tracer);
     }
   }
 
@@ -299,16 +331,21 @@ export class API {
   // Assign a random unassigned task to a remote tracer via the REST API
   // Payload is simple JSON object with two members, task and scene
   // ====================================================================================================
-  private async assignTaskToTracer(tracer: Tracer): Promise<void> {
+  private async assignTaskToTracer(frameNum: number, tracer: Tracer): Promise<void> {
+    console.log('############ assignTaskToTracer');
+
+    const frame = this.job.frames[frameNum];
+    //console.log(frame);
+
     // Sanity/edge case check
-    if(this.job.tasksRemaining <= 0) return;
+    if(frame.tasksRemaining <= 0) return;
 
     // Get random task not yet assigned
-    const unassignedTaskIndex = Math.floor(Math.random() * this.job.taskQueue.length);
-    const taskId = this.job.taskQueue[unassignedTaskIndex];
+    const unassignedTaskIndex = Math.floor(Math.random() * frame.taskQueue.length);
+    const taskId = frame.taskQueue[unassignedTaskIndex];
     // Remember to remove from array!
-    this.job.taskQueue.splice(unassignedTaskIndex, 1);
-    const task = this.job.tasks.find(t => t.id == taskId);
+    frame.taskQueue.splice(unassignedTaskIndex, 1);
+    const task = frame.tasks.find(t => t.id == taskId);
 
     // Send to tracer
     console.log(`### Sending task ${task.id}:${task.index} to ${tracer.endPoint}`);
@@ -357,35 +394,41 @@ export class API {
       return;
     }
 
-    // Write out result PNG file
-    this.job.png.pack()
-      .pipe(fs.createWriteStream(`${outDir}/${this.job.name}.png`))
-      .on('finish', () => {
-      // Output debug info and stats JSON
-        this.job.status = 'COMPLETE';
-        this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
-        const results = {
-          status: this.job.status,
-          reason: this.job.reason,
-          start: this.job.startDate,
-          end: this.job.endDate,
-          durationTime: this.job.durationTime,
-          imageWidth: this.job.width,
-          imageHeight: this.job.height,
-          pixels: this.job.width * this.job.height,
-          tasks: this.job.totalTasks,
-          tracersUsed: Object.keys(this.tracers).length,
-          RPP: this.job.stats.raysCast / (this.job.width * this.job.height),
-          stats: this.job.stats
-        };
-        console.log('### Results details: ', results);
-        console.log(`### Render complete, ${outDir}/${this.job.name}.png saved`);
-        console.log(`### Job completed in ${this.job.durationTime} seconds`);
+    // Output debug info and stats JSON
+    this.job.status = 'COMPLETE';
+    this.job.reason = `Render completed in ${this.job.durationTime} seconds`;
+    const results = {
+      status: this.job.status,
+      reason: this.job.reason,
+      start: this.job.startDate,
+      end: this.job.endDate,
+      durationTime: this.job.durationTime,
+      imageWidth: this.job.width,
+      imageHeight: this.job.height,
+      pixels: this.job.width * this.job.height,
+      tasks: this.job.taskCount,
+      frames: this.job.frames.length,
+      tracersUsed: Object.keys(this.tracers).length,
+      RPP: this.job.stats.raysCast / (this.job.width * this.job.height),
+      stats: this.job.stats
+    };
+    console.log('### Results details: ', results);
+    console.log(`### Job completed in ${this.job.durationTime} seconds`);
 
-        // Supplementary result files
-        fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));
-        fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);
-      });
+    // Supplementary result files
+    fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));
+    fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);
+  }
+
+  // ====================================================================================
+  // Save a frame as PNG to the output dir
+  // ====================================================================================
+  private writeFrame(frameNum: number): void {
+    const outDir = `${this.jobOutDir}/${this.job.name}`;
+
+    // Write out result PNG file
+    this.job.frames[frameNum].png.pack()
+      .pipe(fs.createWriteStream(`${outDir}/result_${frameNum.toString().padStart(5, '0')}.png`));
   }
 
   // ====================================================================================
@@ -399,8 +442,8 @@ export class API {
           status: this.job.status,
           reason: this.job.reason,
           started: this.job.startDate,
-          tasksComplete: this.job.tasksComplete,
-          taskCount: this.job.totalTasks
+          taskCount: this.job.taskCount,
+          tasksComplete: this.job.tasksComplete
         }
       });
     } else {

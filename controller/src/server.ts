@@ -43,7 +43,7 @@ app.post('/api/jobs/cancel',  api.cancelJob);
 app.post('/api/tracers',      api.addTracer);
 app.get('/api/tracers',       api.listTracers);
 app.get('/api/logs/:offset?', api.getLogs);
-app.post('/api/tasks/:id',    api.taskComplete);
+app.post('/api/tasks/:frame/:id',    api.taskComplete);
 app.get('/', function(req, res) {
   res.redirect('/ui');
 });

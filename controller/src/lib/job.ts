@@ -15,11 +15,15 @@ export class Job {
   rawScene: Record<string, unknown>;        // Unparsed scene as given to us from jobInput
   stats: JobStats;          // General data bag for holding stats about the job
 
-  png: PNG.PNG;             // Output PNG image buffer
+  //png: PNG.PNG;             // Output PNG image buffer
 
-  taskQueue: string[];      // Ids of tasks not yet assigned
-  tasks: Task[];            // Tasks this job has been split into
-  tasksComplete: number;    // Tasks completed
+  // taskQueue: string[];      // Ids of tasks not yet assigned
+  // tasks: Task[];            // Tasks this job has been split into
+  // tasksComplete: number;    // Tasks completed
+  frames: Frame[];
+  currentFrame: number;
+  taskCount: number;
+  tasksComplete: number;
 
   framerate: number;        // Animation framerate in frames per second (e.g. 30)
   duration: number;         // Animation duration, in seconds
@@ -27,6 +31,34 @@ export class Job {
   // public static readonly RUNNING = 101;
   // public static readonly FAILED = 201;
   // public static readonly CANCELLED = 301;
+
+  // get totalTasks(): number {
+  //   return this.tasks.length;
+  // }
+
+  // get tasksInQueue(): number {
+  //   return this.taskQueue.length;
+  // }
+
+  // get tasksRemaining(): number {
+  //   return this.totalTasks - this.tasksComplete;
+  // }
+}
+
+class JobStats {
+  raysCreated: number;
+  raysCast: number;
+  shadowRays: number;
+  objectTests: number;
+  meshFaceTests: number;
+}
+
+export class Frame {
+  png: PNG.PNG;             // Output PNG image buffer
+
+  taskQueue: string[];      // Ids of tasks not yet assigned
+  tasks: Task[];            // Tasks this job has been split into
+  tasksComplete: number;    // Tasks completed
 
   get totalTasks(): number {
     return this.tasks.length;
@@ -39,12 +71,4 @@ export class Job {
   get tasksRemaining(): number {
     return this.totalTasks - this.tasksComplete;
   }
-}
-
-class JobStats {
-  raysCreated: number;
-  raysCast: number;
-  shadowRays: number;
-  objectTests: number;
-  meshFaceTests: number;
 }

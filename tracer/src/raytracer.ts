@@ -114,7 +114,7 @@ export class Raytracer {
       cacheCorner = null;
       bufferY++;
       const perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
-      if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Task '${this.task.index + 1} / ${this.task.jobId}' rendered ${perc}%`);
+      if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Frame ${this.task.frame}, task '${this.task.index + 1} / ${this.task.jobId}' rendered ${perc}%`);
     }
 
     return this.image;

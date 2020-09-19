@@ -87,7 +87,7 @@ export class API {
 
       // Send image buffer to controller as binary (octet-stream)
       await axios.post(
-        `${this.ctrlEndPoint}/tasks/${task.id}`,
+        `${this.ctrlEndPoint}/tasks/${task.frame}/${task.id}`,
         imgSlice,
         { headers: {
           'content-type': 'application/octet-stream',
@@ -105,7 +105,7 @@ export class API {
     } catch(e) {
       console.log(`### ERROR! ${e}. Ray tracing task failed`);
       await axios.post(
-        `${this.ctrlEndPoint}/tasks/${task.id}`,
+        `${this.ctrlEndPoint}/tasks/${task.frame}/${task.id}`,
         { error: e.toString(), taskIndex: task.index },
         { headers: { 'content-type': 'application/json'}}
       );
