@@ -20,8 +20,8 @@ export default {
         </header> 
         <div class="card-image">
           <figure class="image">
-            <!-- the random appended string on the URL prevents caching :href="'/jobs/'+job+'/'+job+'.png'"-->
-            <a :target="job+'_render'" @click="showImage='/jobs/'+job+'/'+job+'.png'"><img :src="'/jobs/'+job+'/'+job+'.png?r='+Math.random()"></a>
+            <!-- the random appended string on the URL prevents caching -->
+            <a :target="job+'_render'" @click="showImage='/jobs/'+job+'/'+'result_00001.png'"><img :src="'/jobs/'+job+'/result_00001.png?r='+Math.random()"></a>
           </figure>
         </div>
         <footer class="card-footer">
@@ -51,7 +51,7 @@ export default {
     <error title="Job Fetch Error" :message="errorMsg" @closed="errorMsg=''"/>
   </div>`,
 
-  data () {
+  data() {
     return {
       jobData: [],
       errorMsg: '',
@@ -67,13 +67,13 @@ export default {
   },
 
   methods: {
-    fetchJobs: async function() {
+    fetchJobs: async function () {
       this.jobData = []
       try {
         const listResp = await fetch('/api/jobs')
-        if(!listResp.ok) {
-          if(listResp.headers.get('content-type').startsWith('application/json')) { 
-            const data = await submitResp.json() 
+        if (!listResp.ok) {
+          if (listResp.headers.get('content-type').startsWith('application/json')) {
+            const data = await submitResp.json()
             this.errorMsg = data.msg
             return
           }
@@ -81,16 +81,16 @@ export default {
           return
         }
         this.jobData = await listResp.json()
-      } catch(err) {
+      } catch (err) {
         this.errorMsg = err.toString()
       }
     },
 
-    deleteJob: async function(job) {
+    deleteJob: async function (job) {
       try {
-        await fetch(`/api/jobs/${job}`, {method: 'DELETE'})
+        await fetch(`/api/jobs/${job}`, { method: 'DELETE' })
         this.fetchJobs()
-      } catch(err) {
+      } catch (err) {
         this.errorMsg = err.toString()
       }
     }

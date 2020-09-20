@@ -1,5 +1,8 @@
 //
-// Shared definition in both Tracer and Controller
+// Data structure for the passing of tasks to the tracers
+// Note. Is duplicated in tracer/lib
+// ------------------------------------------------------------------
+// Ben C, May 2018, update: Sept 2020
 //
 
 export class Task {
@@ -17,6 +20,6 @@ export class Task {
   sliceHeight: number;    // Height of slice to be rendered
 
   // Animation
-  frame: number;          // Frame number integer
+  frame: number;          // Frame number index
   time: number;           // Time in seconds
 }

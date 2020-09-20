@@ -94,5 +94,4 @@ app.listen(port, async () => {
       console.log(`### ERROR! ${err.message}, exiting!`);
       process.exit(3);
     });
-
 });

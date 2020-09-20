@@ -38,6 +38,8 @@ export class Raytracer {
     if(this.task.imageWidth < this.task.imageHeight) { throw('Error, image width must be > height'); }
     const aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height
 
+    // HACK: TEMP!!!
+    this.scene.cameraPos[0] = this.task.time * 5;
     // Create our camera transform and invert
     const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
     mat4.invert(camTrans, camTrans);
