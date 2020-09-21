@@ -58,33 +58,33 @@ export default {
       this.status = status
     },
 
-    statusRefresh: async function() {
+    statusRefresh: async function () {
       try {
         let statusResp = await fetch('/api/status', { headers: { 'Accept': 'application/json' }, method: "GET" })
-        
-        if(!statusResp.ok) throw new Error('Failed to fetch data from controller')
+
+        if (!statusResp.ok) throw new Error('Failed to fetch data from controller')
         let data = await statusResp.json()
-        if(data.job && data.job.status == 'RUNNING') {
+        if (data.job && data.job.status == 'RUNNING') {
           this.running = true
           this.taskCount = data.job.taskCount
           this.tasksComplete = data.job.tasksComplete
-          this.status = `Job: ${data.job.name} is running. Completed ${data.job.tasksComplete} of ${data.job.taskCount} tasks...`;
+          this.status = `Job: ${data.job.name} is running. Frame: ${data.job.currentFrame}/${data.job.frameCount}. Completed ${data.job.tasksComplete} of ${data.job.taskCount} tasks...`;
           this.prevStatus = data.job.status
-        } else if(data.job) {
+        } else if (data.job) {
           this.running = false
           this.status = `Job: ${data.job.name} is ${data.job.status}. ${data.job.reason}`;
-          if(this.prevStatus == 'RUNNING' && data.job.status == 'COMPLETE') {
+          if (this.prevStatus == 'RUNNING' && data.job.status == 'COMPLETE') {
             this.$root.$emit('refreshJobs')
           }
           this.prevStatus = data.job.status
         }
         // Fall back
-        if(data.msg) this.status = data.msg
+        if (data.msg) this.status = data.msg
 
-      } catch(err) {
+      } catch (err) {
         this.running = false
         this.status = err.toString()
       }
-    }  
+    }
   }
 }

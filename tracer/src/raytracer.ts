@@ -39,7 +39,7 @@ export class Raytracer {
     const aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height
 
     // HACK: TEMP!!!
-    this.scene.cameraPos[0] = this.task.time * 5;
+    this.scene.cameraPos[0] = -40 + (this.task.time * 7);
     // Create our camera transform and invert
     const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
     mat4.invert(camTrans, camTrans);
@@ -53,7 +53,6 @@ export class Raytracer {
     // Main pixel casting loop, note we only render the slice of the image we're given in the task
     for (let y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y ++) {
       for (let x = 0; x < this.task.imageWidth; x++) {
-
         // Field of view scaling factor
         const fovScale = Math.tan(Utils.degreeToRad(this.scene.cameraFov * 0.5));
 
@@ -105,7 +104,7 @@ export class Raytracer {
           outPixel = Colour.add(outPixel, outPixel4);
         } else {
           // Without anti-aliasing we just cast one ray in center of each pixel
-          outPixel = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+          outPixel = this.shadeRay(this.makeCameraRay(x + 0.5, y + 0.5, camTrans, fovScale, aspectRatio));
         }
 
         // We have the final pixel colour so write to the image buffer
@@ -199,7 +198,6 @@ export class Raytracer {
 
       // Loop over all lights...
       for(const light of this.scene.lights) {
-
         // shadeColour is a copy of the base colour modified for this light only
         const shadeColour: Colour = hitColour.copy();
 

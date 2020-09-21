@@ -11,6 +11,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import fs from 'fs';
 import { API } from './api';
+import { Scheduler } from './scheduler';
 
 // Just to grab the version num
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
@@ -33,8 +34,12 @@ if (!fs.existsSync(jobOutDir)){
   fs.mkdirSync(jobOutDir);
 }
 
+// Main controller, all logic is really in here
+// Note. This is nothing to do with the 'controller' in MVC
+const controller = new Scheduler(jobOutDir);
+
 // API and app routing here
-const api = new API(jobOutDir, checkInterval);
+const api = new API(controller);
 app.get('/api/status',        api.getStatus);
 app.get('/api/jobs',          api.listJobs);
 app.post('/api/jobs',         api.startJob);
@@ -51,7 +56,7 @@ app.get('/', function(req, res) {
 app.use('/ui', express.static(webUIDir, { etag: false, maxAge: 0 }));
 app.use('/jobs', express.static(jobOutDir));
 
-// Silly stuff to intercept calls to console.log
+// Silly stuff to intercept calls to console.log so we can capture them
 export const allLogs: string[] = [];
 const cl = console.log;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,5 +84,5 @@ app.listen(port, function () {
   console.log(`### Tracer health checks run every ${checkInterval/1000} seconds [${checkInterval}ms]`);
 
   // Setup polling of tracers with good old setInterval
-  setInterval(api.tracerHealthCheck, checkInterval);
+  setInterval(controller.tracerHealthCheck, checkInterval);
 });
