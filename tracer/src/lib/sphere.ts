@@ -42,7 +42,6 @@ export class Sphere implements Object3D {
     // We cheat here, and scale by 1, and do the scaling in the calcT (using r2)
     mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
     mat4.invert(this.trans, this.transFwd);
-    //mat4.transpose(this.transNormal, this.transFwd);
   }
 
   // ====================================================================================

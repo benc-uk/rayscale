@@ -65,7 +65,7 @@ export class Mesh implements Object3D {
       vertPoint.z *= scale;
     }
 
-    // Wor out outer bounding box dimensions
+    // Work out outer bounding box dimensions
     const min = vec3.fromValues(Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE);
     const max = vec3.fromValues(-Number.MAX_VALUE, -Number.MAX_VALUE, -Number.MAX_VALUE);
     for(const vertPoint of this.objModel.vertices) {
