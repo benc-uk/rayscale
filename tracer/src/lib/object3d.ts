@@ -3,20 +3,24 @@
 // (C) Ben Coleman 2018
 //
 
-import { mat4 } from 'gl-matrix';
+import { vec3, mat4 } from 'gl-matrix';
 import { Ray } from './ray';
 import { Hit } from './hit';
 import { Material } from './material';
+import { Animation } from './animation';
 import { TResult } from './t-result';
 
 // ====================================================================================
 // Base interface all objects inherit from
 // ====================================================================================
 export interface Object3D {
-  trans: mat4;          // Inverse transform matrix to move rays into object space
-  transFwd: mat4;       // Forward transform matrix to move rays from object to world space
-  name: string;         // Name, not used yet
-  material: Material;   // Material; color and other surface coefficients
+  trans: mat4;              // Inverse transform matrix to move rays into object space
+  transFwd: mat4;           // Forward transform matrix to move rays from object to world space
+  name: string;             // Name, not used yet
+  material: Material;       // Material; color and other surface coefficients
+  animations: Animation[];  // Animation set for this object
+
+  pos: vec3;                // Position of the object
 
   // ====================================================================================================
   // Used by Raytracer main loop to test if a ray has hit this object

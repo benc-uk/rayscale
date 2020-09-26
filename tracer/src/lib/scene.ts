@@ -19,7 +19,7 @@ import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './mesh';
 import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
 import { Texture } from './texture';
-//import * as _ from 'lodash';
+import { AnimationTranslate } from './animation-translate';
 
 // ====================================================================================================
 //
@@ -103,21 +103,27 @@ export class Scene {
           if(!rawObj.pos) throw(`Object pos missing ${JSON.stringify(rawObj)}`);
           if(!rawObj.material) throw(`Object material: missing ${JSON.stringify(rawObj)}`);
 
+          // FIXME: TEMPORARY!!!!
+          const a = new AnimationTranslate(vec3.fromValues(18, -59, -200), 5);
+          const b = new AnimationTranslate(vec3.fromValues(18, 0, 20), 5);
+
           switch (rawObj.type.toLowerCase()) {
             case 'sphere':
               if(!rawObj.radius) throw(`Sphere radius missing ${JSON.stringify(rawObj)}`);
-              obj = new Sphere(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), rawObj.radius, rawObj.name);
+              obj = new Sphere(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), rawObj.radius, rawObj.name);
+              obj.animations.push(a);
+              obj.animations.push(b);
               break;
 
             case 'plane':
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
-              obj = new Plane(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
+              obj = new Plane(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
               break;
 
             case 'cuboid':
               if(!rawObj.size) throw(`Cuboid size missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
-              obj = new Cuboid(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1),
+              obj = new Cuboid(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
                 vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
               break;
@@ -126,7 +132,7 @@ export class Scene {
               if(!rawObj.radius) throw(`Cylinder radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cylinder length missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
-              obj = new Cylinder(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1),
+              obj = new Cylinder(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
                 rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
               break;
@@ -135,7 +141,7 @@ export class Scene {
               if(!rawObj.radius) throw(`Cone radius missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.length) throw(`Cone length missing ${JSON.stringify(rawObj)}`);
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
-              obj = new Cone(vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1),
+              obj = new Cone(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
                 rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
               break;
@@ -152,10 +158,14 @@ export class Scene {
                 boxSettings.maxFaces = rawObj.boundingSettings[1];
                 boxSettings.vertexEpsilon = rawObj.boundingSettings[2];
               }
+
               if(rawObj.debug) boxSettings.debug = rawObj.debug;
+
               // Load .obj file into manager before creating Mesh object
               await ObjManager.getInstance().loadObjFile(rawObj.src);
-              obj = new Mesh(rawObj.src, vec4.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2], 1),
+
+              // Now create the Object3D
+              obj = new Mesh(rawObj.src, vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
                 rawObj.scale, rawObj.name, boxSettings);
 

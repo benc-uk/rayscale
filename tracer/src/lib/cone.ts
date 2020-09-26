@@ -8,6 +8,7 @@ import { Ray } from './ray';
 import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
 import { Material } from './material';
+import { Animation } from './animation';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 import { Utils } from './utils';
@@ -22,9 +23,10 @@ export class Cone implements Object3D {
   trans: mat4;
   transFwd: mat4;
   material: Material;
+  animations: Animation[];
 
   // Cylinder properties
-  pos: vec4;
+  pos: vec3;
   radius: number;
   length: number;
   ratio: number;
@@ -34,7 +36,7 @@ export class Cone implements Object3D {
   // ====================================================================================
   // Create a Cone (called by Scene parser)
   // ====================================================================================
-  constructor(pos: vec4, rotation: vec3, radius: number, length: number, capped = false, name: string) {
+  constructor(pos: vec3, rotation: vec3, radius: number, length: number, capped = false, name: string) {
     this.name = name;
     this.pos = pos;
     this.radius = radius;
@@ -63,8 +65,6 @@ export class Cone implements Object3D {
     const tresult = new TResult(0.0, ray);
     let t1: number, t2: number;
     let d = 0;
-
-    //tresult.data = TResult.SIDE;
 
     const a: number = (ray.dx * ray.dx + ray.dz * ray.dz - ray.dy * ray.dy * this.ratio);
     const b: number = (ray.px * ray.dx + ray.pz * ray.dz - ray.py * ray.dy * this.ratio);

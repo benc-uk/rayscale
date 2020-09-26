@@ -8,6 +8,7 @@ import { Ray } from './ray';
 import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
 import { Material } from './material';
+import { Animation } from './animation';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 import { Utils } from './utils';
@@ -22,9 +23,10 @@ export class Cylinder implements Object3D {
   trans: mat4;
   transFwd: mat4;
   material: Material;
+  animations: Animation[];
 
   // Cylinder properties
-  pos: vec4;
+  pos: vec3;
   radius: number;
   length: number;
   r2: number;
@@ -33,7 +35,7 @@ export class Cylinder implements Object3D {
   // ====================================================================================
   // Create a Cylinder (called by Scene parser)
   // ====================================================================================
-  constructor(pos: vec4, rotation: vec3, radius: number, length: number, capped = false, name: string) {
+  constructor(pos: vec3, rotation: vec3, radius: number, length: number, capped = false, name: string) {
     this.name = name;
     this.pos = pos;
     this.radius = radius;
@@ -71,7 +73,6 @@ export class Cylinder implements Object3D {
 
     if (d >= 0.0) {
       // We have hit the cylinder, but that's the easy part...
-
       d = Math.sqrt(d);
       t1 = (-b + d) / a;
       t2 = (-b - d) / a;

@@ -8,6 +8,7 @@ import { Ray } from './ray';
 import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
 import { Material } from './material';
+import { Animation } from './animation';
 import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
@@ -17,18 +18,22 @@ import { TResult } from './t-result';
 // - Centred at `pos`, cuboid extends along each axis as per the `size` vector
 // ====================================================================================================
 export class Cuboid implements Object3D {
+  pos: vec3;
   trans: mat4;
   transFwd: mat4;
   name: string;
   material: Material;
+  animations: Animation[];
+
   private b1: number[] = [];
   private b2: number[] = [];
 
   // ====================================================================================================
   // Create a Cuboid (called by Scene parser)
   // ====================================================================================================
-  constructor(pos: vec4, rotation: vec3, size: vec3, name: string) {
+  constructor(pos: vec3, rotation: vec3, size: vec3, name: string) {
     this.name = name;
+    this.pos = pos;
     this.b1 = [-size[0]/2, -size[1]/2, -size[2]/2];
     this.b2 = [size[0]/2, size[1]/2, size[2]/2];
 

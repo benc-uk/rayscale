@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec4, mat4 } from 'gl-matrix';
+import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Colour } from './lib/colour';
 import { Ray } from './lib/ray';
 import { Scene } from './lib/scene';
@@ -38,8 +38,28 @@ export class Raytracer {
     if(this.task.imageWidth < this.task.imageHeight) { throw('Error, image width must be > height'); }
     const aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height
 
-    // HACK: TEMP!!!
-    this.scene.cameraPos[0] = -40 + (this.task.time * 7);
+    // Move all objects by resolving each of their animation chains for the current time
+    // FIXME: Work in progress?
+    let animTimeTotal = 0;
+    for(const obj of this.scene.objects) {
+      const newPos = vec3.clone(obj.pos);
+
+      for(const anim of obj.animations) {
+        // Move the object according to this animation, for the time offset
+        anim.modifyPositionForTime(newPos, this.task.time - animTimeTotal);
+
+        animTimeTotal += anim.duration;
+        if(animTimeTotal > this.task.time) break;
+      }
+
+      // Now update the object transformations
+      // FIXME: This needs moving I thin
+      const rot: quat = quat.identity(quat.create());
+      // We cheat here, and scale by 1, and do the scaling in the calcT (using r2)
+      mat4.fromRotationTranslationScale(obj.transFwd, rot, newPos, [1, 1, 1]);
+      mat4.invert(obj.trans, obj.transFwd);
+    }
+
     // Create our camera transform and invert
     const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
     mat4.invert(camTrans, camTrans);

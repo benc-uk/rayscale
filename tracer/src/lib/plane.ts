@@ -8,6 +8,7 @@ import { Ray } from './ray';
 import { vec3, vec4, mat4, quat } from 'gl-matrix';
 import { Hit } from './hit';
 import { Material } from './material';
+import { Animation } from './animation';
 import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
@@ -19,9 +20,11 @@ import { TResult } from './t-result';
 export class Plane implements Object3D {
   // Base properties
   name: string;
+  pos: vec3;
   trans: mat4;
   transFwd: mat4;
   material: Material;
+  animations: Animation[];
 
   // Plane properties
   norm: vec4;
@@ -29,8 +32,9 @@ export class Plane implements Object3D {
   // ====================================================================================================
   // Create a Plane (called by Scene parser)
   // ====================================================================================================
-  constructor(pos: vec4, rotation: vec3, name: string) {
+  constructor(pos: vec3, rotation: vec3, name: string) {
     this.name = name;
+    this.pos = pos;
 
     // pointing up
     this.norm = vec4.fromValues(0, 1, 0, 0);

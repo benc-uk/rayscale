@@ -10,6 +10,7 @@ import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
 import { Hit } from './hit';
 import { Material } from './material';
+import { Animation } from './animation';
 import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
@@ -25,6 +26,7 @@ export class Mesh implements Object3D {
   trans: mat4;
   transFwd: mat4;
   material: Material;
+  animations: Animation[];
 
   // Mesh properties
   public objModel: ObjModel;
@@ -35,8 +37,9 @@ export class Mesh implements Object3D {
   // Create a ObjMesh
   // Note. Before calling this constructor the OBJ must be loaded into the ObjManager
   // ====================================================================================================
-  constructor(objFile: string, pos: vec4, rotation: vec3, scale: number, name: string, bbSettings: BoundingBoxSettings) {
+  constructor(objFile: string, pos: vec3, rotation: vec3, scale: number, name: string, bbSettings: BoundingBoxSettings) {
     this.name = name;
+    this.pos = pos;
 
     // Fetch the OBJ model for this mesh from the ObjManager (global singleton)
     // Why the JSON parsing here? This is a hacky way to give me a deep copy of the object
@@ -82,6 +85,7 @@ export class Mesh implements Object3D {
     // Create top level bounding box holding the whole mesh, depth = 0
     this.boundingBox = new BoundingBox(0, vec3.clone(min), vec3.clone(max), this);
   }
+  pos: vec3;
 
   // ====================================================================================================
   // Standard calc T method required by all objects
