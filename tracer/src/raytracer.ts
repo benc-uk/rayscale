@@ -14,6 +14,8 @@ import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
 import { ObjectConsts, Object3D } from './lib/object3d';
 import { Mesh } from './lib/mesh';
+import { AnimationRotation, AnimationPosition } from './lib/animation-vec3';
+import { Cuboid } from './lib/cuboid';
 
 // ====================================================================================================
 // The core & heart of everything
@@ -40,23 +42,28 @@ export class Raytracer {
 
     // Move all objects by resolving each of their animation chains for the current time
     // FIXME: Work in progress?
-    let animTimeTotal = 0;
     for(const obj of this.scene.objects) {
       const newPos = vec3.clone(obj.pos);
+      const newRot = vec3.clone((<Cuboid>obj).rot);
 
       for(const anim of obj.animations) {
         // Move the object according to this animation, for the time offset
-        anim.modifyPositionForTime(newPos, this.task.time - animTimeTotal);
-
-        animTimeTotal += anim.duration;
-        if(animTimeTotal > this.task.time) break;
+        if(anim.constructor.name === 'AnimationPosition') {
+          (<AnimationPosition>anim).modifyVec3ForTime(newPos, this.task.time);
+        }
+        if(anim.constructor.name === 'AnimationRotation') {
+          (<AnimationRotation>anim).modifyVec3ForTime(newRot, this.task.time);
+        }
       }
 
-      // Now update the object transformations
-      // FIXME: This needs moving I thin
-      const rot: quat = quat.identity(quat.create());
+      // // Now update the object transformations
+      // // FIXME: This needs moving I thin
+      const rotationQuat: quat = quat.identity(quat.create());
+      quat.rotateX(rotationQuat, rotationQuat, Utils.degreeToRad(newRot[0]));
+      quat.rotateY(rotationQuat, rotationQuat, Utils.degreeToRad(newRot[1]));
+      quat.rotateZ(rotationQuat, rotationQuat, Utils.degreeToRad(newRot[2]));
       // We cheat here, and scale by 1, and do the scaling in the calcT (using r2)
-      mat4.fromRotationTranslationScale(obj.transFwd, rot, newPos, [1, 1, 1]);
+      mat4.fromRotationTranslationScale(obj.transFwd, rotationQuat, newPos, [1, 1, 1]);
       mat4.invert(obj.trans, obj.transFwd);
     }
 
@@ -134,8 +141,9 @@ export class Raytracer {
       // Image row complete
       cacheCorner = null;
       bufferY++;
-      const perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
-      if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Frame ${this.task.frame}, task '${this.task.index + 1} / ${this.task.jobId}' rendered ${perc}%`);
+      // TODO: Put this back!
+      //const perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
+      //if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Frame ${this.task.frame}, task '${this.task.index + 1} / ${this.task.jobId}' rendered ${perc}%`);
     }
 
     return this.image;

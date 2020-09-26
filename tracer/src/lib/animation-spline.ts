@@ -2,7 +2,7 @@
 // Rayscale - Base raytracing classes
 // (C) Ben Coleman 2020
 //
-
+/*
 import { vec3 } from 'gl-matrix';
 import { CatmullRomSpline } from './catmull-rom-spline';
 import { Utils } from './utils';
@@ -24,3 +24,4 @@ export class AnimationSpline extends Animation {
     //return this.spline.getPoint(t, null);
   }
 }
+*/

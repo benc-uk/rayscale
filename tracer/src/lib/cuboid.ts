@@ -19,6 +19,7 @@ import { TResult } from './t-result';
 // ====================================================================================================
 export class Cuboid implements Object3D {
   pos: vec3;
+  rot: vec3;
   trans: mat4;
   transFwd: mat4;
   name: string;
@@ -34,6 +35,8 @@ export class Cuboid implements Object3D {
   constructor(pos: vec3, rotation: vec3, size: vec3, name: string) {
     this.name = name;
     this.pos = pos;
+    this.rot = rotation;
+    this.animations = [];
     this.b1 = [-size[0]/2, -size[1]/2, -size[2]/2];
     this.b2 = [size[0]/2, size[1]/2, size[2]/2];
 

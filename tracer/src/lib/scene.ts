@@ -19,7 +19,7 @@ import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './mesh';
 import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
 import { Texture } from './texture';
-import { AnimationTranslate } from './animation-translate';
+import { AnimationPosition, AnimationRotation } from './animation-vec3';
 
 // ====================================================================================================
 //
@@ -104,15 +104,15 @@ export class Scene {
           if(!rawObj.material) throw(`Object material: missing ${JSON.stringify(rawObj)}`);
 
           // FIXME: TEMPORARY!!!!
-          const a = new AnimationTranslate(vec3.fromValues(18, -59, -200), 5);
-          const b = new AnimationTranslate(vec3.fromValues(18, 0, 20), 5);
+          const a = new AnimationPosition(vec3.fromValues(18, 0, 0), 0, 10);
+          const b = new AnimationRotation(vec3.fromValues(90, 30, 0), 5, 5);
+          const c = new AnimationPosition(vec3.fromValues(10, 9, 0), 10, 5);
+          const d = new AnimationRotation(vec3.fromValues(90, 30, 90), 10, 5);
 
           switch (rawObj.type.toLowerCase()) {
             case 'sphere':
               if(!rawObj.radius) throw(`Sphere radius missing ${JSON.stringify(rawObj)}`);
               obj = new Sphere(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), rawObj.radius, rawObj.name);
-              obj.animations.push(a);
-              obj.animations.push(b);
               break;
 
             case 'plane':
@@ -126,6 +126,10 @@ export class Scene {
               obj = new Cuboid(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
                 vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
+              obj.animations.push(a);
+              obj.animations.push(b);
+              obj.animations.push(c);
+              obj.animations.push(d);
               break;
 
             case 'cylinder':

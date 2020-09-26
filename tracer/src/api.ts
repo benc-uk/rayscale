@@ -77,13 +77,15 @@ export class API {
       // Go!
       this.raytracer = new Raytracer(task, scene);
       const imgSlice = this.raytracer.runRayTrace();
+
+      // TODO: Put back
       // Log stats
-      console.log('### Task complete, sending image fragment back to controller');
-      console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
-      console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
-      console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
-      console.log(`### Object tests: ${Utils.numberWithCommas(Stats.objectTests)}`);
-      console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
+      // console.log('### Task complete, sending image fragment back to controller');
+      // console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
+      // console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
+      // console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
+      // console.log(`### Object tests: ${Utils.numberWithCommas(Stats.objectTests)}`);
+      // console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
 
       // Send image buffer to controller as binary (octet-stream)
       await axios.post(
