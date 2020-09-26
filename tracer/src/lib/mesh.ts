@@ -4,14 +4,11 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec3, vec4, mat4, quat } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { ObjModel, Face, Vertex } from 'obj-file-parser';
 import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
 import { Hit } from './hit';
-import { Material } from './material';
-import { Animation } from './animation';
-import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 import { ObjManager } from './obj-manager';
@@ -20,14 +17,7 @@ import { Colour } from './colour';
 // ====================================================================================================
 // Object consisting of a polygon mesh, created from OBJ format file
 // ====================================================================================================
-export class Mesh implements Object3D {
-  // Base properties
-  name: string;
-  trans: mat4;
-  transFwd: mat4;
-  material: Material;
-  animations: Animation[];
-
+export class Mesh extends Object3D {
   // Mesh properties
   public objModel: ObjModel;
   private boundingBox: BoundingBox;
@@ -37,9 +27,8 @@ export class Mesh implements Object3D {
   // Create a ObjMesh
   // Note. Before calling this constructor the OBJ must be loaded into the ObjManager
   // ====================================================================================================
-  constructor(objFile: string, pos: vec3, rotation: vec3, scale: number, name: string, bbSettings: BoundingBoxSettings) {
-    this.name = name;
-    this.pos = pos;
+  constructor(objFile: string, pos: vec3, rot: vec3, scale: number, name: string, bbSettings: BoundingBoxSettings) {
+    super(name, pos, rot);
 
     // Fetch the OBJ model for this mesh from the ObjManager (global singleton)
     // Why the JSON parsing here? This is a hacky way to give me a deep copy of the object
@@ -47,17 +36,6 @@ export class Mesh implements Object3D {
     if(!this.objModel) {
       throw `Obj file ${objFile} not loaded in ObjectManager`;
     }
-
-    // Standard set up of transformation matrices for translation and rotation
-    // Note. Scaling is not handled with a transformation has it messes with things
-    this.transFwd = mat4.identity(mat4.create());
-    this.trans = mat4.identity(mat4.create());
-    const rot: quat = quat.identity(quat.create());
-    quat.rotateX(rot, rot, Utils.degreeToRad(rotation[0]));
-    quat.rotateY(rot, rot, Utils.degreeToRad(rotation[1]));
-    quat.rotateZ(rot, rot, Utils.degreeToRad(rotation[2]));
-    mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
-    mat4.invert(this.trans, this.transFwd);
 
     // Pre scale mesh, yes this is a bit of a hack and we should be using the matrix transforms
     // Note. This is why we needed a deep clone of the objModel

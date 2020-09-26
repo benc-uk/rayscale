@@ -3,25 +3,18 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec3, mat4 } from 'gl-matrix';
+import { vec3, mat4, quat } from 'gl-matrix';
 import { Ray } from './ray';
 import { Hit } from './hit';
 import { Material } from './material';
 import { Animation } from './animation';
 import { TResult } from './t-result';
+import { Utils } from './utils';
 
 // ====================================================================================
-// Base interface all objects inherit from
+// Base interface all objects need to implement
 // ====================================================================================
-export interface Object3D {
-  trans: mat4;              // Inverse transform matrix to move rays into object space
-  transFwd: mat4;           // Forward transform matrix to move rays from object to world space
-  name: string;             // Name, not used yet
-  material: Material;       // Material; color and other surface coefficients
-  animations: Animation[];  // Animation set for this object
-
-  pos: vec3;                // Position of the object
-
+export interface Object3DInterface {
   // ====================================================================================================
   // Used by Raytracer main loop to test if a ray has hit this object
   // ====================================================================================================
@@ -31,6 +24,42 @@ export interface Object3D {
   // Used by Raytracer main loop to get details of the hit; intersection point, normal etc.
   // ====================================================================================================
   getHitPoint(result: TResult): Hit;
+}
+
+// ====================================================================================
+// Base class all objects inherit from
+// ====================================================================================
+export abstract class Object3D implements Object3DInterface {
+  trans: mat4;              // Inverse transform matrix to move rays into object space
+  transFwd: mat4;           // Forward transform matrix to move rays from object to world space
+  material: Material;       // Material; color and other surface coefficients
+  animations: Animation[];  // Animation set for this object
+
+  constructor(public name: string, public pos: vec3, public rot: vec3) {
+    this.animations = new Array<Animation>();
+    this.transFwd = mat4.identity(mat4.create());
+    this.trans = mat4.identity(mat4.create());
+
+    // Apply animation here
+
+    // Build transforms based on position and rotation
+    const rotQuat: quat = quat.identity(quat.create());
+    quat.rotateX(rotQuat, rotQuat, Utils.degreeToRad(this.rot[0]));
+    quat.rotateY(rotQuat, rotQuat, Utils.degreeToRad(this.rot[1]));
+    quat.rotateZ(rotQuat, rotQuat, Utils.degreeToRad(this.rot[2]));
+    mat4.fromRotationTranslationScale(this.transFwd, rotQuat, this.pos, [1, 1, 1]);
+    mat4.invert(this.trans, this.transFwd);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  calcT(ray: Ray): TResult {
+    throw new Error('Method not implemented.');
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getHitPoint(result: TResult): Hit {
+    throw new Error('Method not implemented.');
+  }
 }
 
 // ******************************************************************************************************

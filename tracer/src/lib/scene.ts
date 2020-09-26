@@ -19,7 +19,7 @@ import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './mesh';
 import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
 import { Texture } from './texture';
-import { AnimationPosition, AnimationRotation } from './animation-vec3';
+import { AnimationPosition } from './animation-vec3';
 
 // ====================================================================================================
 //
@@ -105,9 +105,9 @@ export class Scene {
 
           // FIXME: TEMPORARY!!!!
           const a = new AnimationPosition(vec3.fromValues(18, 0, 0), 0, 10);
-          const b = new AnimationRotation(vec3.fromValues(90, 30, 0), 5, 5);
-          const c = new AnimationPosition(vec3.fromValues(10, 9, 0), 10, 5);
-          const d = new AnimationRotation(vec3.fromValues(90, 30, 90), 10, 5);
+          //const b = new AnimationRotation(vec3.fromValues(90, 30, 0), 5, 5);
+          const c = new AnimationPosition(vec3.fromValues(18, 9, 0), 10, 5);
+          //const d = new AnimationRotation(vec3.fromValues(90, 30, 90), 10, 5);
 
           switch (rawObj.type.toLowerCase()) {
             case 'sphere':
@@ -127,9 +127,9 @@ export class Scene {
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
                 vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
               obj.animations.push(a);
-              obj.animations.push(b);
+              //obj.animations.push(b);
               obj.animations.push(c);
-              obj.animations.push(d);
+              //obj.animations.push(d);
               break;
 
             case 'cylinder':

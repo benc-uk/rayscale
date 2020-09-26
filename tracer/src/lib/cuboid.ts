@@ -5,11 +5,8 @@
 
 import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
-import { vec3, vec4, mat4, quat } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { Hit } from './hit';
-import { Material } from './material';
-import { Animation } from './animation';
-import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 
@@ -17,38 +14,17 @@ import { TResult } from './t-result';
 // Object representing a cuboid (3d rectangle)
 // - Centred at `pos`, cuboid extends along each axis as per the `size` vector
 // ====================================================================================================
-export class Cuboid implements Object3D {
-  pos: vec3;
-  rot: vec3;
-  trans: mat4;
-  transFwd: mat4;
-  name: string;
-  material: Material;
-  animations: Animation[];
-
+export class Cuboid extends Object3D {
   private b1: number[] = [];
   private b2: number[] = [];
 
   // ====================================================================================================
   // Create a Cuboid (called by Scene parser)
   // ====================================================================================================
-  constructor(pos: vec3, rotation: vec3, size: vec3, name: string) {
-    this.name = name;
-    this.pos = pos;
-    this.rot = rotation;
-    this.animations = [];
+  constructor(pos: vec3, rot: vec3, size: vec3, name: string) {
+    super(name, pos, rot);
     this.b1 = [-size[0]/2, -size[1]/2, -size[2]/2];
     this.b2 = [size[0]/2, size[1]/2, size[2]/2];
-
-    this.transFwd = mat4.identity(mat4.create());
-    this.trans = mat4.identity(mat4.create());
-    const rot: quat = quat.identity(quat.create());
-    quat.rotateX(rot, rot, Utils.degreeToRad(rotation[0]));
-    quat.rotateY(rot, rot, Utils.degreeToRad(rotation[1]));
-    quat.rotateZ(rot, rot, Utils.degreeToRad(rotation[2]));
-    // We cheat here, and scale by 1, and do the scaling with the box coords
-    mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
-    mat4.invert(this.trans, this.transFwd);
   }
 
   public calcT(inray: Ray): TResult {

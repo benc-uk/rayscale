@@ -7,6 +7,7 @@ import { Scene } from './lib/scene';
 import { Stats } from './lib/stats';
 import { PngManager } from './lib/png-manager';
 import { ObjManager } from './lib/obj-manager';
+import { Utils } from './lib/utils';
 
 // =======================================================================================================
 
@@ -40,32 +41,36 @@ export class API {
 
     // We only parse the scene on new jobs, this way the tracer
     // can accept multiple tasks for the same job without re-parsing the scene
-    if(task.jobId != this.lastJobId) {
-      Stats.reset();
-      // Clear out caches, or not
-      if(process.env.CLEAR_CACHE != 'false') {
+    // NOTE: Had to disable this optimisation, as fundamental at odds with animation
+    // We need a clean state for each render
+    //if(task.jobId != this.lastJobId {
+    Stats.reset();
+    // Clear out caches, or not
+    /* if(process.env.CLEAR_CACHE != 'false') {
         PngManager.getInstance().clearCache();
         ObjManager.getInstance().clearCache();
-      }
+    } */
 
-      // Parse scene
-      try {
-        scene = await Scene.parseScene(req.body.scene, task.jobId);
-      } catch(err) {
-        console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
-        res.contentType('application/json');
-        res.status(460).send({ error: `Scene did not parse correctly: ${err}. Task rejected` });
-      }
-
-      if(!scene) {
-        return;
-      }
-      this.lastJobId = task.jobId;
-      this.lastScene = scene;
-    } else {
-      console.log(`### Scene parsing skipped for job: ${task.jobId}`);
-      scene = this.lastScene;
+    // Parse scene
+    try {
+      scene = await Scene.parseScene(req.body.scene, task.jobId);
+    } catch(err) {
+      console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
+      res.contentType('application/json');
+      res.status(460).send({ error: `Scene did not parse correctly: ${err}. Task rejected` });
     }
+
+    if(!scene) {
+      return;
+    }
+
+    this.lastJobId = task.jobId;
+    this.lastScene = scene;
+    // } else {
+    //   console.log(`### Scene parsing skipped for job: ${task.jobId}`);
+    //   scene = this.lastScene;
+    // }
+
     console.log('### Starting task...');
 
     // Send OK back before starting tracing
@@ -77,14 +82,13 @@ export class API {
       this.raytracer = new Raytracer(task, scene);
       const imgSlice = this.raytracer.runRayTrace();
 
-      // TODO: Put back
       // Log stats
-      // console.log('### Task complete, sending image fragment back to controller');
-      // console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
-      // console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
-      // console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
-      // console.log(`### Object tests: ${Utils.numberWithCommas(Stats.objectTests)}`);
-      // console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
+      console.log('### Task complete, sending image fragment back to controller');
+      console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
+      console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
+      console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
+      console.log(`### Object tests: ${Utils.numberWithCommas(Stats.objectTests)}`);
+      console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
 
       // Send image buffer to controller as binary (octet-stream)
       await axios.post(

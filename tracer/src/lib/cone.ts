@@ -5,28 +5,17 @@
 
 import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
-import { vec3, vec4, mat4, quat } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { Hit } from './hit';
-import { Material } from './material';
-import { Animation } from './animation';
 import { Stats } from './stats';
 import { TResult } from './t-result';
-import { Utils } from './utils';
 
 // ====================================================================================================
 // Object representing a cone with either open or capped ends
 // - Base is at `pos`, cone rises up `length` units, and is aligned along the Y axis
 // ====================================================================================================
-export class Cone implements Object3D {
-  // Base properties
-  name: string;
-  trans: mat4;
-  transFwd: mat4;
-  material: Material;
-  animations: Animation[];
-
+export class Cone extends Object3D {
   // Cylinder properties
-  pos: vec3;
   radius: number;
   length: number;
   ratio: number;
@@ -36,24 +25,13 @@ export class Cone implements Object3D {
   // ====================================================================================
   // Create a Cone (called by Scene parser)
   // ====================================================================================
-  constructor(pos: vec3, rotation: vec3, radius: number, length: number, capped = false, name: string) {
-    this.name = name;
-    this.pos = pos;
+  constructor(pos: vec3, rot: vec3, radius: number, length: number, capped = false, name: string) {
+    super(name, pos, rot);
     this.radius = radius;
     this.r2 = radius * radius;
     this.length = length;
     this.ratio = (this.radius/2) / this.length;
     this.capped = capped;
-
-    this.transFwd = mat4.identity(mat4.create());
-    this.trans = mat4.identity(mat4.create());
-    const rot: quat = quat.identity(quat.create());
-    quat.rotateX(rot, rot, Utils.degreeToRad(rotation[0]));
-    quat.rotateY(rot, rot, Utils.degreeToRad(rotation[1]));
-    quat.rotateZ(rot, rot, Utils.degreeToRad(180 + rotation[2]));  // Hack to get cones the way up I want
-    // We cheat here, and scale by 1, and do the scaling in the calcT
-    mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1] + this.length, pos[2]], [1, 1, 1]);
-    mat4.invert(this.trans, this.transFwd);
   }
 
   // ====================================================================================

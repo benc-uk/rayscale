@@ -5,10 +5,8 @@
 
 import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
-import { vec3, vec4, mat4, quat } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { Hit } from './hit';
-import { Material } from './material';
-import { Animation } from './animation';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 
@@ -16,15 +14,7 @@ import { TResult } from './t-result';
 // Object representing a sphere
 // - Centered at `pos` in world space, with radius `r`
 // ====================================================================================================
-export class Sphere implements Object3D {
-  // Base properties
-  name: string;
-  trans: mat4;
-  transFwd: mat4;
-  material: Material;
-  animations: Animation[];
-  pos: vec3;
-
+export class Sphere extends Object3D {
   // Sphere properties
   radius: number;
   r2: number;
@@ -33,19 +23,9 @@ export class Sphere implements Object3D {
   // Create a Sphere (called by Scene parser)
   // ====================================================================================
   constructor(pos: vec3, radius: number, name: string) {
+    super(name, pos, vec3.create());
     this.radius = radius;
     this.r2 = radius * radius;
-    this.name = name;
-    this.animations = [];
-    this.pos = pos;
-
-    this.transFwd = mat4.identity(mat4.create());
-    this.trans = mat4.identity(mat4.create());
-
-    const rot: quat = quat.identity(quat.create());
-    // We cheat here, and scale by 1, and do the scaling in the calcT (using r2)
-    mat4.fromRotationTranslationScale(this.transFwd, rot, this.pos, [1, 1, 1]);
-    mat4.invert(this.trans, this.transFwd);
   }
 
   // ====================================================================================

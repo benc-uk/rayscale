@@ -5,11 +5,8 @@
 
 import { Object3D, ObjectConsts } from './object3d';
 import { Ray } from './ray';
-import { vec3, vec4, mat4, quat } from 'gl-matrix';
+import { vec3, vec4 } from 'gl-matrix';
 import { Hit } from './hit';
-import { Material } from './material';
-import { Animation } from './animation';
-import { Utils } from './utils';
 import { Stats } from './stats';
 import { TResult } from './t-result';
 
@@ -17,36 +14,18 @@ import { TResult } from './t-result';
 // Object representing a plane infinite plane
 // - Centred at `pos`, and pointing upwards (+ve Y axis), like a "floor"
 // ====================================================================================================
-export class Plane implements Object3D {
-  // Base properties
-  name: string;
-  pos: vec3;
-  trans: mat4;
-  transFwd: mat4;
-  material: Material;
-  animations: Animation[];
-
+export class Plane extends Object3D {
   // Plane properties
   norm: vec4;
 
   // ====================================================================================================
   // Create a Plane (called by Scene parser)
   // ====================================================================================================
-  constructor(pos: vec3, rotation: vec3, name: string) {
-    this.name = name;
-    this.pos = pos;
+  constructor(pos: vec3, rot: vec3, name: string) {
+    super(name, pos, rot);
 
     // pointing up
     this.norm = vec4.fromValues(0, 1, 0, 0);
-
-    this.transFwd = mat4.identity(mat4.create());
-    this.trans = mat4.identity(mat4.create());
-    const rot: quat = quat.identity(quat.create());
-    quat.rotateX(rot, rot, Utils.degreeToRad(rotation[0]));
-    quat.rotateY(rot, rot, Utils.degreeToRad(rotation[1]));
-    quat.rotateZ(rot, rot, Utils.degreeToRad(rotation[2]));
-    mat4.fromRotationTranslationScale(this.transFwd, rot, [pos[0], pos[1], pos[2]], [1, 1, 1]);
-    mat4.invert(this.trans, this.transFwd);
   }
 
   public calcT(inray: Ray): TResult {
