@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec4, mat4, quat } from 'gl-matrix';
+import { vec4, mat4 } from 'gl-matrix';
 import { Colour } from './lib/colour';
 import { Ray } from './lib/ray';
 import { Scene } from './lib/scene';
@@ -14,7 +14,7 @@ import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
 import { ObjectConsts, Object3D } from './lib/object3d';
 import { Mesh } from './lib/mesh';
-import { AnimationPosition } from './lib/animation-vec3';
+//import { AnimationPosition } from './lib/animation-vec3';
 
 // ====================================================================================================
 // The core & heart of everything

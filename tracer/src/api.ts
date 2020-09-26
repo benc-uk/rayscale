@@ -5,8 +5,8 @@ import { Raytracer } from './raytracer';
 import { Task } from './lib/task';
 import { Scene } from './lib/scene';
 import { Stats } from './lib/stats';
-import { PngManager } from './lib/png-manager';
-import { ObjManager } from './lib/obj-manager';
+//import { PngManager } from './lib/png-manager';
+//import { ObjManager } from './lib/obj-manager';
 import { Utils } from './lib/utils';
 
 // =======================================================================================================
