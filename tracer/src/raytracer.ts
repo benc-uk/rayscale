@@ -85,7 +85,7 @@ export class Raytracer {
             outPixel3 = this.shadeRay(this.scene.camera.makeRay(x, y+1, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
             cacheRow[x] = outPixel3.copy();
           }
-          const outPixel4: Colour = this.shadeRay(this.scene.camera.makeRay(x+1, y+1, this.task.imageHeight, this.task.imageHeight, fovScale, aspectRatio));
+          const outPixel4: Colour = this.shadeRay(this.scene.camera.makeRay(x+1, y+1, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
           cacheRow[x+1] = outPixel4.copy();
           cacheCorner = outPixel4.copy();
 
@@ -119,26 +119,6 @@ export class Raytracer {
 
     return this.image;
   }
-
-  // ====================================================================================================
-  // Create camera rays to cast into the scene for a given pixel
-  // ====================================================================================================
-  // private makeCameraRay(x: number, y: number, camTrans: mat4, fovScale: number, aspectRatio: number): Ray {
-  //   // This converts from raster space (output image) -> normalized space -> screen space
-  //   const px: number = (2 * (x + 0.5) / this.task.imageWidth - 1) * fovScale  * aspectRatio;
-  //   const py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
-
-  //   // Create camera ray, starting at origin and pointing into -z
-  //   const origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
-  //   const dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
-  //   const ray: Ray = new Ray(origin, dir);
-
-  //   // Now move ray with respect to camera transform (into world space)
-  //   ray.transform(camTrans);
-  //   ray.depth = 1;
-
-  //   return ray;
-  // }
 
   // ====================================================================================================
   // Main shading & lighting function, computes the colour of given ray

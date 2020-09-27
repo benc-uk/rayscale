@@ -43,8 +43,8 @@ COPY --from=build /build/controller/dist/ ./dist
 COPY controller/webui/ ./webui
 RUN mkdir jobs
 
-# Install bash inside container just for debugging 
-RUN apk update && apk add bash
+# Install bash inside for debugging, ffmeg also needed now
+RUN apk update && apk add bash && apk add ffmpeg
 
 EXPOSE 9000
 CMD npm start

@@ -54,9 +54,6 @@ export class Scene {
       console.log('### Begin parsing scene...');
 
       try {
-        if(!input.cameraPos) throw('Scene cameraPos missing');
-        if(!input.cameraLookAt) throw('Scene cameraLookAt missing');
-
         // NOTE: We need to use the same random seed across all tracers otherwise
         // We'll get banding with noiseTextures
         if(!input.seed)
@@ -77,13 +74,18 @@ export class Scene {
 
         scene.ior = 1.0;
 
-        let cameraFov = 30;
-        if(input.cameraFov)
-          cameraFov = input.cameraFov;
+        if(!input.camera) throw('Scene camera missing');
+        if(!input.camera.pos) throw(`Camera pos missing ${JSON.stringify(input.camera)}`);
+        if(!input.camera.lookAt) throw(`Camera pos missing ${JSON.stringify(input.camera)}`);
 
-        scene.camera = new Camera(vec3.fromValues(input.cameraPos[0], input.cameraPos[1], input.cameraPos[2]),
-          vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]),
-          cameraFov);
+        let cameraFov = 30;
+        if(input.camera.fov)
+          cameraFov = input.camera.fov;
+
+        const cameraAnims = this.parseAnimations(input.camera);
+        scene.camera = new Camera(vec3.fromValues(input.camera.pos[0], input.camera.pos[1], input.camera.pos[2]),
+          vec3.fromValues(input.camera.lookAt[0], input.camera.lookAt[1], input.camera.lookAt[2]),
+          cameraFov, time, cameraAnims);
 
         // Parse presetMaterials materials
         Scene.presetMaterials.basic  = new Material(0.1,  1,   0,   5,  0, 0);
