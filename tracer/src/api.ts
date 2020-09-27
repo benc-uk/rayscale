@@ -53,7 +53,7 @@ export class API {
 
     // Parse scene
     try {
-      scene = await Scene.parseScene(req.body.scene, task.jobId);
+      scene = await Scene.parseScene(req.body.scene, task.jobId, task.time);
     } catch(err) {
       console.error(`### ERROR! ${err}, Scene did not parse correctly, task rejected`);
       res.contentType('application/json');

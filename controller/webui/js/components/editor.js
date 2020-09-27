@@ -32,7 +32,7 @@ export default {
     <error title="Job Submission Error" :message="errorMsg" @closed="errorMsg=''"/>
   </div>`,
 
-  data () {
+  data() {
     return {
       errorMsg: null,
     }
@@ -43,14 +43,16 @@ export default {
       editor.layout()
     })*/
 
-    require(['vs/editor/editor.main'], function() {
+    require(['vs/editor/editor.main'], function () {
       editor = monaco.editor.create(document.getElementById('editor'), {
         minimap: { enabled: false },
         theme: 'vs-dark',
         fontSize: '17px',
         language: 'yaml',
-        useTabStops: false,
-        automaticLayout: true
+        useTabStops: true,
+        //tabCompletion: true,
+        automaticLayout: true,
+        tabIndex: 2
       })
 
       // Restore old job YAML
@@ -60,7 +62,7 @@ export default {
   },
 
   methods: {
-    jobSubmit: async function() {
+    jobSubmit: async function () {
       try {
         const job = editor.getValue();
         window.localStorage.setItem('rayScaleJob', job);
@@ -69,38 +71,38 @@ export default {
           method: 'POST',
           body: job
         })
-        if(!submitResp.ok) {
-          if(submitResp.headers.get('content-type').startsWith('application/json')) { 
-            const data = await submitResp.json() 
+        if (!submitResp.ok) {
+          if (submitResp.headers.get('content-type').startsWith('application/json')) {
+            const data = await submitResp.json()
             this.errorMsg = data.msg
             return
           }
           this.errorMsg = `Submit failed - ${submitResp.status} ${submitResp.statusText}`
         }
         this.$emit('statusRefresh')
-      } catch(err) {
+      } catch (err) {
         this.errorMsg = err.toString()
       }
     },
 
-    jobCancel: async function() {
+    jobCancel: async function () {
       try {
         const cancelResp = await fetch("/api/jobs/cancel", {
           method: "POST",
           body: {}
         })
-        if(!cancelResp.ok) {
-          if(submitResp.headers.get('content-type').startsWith('application/json')) { 
-            const data = await submitResp.json() 
+        if (!cancelResp.ok) {
+          if (submitResp.headers.get('content-type').startsWith('application/json')) {
+            const data = await submitResp.json()
             this.errorMsg = data.msg
             return
           }
           this.errorMsg = `Cancel failed - ${submitResp.status} ${submitResp.statusText}`
         }
         this.$emit('statusRefresh')
-      } catch(err) {
+      } catch (err) {
         this.errorMsg = err.toString()
       }
-    }          
+    }
   }
 }

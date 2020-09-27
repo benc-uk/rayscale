@@ -5,7 +5,7 @@ scene:
   backgroundColour: [100, 100, 100]
   ambientLevel: 0.15
   cameraFov: 30
-  cameraPos: [0, 0, 50]
+  cameraPos: [0, 10, 50]
   cameraLookAt: [0, 0, 0]
   lights:
     - pos: [0, 0, 200]
@@ -15,7 +15,7 @@ scene:
     - type: sphere
       name: s1
       pos: [10, 5, 0]
-      radius: 4
+      radius: 6
       material:
         preset: shiny
         texture:

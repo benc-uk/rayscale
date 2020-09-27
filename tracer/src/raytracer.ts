@@ -12,9 +12,8 @@ import { Utils } from './lib/utils';
 import { Hit } from './lib/hit';
 import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
-import { ObjectConsts, Object3D } from './lib/object3d';
-import { Mesh } from './lib/mesh';
-//import { AnimationPosition } from './lib/animation-vec3';
+import { ObjectConsts, Object3D } from './lib/objects/object3d';
+import { Mesh } from './lib/objects/mesh';
 
 // ====================================================================================================
 // The core & heart of everything
@@ -38,29 +37,6 @@ export class Raytracer {
   public runRayTrace(): Buffer {
     if(this.task.imageWidth < this.task.imageHeight) { throw('Error, image width must be > height'); }
     const aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height
-
-    // Move all objects by resolving each of their animation chains for the current time
-    // FIXME: Work in progress?
-    // for(const obj of this.scene.objects) {
-    //   if(obj.animations) {
-    //     for(const anim of obj.animations) {
-    //       // Move the object according to this animation, for the time offset
-    //       if(anim.constructor.name === 'AnimationPosition') {
-    //         (<AnimationPosition>anim).modifyVec3ForTime(obj.pos, this.task.time);
-    //       }
-    //     }
-    //   }
-
-    //   // Now update the object transformations
-    //   // FIXME: This needs moving I think
-    //   const rotationQuat: quat = quat.identity(quat.create());
-    //   quat.rotateX(rotationQuat, rotationQuat, Utils.degreeToRad(newRot[0]));
-    //   quat.rotateY(rotationQuat, rotationQuat, Utils.degreeToRad(newRot[1]));
-    //   quat.rotateZ(rotationQuat, rotationQuat, Utils.degreeToRad(newRot[2]));
-    //   // We cheat here, and scale by 1, and do the scaling in the calcT (using r2)
-    //   mat4.fromRotationTranslationScale(obj.transFwd, rotationQuat, obj.pos, [1, 1, 1]);
-    //   mat4.invert(obj.trans, obj.transFwd);
-    // }
 
     // Create our camera transform and invert
     const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);

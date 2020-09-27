@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-prototype-builtins */
 import { Colour } from './colour';
-import { Object3D } from './object3d';
+import { Object3D } from './objects/object3d';
+import { Animation } from './animation';
 import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
@@ -10,16 +11,16 @@ import { TextureBasic } from './texture-basic';
 import { TextureCheckUV } from './texture-check-uv';
 import { TextureImage } from './texture-image';
 import { PngManager } from './png-manager';
-import { Plane } from './plane';
-import { Sphere } from './sphere';
-import { Cuboid } from './cuboid';
-import { Cylinder } from './cylinder';
-import { Cone } from './cone';
+import { Plane } from './objects/plane';
+import { Sphere } from './objects/sphere';
+import { Cuboid } from './objects/cuboid';
+import { Cylinder } from './objects/cylinder';
+import { Cone } from './objects/cone';
 import { ObjManager } from './obj-manager';
-import { Mesh, BoundingBoxSettings } from './mesh';
+import { Mesh, BoundingBoxSettings } from './objects/mesh';
 import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
 import { Texture } from './texture';
-import { AnimationPosition } from './animation-vec3';
+import { AnimationVector3 } from './animation-vec3';
 
 // ====================================================================================================
 //
@@ -42,7 +43,7 @@ export class Scene {
   // ====================================================================================================
   // Main scene parser, convert JSON into a real Scene with Object3Ds and Lights etc etc
   // ====================================================================================================
-  static parseScene(input: any, jobId: string): Promise<Scene> {
+  static parseScene(input: any, jobId: string, time: number): Promise<Scene> {
 
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
@@ -103,21 +104,18 @@ export class Scene {
           if(!rawObj.pos) throw(`Object pos missing ${JSON.stringify(rawObj)}`);
           if(!rawObj.material) throw(`Object material: missing ${JSON.stringify(rawObj)}`);
 
-          // FIXME: TEMPORARY!!!!
-          const a = new AnimationPosition(vec3.fromValues(18, 0, 0), 0, 10);
-          //const b = new AnimationRotation(vec3.fromValues(90, 30, 0), 5, 5);
-          const c = new AnimationPosition(vec3.fromValues(18, 9, 0), 10, 5);
-          //const d = new AnimationRotation(vec3.fromValues(90, 30, 90), 10, 5);
+          // Parse all object animations
+          const anims = this.parseAnimations(rawObj);
 
           switch (rawObj.type.toLowerCase()) {
             case 'sphere':
               if(!rawObj.radius) throw(`Sphere radius missing ${JSON.stringify(rawObj)}`);
-              obj = new Sphere(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), rawObj.radius, rawObj.name);
+              obj = new Sphere(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), rawObj.radius, rawObj.name, time, anims);
               break;
 
             case 'plane':
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
-              obj = new Plane(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name);
+              obj = new Plane(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]), vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]), rawObj.name, time, anims);
               break;
 
             case 'cuboid':
@@ -125,11 +123,7 @@ export class Scene {
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Cuboid(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
-                vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name);
-              obj.animations.push(a);
-              //obj.animations.push(b);
-              obj.animations.push(c);
-              //obj.animations.push(d);
+                vec3.fromValues(rawObj.size[0], rawObj.size[1], rawObj.size[2]), rawObj.name, time, anims);
               break;
 
             case 'cylinder':
@@ -138,7 +132,7 @@ export class Scene {
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Cylinder(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
-                rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
+                rawObj.radius, rawObj.length, rawObj.capped, rawObj.name, time, anims);
               break;
 
             case 'cone':
@@ -147,7 +141,7 @@ export class Scene {
               if(!rawObj.rotate) { rawObj.rotate = []; rawObj.rotate[0] = 0; rawObj.rotate[1] = 0; rawObj.rotate[2] = 0; }
               obj = new Cone(vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
-                rawObj.radius, rawObj.length, rawObj.capped, rawObj.name);
+                rawObj.radius, rawObj.length, rawObj.capped, rawObj.name, time, anims);
               break;
 
             case 'mesh': {
@@ -171,7 +165,7 @@ export class Scene {
               // Now create the Object3D
               obj = new Mesh(rawObj.src, vec3.fromValues(rawObj.pos[0], rawObj.pos[1], rawObj.pos[2]),
                 vec3.fromValues(rawObj.rotate[0], rawObj.rotate[1], rawObj.rotate[2]),
-                rawObj.scale, rawObj.name, boxSettings);
+                rawObj.scale, rawObj.name, boxSettings, time, anims);
 
               break;
             }
@@ -363,5 +357,34 @@ export class Scene {
     if(textureInput.swapUV) (texture as TextureImage).swapUV = textureInput.swapUV;
 
     return texture;
+  }
+
+  static parseAnimations(rawObj: any): Animation[] {
+    const anims = new Array<Animation>();
+
+    if(!rawObj.animation) return anims;
+
+    for(const rawAnim of rawObj.animation) {
+      if(!rawAnim.type) throw(`Animation missing required field 'type' ${JSON.stringify(rawAnim)}`);
+      if(!rawAnim.property) throw(`Animation missing required field 'property' ${JSON.stringify(rawAnim)}`);
+      if(!rawAnim.hasOwnProperty('start')) throw(`Animation missing required field 'start' ${JSON.stringify(rawObj)}`);
+      if(!rawAnim.duration) throw(`Animation missing required field 'duration' ${JSON.stringify(rawObj)}`);
+      if(!rawAnim.hasOwnProperty('target')) throw(`Animation missing required field 'target' ${JSON.stringify(rawObj)}`);
+
+      switch(rawAnim.type.toLowerCase()) {
+        case 'vector3': {
+          const anim = new AnimationVector3(rawAnim.property, rawAnim.target, rawAnim.start, rawAnim.duration);
+          console.log(anim);
+
+          anims.push(anim);
+          break;
+        }
+        default: {
+          throw `Animation type '${rawAnim.type}' is invalid, must be 'vector3' or 'scalar'`;
+        }
+      }
+    }
+
+    return anims;
   }
 }

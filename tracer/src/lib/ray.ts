@@ -5,7 +5,7 @@
 
 import { vec4, mat4 } from 'gl-matrix';
 import { Stats } from './stats';
-import { Object3D } from './object3d';
+import { Object3D } from './objects/object3d';
 
 export class Ray {
   pos: vec4;
