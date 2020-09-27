@@ -3,7 +3,7 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec4, mat4 } from 'gl-matrix';
+import { vec4 } from 'gl-matrix';
 import { Colour } from './lib/colour';
 import { Ray } from './lib/ray';
 import { Scene } from './lib/scene';
@@ -39,8 +39,8 @@ export class Raytracer {
     const aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height
 
     // Create our camera transform and invert
-    const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
-    mat4.invert(camTrans, camTrans);
+    // const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
+    // mat4.invert(camTrans, camTrans);
 
     // Image buffer row
     let bufferY = 0;
@@ -52,14 +52,15 @@ export class Raytracer {
     for (let y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y ++) {
       for (let x = 0; x < this.task.imageWidth; x++) {
         // Field of view scaling factor
-        const fovScale = Math.tan(Utils.degreeToRad(this.scene.cameraFov * 0.5));
+        const fovScale = Math.tan(Utils.degreeToRad(this.scene.camera.FOV * 0.5));
 
         // Top of ray tracing process
         let outPixel: Colour;
 
         if(this.task.antiAlias) {
           // Fire 5 rays. one in center and one in each corner of pixel
-          const outPixel0: Colour = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+          //const outPixel0: Colour = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+          const outPixel0: Colour = this.shadeRay(this.scene.camera.makeRay(x+0.5, y+0.5, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
 
           // All this  weird rubbish casts additional rays but also uses cached values
           // The cache consists of corner values of the previous pixel on the current row
@@ -71,20 +72,20 @@ export class Raytracer {
           if(cacheRow[x]) {
             outPixel1 = cacheRow[x].copy();
           } else {
-            outPixel1 = this.shadeRay(this.makeCameraRay(x, y, camTrans, fovScale, aspectRatio));
+            outPixel1 = this.shadeRay(this.scene.camera.makeRay(x, y, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
           }
           if(cacheRow[x+1]) {
             outPixel2 = cacheRow[x+1].copy();
           } else {
-            outPixel2 = this.shadeRay(this.makeCameraRay(x+1, y, camTrans, fovScale, aspectRatio));
+            outPixel2 = this.shadeRay(this.scene.camera.makeRay(x+1, y, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
           }
           if(cacheCorner) {
             outPixel3 = cacheCorner.copy();
           } else {
-            outPixel3 = this.shadeRay(this.makeCameraRay(x, y+1, camTrans, fovScale, aspectRatio));
+            outPixel3 = this.shadeRay(this.scene.camera.makeRay(x, y+1, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
             cacheRow[x] = outPixel3.copy();
           }
-          const outPixel4: Colour = this.shadeRay(this.makeCameraRay(x+1, y+1, camTrans, fovScale, aspectRatio));
+          const outPixel4: Colour = this.shadeRay(this.scene.camera.makeRay(x+1, y+1, this.task.imageHeight, this.task.imageHeight, fovScale, aspectRatio));
           cacheRow[x+1] = outPixel4.copy();
           cacheCorner = outPixel4.copy();
 
@@ -102,7 +103,7 @@ export class Raytracer {
           outPixel = Colour.add(outPixel, outPixel4);
         } else {
           // Without anti-aliasing we just cast one ray in center of each pixel
-          outPixel = this.shadeRay(this.makeCameraRay(x + 0.5, y + 0.5, camTrans, fovScale, aspectRatio));
+          outPixel = this.shadeRay(this.scene.camera.makeRay(x + 0.5, y + 0.5, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
         }
 
         // We have the final pixel colour so write to the image buffer
@@ -122,22 +123,22 @@ export class Raytracer {
   // ====================================================================================================
   // Create camera rays to cast into the scene for a given pixel
   // ====================================================================================================
-  private makeCameraRay(x: number, y: number, camTrans: mat4, fovScale: number, aspectRatio: number): Ray {
-    // This converts from raster space (output image) -> normalized space -> screen space
-    const px: number = (2 * (x + 0.5) / this.task.imageWidth - 1) * fovScale  * aspectRatio;
-    const py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
+  // private makeCameraRay(x: number, y: number, camTrans: mat4, fovScale: number, aspectRatio: number): Ray {
+  //   // This converts from raster space (output image) -> normalized space -> screen space
+  //   const px: number = (2 * (x + 0.5) / this.task.imageWidth - 1) * fovScale  * aspectRatio;
+  //   const py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
 
-    // Create camera ray, starting at origin and pointing into -z
-    const origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
-    const dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
-    const ray: Ray = new Ray(origin, dir);
+  //   // Create camera ray, starting at origin and pointing into -z
+  //   const origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
+  //   const dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
+  //   const ray: Ray = new Ray(origin, dir);
 
-    // Now move ray with respect to camera transform (into world space)
-    ray.transform(camTrans);
-    ray.depth = 1;
+  //   // Now move ray with respect to camera transform (into world space)
+  //   ray.transform(camTrans);
+  //   ray.depth = 1;
 
-    return ray;
-  }
+  //   return ray;
+  // }
 
   // ====================================================================================================
   // Main shading & lighting function, computes the colour of given ray

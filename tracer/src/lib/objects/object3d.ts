@@ -30,12 +30,18 @@ export interface Object3DInterface {
 // Base class all objects inherit from
 // ====================================================================================
 export abstract class Object3D implements Object3DInterface {
+  name: string;
+  pos: vec3;
+  rot: vec3;
   trans: mat4;              // Inverse transform matrix to move rays into object space
   transFwd: mat4;           // Forward transform matrix to move rays from object to world space
   material: Material;       // Material; color and other surface coefficients
   animations: Animation[];
 
-  constructor(public name: string, public pos: vec3, public rot: vec3, time: number, animations: Animation[]) {
+  constructor(name: string, pos: vec3, rot: vec3, time: number, animations: Animation[]) {
+    this.name = name;
+    this.pos = pos;
+    this.rot = rot;
     this.animations = new Array<Animation>();
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());

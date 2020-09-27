@@ -21,6 +21,7 @@ import { Mesh, BoundingBoxSettings } from './objects/mesh';
 import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
 import { Texture } from './texture';
 import { AnimationVector3 } from './animation-vec3';
+import { Camera } from './camera';
 
 // ====================================================================================================
 //
@@ -31,9 +32,10 @@ export class Scene {
   ior: number;
   seed: string;
 
-  cameraPos: vec3;      // Camera position in world
-  cameraLookAt: vec3;   // Camera look at point
-  cameraFov: number;    // Camera field of view in radians
+  // cameraPos: vec3;      // Camera position in world
+  // cameraLookAt: vec3;   // Camera look at point
+  // cameraFov: number;    // Camera field of view in radians
+  camera: Camera;
 
   objects: Object3D[];
   lights: Light[];
@@ -73,14 +75,15 @@ export class Scene {
         else
           scene.ambientLevel = input.ambientLevel;
 
-        if(!input.cameraFov)
-          scene.cameraFov = 30;
-        else
-          scene.cameraFov = input.cameraFov;
-
         scene.ior = 1.0;
-        scene.cameraPos = vec3.fromValues(input.cameraPos[0], input.cameraPos[1], input.cameraPos[2]);
-        scene.cameraLookAt = vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]);
+
+        let cameraFov = 30;
+        if(input.cameraFov)
+          cameraFov = input.cameraFov;
+
+        scene.camera = new Camera(vec3.fromValues(input.cameraPos[0], input.cameraPos[1], input.cameraPos[2]),
+          vec3.fromValues(input.cameraLookAt[0], input.cameraLookAt[1], input.cameraLookAt[2]),
+          cameraFov);
 
         // Parse presetMaterials materials
         Scene.presetMaterials.basic  = new Material(0.1,  1,   0,   5,  0, 0);
