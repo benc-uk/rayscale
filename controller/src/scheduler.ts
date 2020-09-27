@@ -370,7 +370,7 @@ export class Scheduler {
 
     // Render video
     const videoFilename = 'video.mp4';
-    child_process.exec(`ffmpeg -hide_banner -loglevel warning -framerate ${this.job.framerate} -i "result_%05d.png" -vcodec libx264 -pix_fmt yuv420p -y ${videoFilename}`, {cwd:`${outDir}`}, (error, stdout, stderr) => {
+    child_process.exec(`ffmpeg -hide_banner -loglevel warning -framerate ${this.job.framerate} -i "result_%05d.png" -vcodec libx264 -pix_fmt yuv420p -y -tune animation -preset veryslow ${videoFilename}`, {cwd:`${outDir}`}, (error, stdout, stderr) => {
       if (error) {
         console.error(`### Video generation ffmpeg error: ${error}`);
         return;
