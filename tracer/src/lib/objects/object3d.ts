@@ -33,15 +33,15 @@ export abstract class Object3D implements Object3DInterface {
   trans: mat4;              // Inverse transform matrix to move rays into object space
   transFwd: mat4;           // Forward transform matrix to move rays from object to world space
   material: Material;       // Material; color and other surface coefficients
-  animations: Animation[];  // Animation set for this object
+  animations: Animation[];
 
-  constructor(public name: string, public pos: vec3, public rot: vec3, time: number, anims: Animation[]) {
+  constructor(public name: string, public pos: vec3, public rot: vec3, time: number, animations: Animation[]) {
     this.animations = new Array<Animation>();
     this.transFwd = mat4.identity(mat4.create());
     this.trans = mat4.identity(mat4.create());
 
     // Apply animation for time
-    this.animations = anims;
+    this.animations = animations;
     if(this.animations) {
       for(const anim of this.animations) {
         anim.updateObjectAtTime(this, time);

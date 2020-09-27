@@ -374,8 +374,6 @@ export class Scene {
       switch(rawAnim.type.toLowerCase()) {
         case 'vector3': {
           const anim = new AnimationVector3(rawAnim.property, rawAnim.target, rawAnim.start, rawAnim.duration);
-          console.log(anim);
-
           anims.push(anim);
           break;
         }

@@ -31,15 +31,12 @@ export class AnimationVector3 implements Animation {
 
     const input = entity[this.propertyName];
 
-    // FIXME: Runtime type checking here
-    //if(input.constructor.name !== 'vec3') {}
-
     // Calculate displacement vector
     const displace = vec3.create();
     vec3.subtract(displace, this.targetValue, input);
 
     // Modify pos, by t amount along displacement vector
     vec3.scaleAndAdd(input, input, displace, t);
-    console.log(`###### modifyVec3ForTime ${this.duration} ${time} ${t} ${input}`);
+    //console.log(`###### modifyVec3ForTime ${this.duration} ${time} ${t} ${input}`);
   }
 }

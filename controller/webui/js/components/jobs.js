@@ -21,10 +21,11 @@ export default {
         <div class="card-image">
           <figure class="image">
             <!-- the random appended string on the URL prevents caching -->
-            <a :target="job+'_render'" @click="showImage='/jobs/'+job+'/'+'result_00001.png'"><img :src="'/jobs/'+job+'/result_00001.png?r='+Math.random()"></a>
+            <a :target="job+'_render'" @click="showImage='/jobs/'+job+'/'+'result_00001.png'"><img :src="'/jobs/'+job+'/result_00001.png'"></a>
           </figure>
         </div>
         <footer class="card-footer">
+          <a :href="'/jobs/'+job+'/video.mp4'" class="card-footer-item" :target="job+'_video'"><i class="fas fa-video fa-fw"></i> &nbsp; Video</a>
           <a :href="'/jobs/'+job+'/result.json'" class="card-footer-item" :target="job+'_details'"><i class="fas fa-info-circle fa-fw"></i> &nbsp; Details</a>
           <a :href="'/jobs/'+job+'/job.yaml'" class="card-footer-item" :target="job+'_job'"><i class="fas fa-code fa-fw"></i> &nbsp; Job</a>
           <a @click="deleteJob(job)" class="card-footer-item is-warning"><i class="fas fa-trash fa-fw"></i> &nbsp; Delete</a>

@@ -14,5 +14,5 @@ else
 fi
 
 pushd "$1"
-ffmpeg -framerate $framerate -i "result_%05d.png" -vcodec libx264 -pix_fmt yuv420p -y video.mp4
+ffmpeg -hide_banner -loglevel warning -framerate $framerate -i "result_%05d.png" -vcodec libx264 -pix_fmt yuv420p -y video.mp4
 popd

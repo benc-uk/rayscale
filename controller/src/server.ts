@@ -25,6 +25,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw({ limit: '100mb', type: 'application/octet-stream' }));
 app.use(bodyParser.raw({ limit: '10mb', type: 'application/x-yaml' }));
 
+// Without this, express-static will return 304 sometimes
+app.set('etag', false);
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  next();
+});
+
 const webUIDir = `${__dirname}/../webui`;
 const jobOutDir = process.env.JOB_OUTPUT || `${__dirname}/../jobs`;
 const checkInterval: number = parseInt(process.env.HEALTH_CHECK_INTERVAL || '80') * 1000;
@@ -55,6 +62,8 @@ app.get('/', function(req, res) {
 
 app.use('/ui', express.static(webUIDir, { etag: false, maxAge: 0 }));
 app.use('/jobs', express.static(jobOutDir));
+
+
 
 // Silly stuff to intercept calls to console.log so we can capture them
 export const allLogs: string[] = [];

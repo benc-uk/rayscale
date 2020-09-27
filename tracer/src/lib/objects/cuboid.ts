@@ -22,8 +22,8 @@ export class Cuboid extends Object3D {
   // ====================================================================================================
   // Create a Cuboid (called by Scene parser)
   // ====================================================================================================
-  constructor(pos: vec3, rot: vec3, size: vec3, name: string, time: number, anims: Animation[]) {
-    super(name, pos, rot, time, anims);
+  constructor(pos: vec3, rot: vec3, size: vec3, name: string, time: number, animations: Animation[]) {
+    super(name, pos, rot, time, animations);
     this.b1 = [-size[0]/2, -size[1]/2, -size[2]/2];
     this.b2 = [size[0]/2, size[1]/2, size[2]/2];
   }

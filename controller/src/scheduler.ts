@@ -7,6 +7,7 @@
 import randstr from 'randomstring';
 import * as PNG from 'pngjs';
 import fs from 'fs';
+import child_process from 'child_process';
 import { Job } from './lib/job';
 import { Frame } from './lib/frame';
 import { JobInput } from './lib/job-input';
@@ -159,6 +160,18 @@ export class Scheduler {
 
     console.log(`### New job created: '${this.job.name}' with ${this.job.taskCount} tasks`);
     console.log(`### Job will render ${this.job.frameCount} frames`);
+
+    // Delete old PNGs from output dir
+    const outDir = `${this.jobOutDir}/${this.job.name}`;
+    fs.readdir(outDir, (error, files) => {
+      if (error) {
+        // ignore probably as the directory doesn't exist
+        return;
+      }
+      for(const file of files.filter(name => /\.png$/.test(name))) {
+        fs.unlink(`${outDir}/${file}`, err => {if (err) throw err;});
+      }
+    });
 
     // First pass, send out tasks for first frame
     // One for each online tracer
@@ -354,6 +367,18 @@ export class Scheduler {
     // Supplementary result files
     fs.writeFileSync(`${outDir}/result.json`, JSON.stringify(results, null, 2));
     fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);
+
+    // Render video
+    const videoFilename = 'video.mp4';
+    child_process.exec(`ffmpeg -hide_banner -loglevel warning -framerate ${this.job.framerate} -i "result_%05d.png" -vcodec libx264 -pix_fmt yuv420p -y ${videoFilename}`, {cwd:`${outDir}`}, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`### Video generation ffmpeg error: ${error}`);
+        return;
+      }
+      if(stdout) console.log(`### Video generation ffmpeg output: ${stdout}`);
+      if(stderr) console.log(`### Video generation ffmpeg error: ${stderr}`);
+      console.log(`### Video generation of ${videoFilename} complete!`);
+    });
   }
 
   // ====================================================================================
