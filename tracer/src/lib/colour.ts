@@ -104,6 +104,12 @@ export class Colour {
     this.b = Math.min(1, this.b);
   }
 
+  public toArray(): Float32Array {
+    const a = new Float32Array(3);
+    a[0] = this.r * 255; a[1] = this.g * 255; a[2] = this.b * 255;
+    return a;
+  }
+
   static BLACK   = new Colour(0, 0, 0);
   static WHITE   = new Colour(1, 1, 1);
   static RED     = new Colour(1, 0, 0);

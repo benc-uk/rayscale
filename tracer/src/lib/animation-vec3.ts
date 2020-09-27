@@ -8,6 +8,7 @@
 import { vec3 } from 'gl-matrix';
 import { Utils } from './utils';
 import { Animation } from './animation';
+import { Colour } from './colour';
 
 export class AnimationVector3 implements Animation {
   targetValue: vec3;
@@ -22,21 +23,35 @@ export class AnimationVector3 implements Animation {
     this.duration = duration;
   }
 
-  updateObjectAtTime(entity: any, time: number): void {
+  updateAtTime(entity: any, time: number): void {
+    // Skip if before start time
     if(time < this.start) return;
 
-    // t is normalised time offset into duration (0 - 1)
-    // We allow calc for time past the end, which results in t=1
+    // t is normalised time offset into anim duration (0 - 1)
+    // Allow calc for time past the end, which results in t=1
     const t = Utils.clamp((time - this.start) / this.duration, 0.0, 1.0);
 
-    const input = entity[this.propertyName];
+    // Get entity/object property we are going to modify
+    let input = entity[this.propertyName];
+    if(!input) console.log(`### Invalid property name '${this.propertyName}' given for animation`);
+
+    // A bit of a hack to treat Colours like vectors with 0-255 values
+    let colour = false;
+    if(input.constructor.name === 'Colour') {
+      colour = true;
+      input = (<Colour>input).toArray();
+    }
 
     // Calculate displacement vector
     const displace = vec3.create();
     vec3.subtract(displace, this.targetValue, input);
 
-    // Modify pos, by t amount along displacement vector
+    // Modify input, by t scaled amount along displacement vector
     vec3.scaleAndAdd(input, input, displace, t);
-    //console.log(`###### modifyVec3ForTime ${this.duration} ${time} ${t} ${input}`);
+
+    // More hacks to mutate colour back into entity
+    if(colour) {
+      entity[this.propertyName] = Colour.fromRGB(input[0], input[1], input[2]);
+    }
   }
 }

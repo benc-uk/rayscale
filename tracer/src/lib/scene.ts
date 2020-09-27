@@ -7,9 +7,11 @@ import { Animation } from './animation';
 import { Light } from './light';
 import { Material } from './material';
 import { vec3, vec4 } from 'gl-matrix';
-import { TextureBasic } from './texture-basic';
-import { TextureCheckUV } from './texture-check-uv';
-import { TextureImage } from './texture-image';
+import { Texture } from './textures/texture';
+import { TextureBasic } from './textures/texture-basic';
+import { TextureCheckUV } from './textures/texture-check-uv';
+import { TextureImage } from './textures/texture-image';
+import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './textures/texture-noise';
 import { PngManager } from './png-manager';
 import { Plane } from './objects/plane';
 import { Sphere } from './objects/sphere';
@@ -18,8 +20,6 @@ import { Cylinder } from './objects/cylinder';
 import { Cone } from './objects/cone';
 import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './objects/mesh';
-import { NoiseTexture, TurbulenceTexture, NoiseLib, MarbleTexture, WoodTexture } from './texture-noise';
-import { Texture } from './texture';
 import { AnimationVector3 } from './animation-vec3';
 import { Camera } from './camera';
 
@@ -49,7 +49,7 @@ export class Scene {
 
     // eslint-disable-next-line no-async-promise-executor
     return new Promise(async (resolve, reject) => {
-
+      // Start with an empty scene
       const scene: Scene = new Scene();
       console.log('### Begin parsing scene...');
 
@@ -78,10 +78,12 @@ export class Scene {
         if(!input.camera.pos) throw(`Camera pos missing ${JSON.stringify(input.camera)}`);
         if(!input.camera.lookAt) throw(`Camera pos missing ${JSON.stringify(input.camera)}`);
 
+        // Camera field of view, with default of 30
         let cameraFov = 30;
         if(input.camera.fov)
           cameraFov = input.camera.fov;
 
+        // Parse camera animations and create Camera
         const cameraAnims = this.parseAnimations(input.camera);
         scene.camera = new Camera(vec3.fromValues(input.camera.pos[0], input.camera.pos[1], input.camera.pos[2]),
           vec3.fromValues(input.camera.lookAt[0], input.camera.lookAt[1], input.camera.lookAt[2]),
@@ -195,12 +197,18 @@ export class Scene {
           let r = 200;
           if(rawLight.brightness) b = rawLight.brightness;
           if(rawLight.radius) r = rawLight.radius;
-          const light = new Light(vec4.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2], 1), b, r);
 
+          // Lights can be animated
+          const lightAnims = this.parseAnimations(rawLight);
+
+          // Default colour is white
+          let lightColour = new Colour(1, 1, 1);
           if(rawLight.colour) {
-            light.colour = Colour.fromRGB(rawLight.colour[0], rawLight.colour[1], rawLight.colour[2]);
+            lightColour = Colour.fromRGB(rawLight.colour[0], rawLight.colour[1], rawLight.colour[2]);
           }
 
+          // Build light and add to scene
+          const light = new Light(vec4.fromValues(rawLight.pos[0], rawLight.pos[1], rawLight.pos[2], 1), b, r, lightColour, time, lightAnims);
           if(light) scene.lights.push(light);
         }
 

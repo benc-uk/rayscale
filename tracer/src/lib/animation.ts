@@ -15,5 +15,5 @@ export interface Animation {
   * @param {number} time - Time in seconds
   */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  updateObjectAtTime(entity: any, time: number): void;
+  updateAtTime(entity: any, time: number): void;
 }

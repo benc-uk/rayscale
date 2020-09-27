@@ -4,7 +4,7 @@
 //
 
 import { Texture } from './texture';
-import { Colour } from './colour';
+import { Colour } from '../colour';
 
 export class TextureCheckUV extends Texture {
   colour1: Colour;

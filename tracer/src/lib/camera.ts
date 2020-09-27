@@ -23,18 +23,13 @@ export class Camera {
     this.animations = animations;
     if(this.animations) {
       for(const anim of this.animations) {
-        anim.updateObjectAtTime(this, time);
+        anim.updateAtTime(this, time);
       }
     }
-
-    console.log(this.pos);
-    console.log(this.lookAt);
 
     // NOTE: The standard up vector [0,1,0]
     mat4.lookAt(this.trans, this.pos, this.lookAt, [0, 1, 0]);
     mat4.invert(this.trans, this.trans);
-
-    console.log(JSON.stringify(this));
   }
 
   // ====================================================================================================

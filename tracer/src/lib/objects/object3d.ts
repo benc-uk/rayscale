@@ -50,7 +50,7 @@ export abstract class Object3D implements Object3DInterface {
     this.animations = animations;
     if(this.animations) {
       for(const anim of this.animations) {
-        anim.updateObjectAtTime(this, time);
+        anim.updateAtTime(this, time);
       }
     }
 
