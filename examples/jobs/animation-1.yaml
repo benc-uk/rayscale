@@ -1,35 +1,44 @@
-name: AnimTest1
+name: Animation 1
 width: 640
 height: 480
-tasks: 16
-antiAlias: true
+tasks: 8
+antiAlias: false
 animation:
-  duration: 20
-  framerate: 30
+  duration: 1
+  framerate: 1
 scene:
   backgroundColour: [80, 40, 7]
   ambientLevel: 0.15
+
   camera:
     fov: 30
     pos: [-15, 14, 50]
     lookAt: [2, 0, 0]
     animation:
-      - type: vector3
+      - type: vector
         property: pos
         start: 0
         duration: 20
         target: [15, 14, 50]
+
   lights:
-    - pos: [-80, 100, 100]
+    - pos: [80, 100, 100]
       radius: 1000
       brightness: 1.4
+      animation:
+        - type: vector
+          property: colour
+          start: 0
+          duration: 20
+          target: [250, 0, 30]
+
   objects:
     - type: sphere
-      name: s1red
+      name: ball
       pos: [10, 5, -5]
       radius: 6
       animation:
-        - type: vector3
+        - type: vector
           property: pos
           start: 0
           duration: 20
@@ -43,16 +52,16 @@ scene:
           colour: [225, 10, 65]
 
     - type: cuboid
-      name: s1green
+      name: grencube
       pos: [-20, -4, 0]
       size: [8, 8, 8]
       animation:
-        - type: vector3
+        - type: vector
           property: pos
           start: 0
           duration: 20
           target: [10, 6, 20]
-        - type: vector3
+        - type: vector
           property: rot
           start: 0
           duration: 20
@@ -68,14 +77,14 @@ scene:
           colour: [25, 80, 25]
 
     - type: cylinder
-      name: cone
+      name: roller
       pos: [15, -14, -50]
       rotate: [90, 0, 90]
       radius: 6
       length: 30
       capped: true
       animation:
-        - type: vector3
+        - type: vector
           property: pos
           start: 0
           duration: 20
@@ -89,7 +98,7 @@ scene:
           colour: [110, 110, 110]
 
     - type: plane
-      name: s1
+      name: floor
       pos: [0, -20, 0]
       material:
         preset: matte

@@ -10,7 +10,7 @@ import { Utils } from './utils';
 import { Animation } from './animation';
 import { Colour } from './colour';
 
-export class AnimationVector3 implements Animation {
+export class AnimationVector implements Animation {
   targetValue: vec3;
   start: number;
   duration: number;

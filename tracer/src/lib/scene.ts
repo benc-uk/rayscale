@@ -20,8 +20,9 @@ import { Cylinder } from './objects/cylinder';
 import { Cone } from './objects/cone';
 import { ObjManager } from './obj-manager';
 import { Mesh, BoundingBoxSettings } from './objects/mesh';
-import { AnimationVector3 } from './animation-vec3';
+import { AnimationVector } from './animation-vector';
 import { Camera } from './camera';
+import { AnimationSpline } from './animation-spline';
 
 // ====================================================================================================
 //
@@ -380,18 +381,26 @@ export class Scene {
     for(const rawAnim of rawObj.animation) {
       if(!rawAnim.type) throw(`Animation missing required field 'type' ${JSON.stringify(rawAnim)}`);
       if(!rawAnim.property) throw(`Animation missing required field 'property' ${JSON.stringify(rawAnim)}`);
-      if(!rawAnim.hasOwnProperty('start')) throw(`Animation missing required field 'start' ${JSON.stringify(rawObj)}`);
-      if(!rawAnim.duration) throw(`Animation missing required field 'duration' ${JSON.stringify(rawObj)}`);
-      if(!rawAnim.hasOwnProperty('target')) throw(`Animation missing required field 'target' ${JSON.stringify(rawObj)}`);
+      if(!rawAnim.hasOwnProperty('start')) throw(`Animation missing required field 'start' ${JSON.stringify(rawAnim)}`);
+      if(!rawAnim.duration) throw(`Animation missing required field 'duration' ${JSON.stringify(rawAnim)}`);
 
       switch(rawAnim.type.toLowerCase()) {
-        case 'vector3': {
-          const anim = new AnimationVector3(rawAnim.property, rawAnim.target, rawAnim.start, rawAnim.duration);
+        case 'vector': {
+          if(!rawAnim.hasOwnProperty('target')) throw(`Animation type vector missing required field 'target' ${JSON.stringify(rawAnim)}`);
+          const anim = new AnimationVector(rawAnim.property, rawAnim.target, rawAnim.start, rawAnim.duration);
           anims.push(anim);
           break;
         }
+
+        case 'spline': {
+          if(!rawAnim.hasOwnProperty('points')) throw(`Animation type vector missing required field 'points' ${JSON.stringify(rawAnim)}`);
+          const anim = new AnimationSpline(rawAnim.property, rawAnim.points, rawAnim.start, rawAnim.duration);
+          anims.push(anim);
+          break;
+        }
+
         default: {
-          throw `Animation type '${rawAnim.type}' is invalid, must be 'vector3' or 'scalar'`;
+          throw `Animation type '${rawAnim.type}' is invalid, must be 'vector' or 'spline'`;
         }
       }
     }
