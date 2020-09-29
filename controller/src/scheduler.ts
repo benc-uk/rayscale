@@ -309,9 +309,9 @@ export class Scheduler {
       if(err.response && err.response.data) {
         details = JSON.stringify(err.response.data);
       }
-      console.error(`### ERROR! Unable to send task to tracer ${err} ${details}`);
+      console.error(`### ERROR! Unable to send task to tracer, ${err}, ${details}`);
       this.job.status = 'FAILED';
-      this.job.reason = err.message;
+      this.job.reason = details !== '' ? details : err.message;
     }
   }
 
