@@ -32,7 +32,7 @@ metadata:
   labels:
     app: tracer
 spec:
-  replicas: 64
+  replicas: 32
   selector:
     matchLabels:
       app: tracer
