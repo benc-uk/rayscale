@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 //
 // Rayscale - Base raytracing classes
 // (C) Ben Coleman 2020
@@ -23,6 +21,7 @@ export class AnimationVector implements Animation {
     this.duration = duration;
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
   updateAtTime(entity: any, time: number): void {
     // Skip if before start time
     if(time < this.start) return;
@@ -33,13 +32,28 @@ export class AnimationVector implements Animation {
 
     // Get entity/object property we are going to modify
     let input = entity[this.propertyName];
-    if(!input) console.log(`### Invalid property name '${this.propertyName}' given for animation`);
+    if(!input) {
+      console.log(`### Warning! animation property '${this.propertyName}' not found`);
+      return;
+    }
 
     // A bit of a hack to treat Colours like vectors with 0-255 values
     let colour = false;
     if(input.constructor.name === 'Colour') {
       colour = true;
       input = (<Colour>input).toArray();
+    }
+
+    // Handle vec4 as well as vec3
+    let vec4 = false;
+    if(entity[this.propertyName].length == 4) {
+      vec4 = true;
+      input = [input[0], input[1], input[2]];
+    }
+
+    if(input.length != 3) {
+      console.log(`### Warning! animation property '${this.propertyName}' is not an 3 element array`);
+      return;
     }
 
     // Calculate displacement vector
@@ -52,6 +66,11 @@ export class AnimationVector implements Animation {
     // More hacks to mutate colour back into entity
     if(colour) {
       entity[this.propertyName] = Colour.fromRGB(input[0], input[1], input[2]);
+    }
+
+    // vec4 hack
+    if(vec4) {
+      entity[this.propertyName] = [input[0], input[1], input[2], 1];
     }
   }
 }

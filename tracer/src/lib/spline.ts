@@ -109,8 +109,9 @@ export class CatmullRomSpline {
 // ==================================================
 // Internal class for cubic polynomials
 // ==================================================
+// Code entirely based on https://github.com/mrdoob/three.js/blob/dev/src/math/Vector3.js
 /*
-  Based on an optimized c++ solution in
+  Based on an optimized C++ solution in
   - http://stackoverflow.com/questions/9489736/catmull-rom-curve-with-no-cusps-and-no-self-intersections/
   - http://ideone.com/NoEbVM
 */

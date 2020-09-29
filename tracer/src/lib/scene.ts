@@ -199,7 +199,7 @@ export class Scene {
           if(rawLight.brightness) b = rawLight.brightness;
           if(rawLight.radius) r = rawLight.radius;
 
-          // Lights can be animated
+          // Lights can be animated, wow weee!
           const lightAnims = this.parseAnimations(rawLight);
 
           // Default colour is white
@@ -373,9 +373,13 @@ export class Scene {
     return texture;
   }
 
+  // ====================================================================================================
+  // Parse and return an array of animations
+  // ====================================================================================================
   static parseAnimations(rawObj: any): Animation[] {
     const anims = new Array<Animation>();
 
+    // Might have no animations
     if(!rawObj.animation) return anims;
 
     for(const rawAnim of rawObj.animation) {
