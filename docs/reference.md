@@ -9,22 +9,27 @@ Items in italics are specific types/classes of object, e.g. a *Light*
 ## Job Input
 This is the top level of YAML that needs to be submitted to start a job
 <pre>
-<b>name:</b>      Name of job to submit
-<b>width:</b>     Width of image to render in pixels
-<b>height:</b>    Height of image to render in pixels
-<span style="color:#275ce5"><b>maxDepth:</b>  Maximum recursion depth when ray tracing (default: 4)</span>
-<span style="color:#275ce5"><b>antiAlias:</b> Enable anti-aliasing, removes jagged edges but slower (default: false)</span>
-<span style="color:#275ce5"><b>tasks:</b>     How many tasks to split the job into. (default: same number as active tracers)</span>
-<b>scene:</b>     <i>Scene</i> to render
+<b>name:</b>        Name of job to submit
+<b>width:</b>       Width of image to render in pixels
+<b>height:</b>      Height of image to render in pixels
+<span style="color:#275ce5"><b>maxDepth:</b>    Maximum recursion depth when ray tracing (default: 4)</span>
+<span style="color:#275ce5"><b>antiAlias:</b>   Enable anti-aliasing, removes jagged edges but slower (default: false)</span>
+<span style="color:#275ce5"><b>tasks:</b>       How many tasks to split the job into. (default: number of active tracers)</span>
+<span style="color:#275ce5"><b>animation:</b>   Render an animation / video, omit this to render a single image</span>
+<span><b>  duration:</b>  Length of animation in seconds   </span>
+<span style="color:#275ce5"><b>  framerate:</b> Framerate (default 30)</span>
+<b>scene:</b>       <i>Scene</i> to render
 </pre>
 
 ## <i>Scene</i> Definition
 <pre>
 <span style="color:#275ce5"><b>backgroundColour:</b> <i>Colour</i> of the background, used when ray misses all objects (default: black)</span>
 <span style="color:#275ce5"><b>ambientLevel:</b>     Level of ambient light, typically: 0.0 ~ 0.3 (default: 0.1)</span>
-<span style="color:#275ce5"><b>cameraFov:</b>        Camera field of view, lower values "zoom in" (default: 30)</span>
-<b>cameraPos:</b>        Camera position <i>Point</i> in world space
-<b>cameraLookAt:</b>     Camera will be oriented and looking at this <i>Point</i> in world space
+<span><b>camera:</b>           Camera settings</span>
+<span style="color:#275ce5"><b>  fov:</b>            Field of view, lower values "zoom in" (default: 30)</span>
+<b>  pos:</b>            Camera position <i>Point</i> in world space
+<b>  lookAt:</b>         Camera will be oriented and looking at this <i>Point</i> in world space
+<span style="color:#275ce5">  <b>animation:</b>      An array of <i>Animations</i> to modify the camera over time</span>
 <span style="color:#275ce5"><b>seed:</b>             String used to initialize the random number generator</span>
 <b>lights:</b>           Array of <i>Lights</i> in the scene
 <b>objects:</b>          Array of <i>Objects</i> in the scene
@@ -51,16 +56,18 @@ This is the top level of YAML that needs to be submitted to start a job
 pos:          A <i>Point</i> position in space where the light is located
 <span style="color:#275ce5">brightness:   Brightness coefficient of the light, typical values are 0.8 ~ 1.3 (default: 1.0)
 radius:       Falloff and attenuation radius, in world units (default: 200)
-colour:       The <i>Colour</i> of the light (default: [1, 1, 1], i.e. white light)</span>
+colour:       The <i>Colour</i> of the light (default: [1, 1, 1], i.e. white light)
+animation:    An array of <i>Animations</i> to modify the light over time</span>
 </pre>
 
 ## <i>Object</i> Definition
-All objects regardless of type have the following mandatory properties
+All objects regardless of type have the following properties
 <pre>
 type:      The type of object, allowed values are: sphere, plane, cuboid, cylinder, cone & mesh
 name:      The name of the object, used for logging and debug purposes
 pos:       A <i>Point</i> position in world space where the center of the object is to be located
 material:  A <i>Material</i> describing the appearance and surface of the object
+<span style="color:#275ce5">animation: An array of <i>Animations</i> to modify the object over time</span>
 </pre>
 
 Each object has additional parameters that will depend on the *type* that was specified
@@ -127,8 +134,8 @@ name:      Only supply a name when the material is in the scene level <i>materia
 </pre>
 
 
-## Texture Definition 
-Textures are typed, and the properties are strongly linked to the given type, so all textures require a **type**
+## <i>Texture</i> Definition 
+*Textures* are typed, and the properties are strongly linked to the given type, so all textures require a **type**
 <pre>
 type:      The type of texture, one of: basic, check, image, noise, turbulence, wood or marble
 <span style="color:#275ce5">scaleU:    Scaling factor for texture U coords (applies to check and image texture types)
@@ -203,4 +210,25 @@ turbPower:  Power factor determines how sharp the wood grain pattern is (default
 turbSize:   Size of the turbulence used (default: 32)
 mult:       Scaling factor applied to colour1 (default: 1)
 pow:        Power factor makes the ramp between colours steeper and colour1 more dense (default: 1)</span>
+</pre>
+
+## <i>Animation</i> Definition 
+*Animation* Can modulate properties of objects, lights and the camera. 
+- A `vector` type animation, takes the original property starting value and interpolates towards the target value over time (the duration).
+- A `spline` type animation, uses a series of control points and extrapolates between them using a spline curve. The original property value is ignored and overwritten with the value of the curve at the given time.
+<pre>
+type:      The type of animation, one of: 'vector' or 'spline'
+property:  Property name to modify, e.g. 'pos', 'rot' or 'lookAt'
+start:     property of the object to modify, e.g. 'pos', 'rot' or 'lookAt'
+duration:  property of the object to modify, e.g. 'pos', 'rot' or 'lookAt'
+</pre>
+
+### type: vector
+<pre>
+target:    The destination value a three tuple of values, e.g. [200, 45, 6]
+</pre>
+
+### type: spline
+<pre>
+points:    Array of spline control points, e.g. [[0, 10, 50], [0, 20, 20], [-30, 20, 20]]
 </pre>
