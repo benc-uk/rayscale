@@ -39,11 +39,13 @@ export class API {
     const task: Task = req.body.task;
     let scene: Scene = null;
 
+    // FIXME: Had to disable this parsing optimization, as fundamental at odds with animation
+    // Investigate caching/cloning properties of objects that have animations
+
     // We only parse the scene on new jobs, this way the tracer
     // can accept multiple tasks for the same job without re-parsing the scene
-    // NOTE: Had to disable this optimisation, as fundamental at odds with animation
-    // We need a clean state for each render
-    //if(task.jobId != this.lastJobId {
+    // if(task.jobId != this.lastJobId {
+
     Stats.reset();
     // Clear out caches, or not
     /* if(process.env.CLEAR_CACHE != 'false') {
