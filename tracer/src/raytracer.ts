@@ -206,6 +206,7 @@ export class Raytracer {
         shadowRay.pos[2] += hit.normal[2] * ObjectConsts.EPSILON2;
         let shadowT: number = Number.MAX_VALUE;
         let shadow = false;
+        let shadowObj = null;
 
         // Work out if we're in shadow
         if(vec4.dot(lightVect, hit.normal) > 0) {
@@ -222,6 +223,7 @@ export class Raytracer {
             // We can exit the first time we find a hit which is closer than the light
             if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
               shadowT = shadTestT;
+              shadowObj = obj;
               break;
             }
           }
@@ -254,8 +256,14 @@ export class Raytracer {
             lightIntensity * lightAtten * hitObject.material.kd * light.colour.b);
 
         } else {
+          // Some approximation to letting light through transparent objects
+          let shadowFudge = 1;
+          if(shadowObj && shadowObj.material.kt > 0) {
+            shadowFudge = 10;
+          }
+
           // In shadow, use material ka & scene ambient level, nothing else
-          shadeColour.mult(hitObject.material.ka * this.scene.ambientLevel);
+          shadeColour.mult(hitObject.material.ka * this.scene.ambientLevel * shadowFudge);
         }
 
         // Add hitColour to our accumulator colour
@@ -305,9 +313,9 @@ export class Raytracer {
         // transRay.pos[0] += transRay.dir[0] * 0.02; //ObjectConsts.E5SILON2;
         // transRay.pos[1] += transRay.dir[1] * 0.02; //ObjectConsts.EPSILON2;
         // transRay.pos[2] += transRay.dir[2] * 0.02; //ObjectConsts.EPSILON2;
-        transRay.pos[0] -= hit.normal[0] * 0.02;
-        transRay.pos[1] -= hit.normal[1] * 0.02;
-        transRay.pos[2] -= hit.normal[2] * 0.02;
+        transRay.pos[0] -= hit.normal[0] * 0.2;
+        transRay.pos[1] -= hit.normal[1] * 0.2;
+        transRay.pos[2] -= hit.normal[2] * 0.2;
         transRay.depth = ray.depth + 1;
 
         // What is new ray inside?
