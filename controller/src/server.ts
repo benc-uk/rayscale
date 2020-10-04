@@ -33,6 +33,7 @@ app.use((req, res, next) => {
 });
 
 const webUIDir = `${__dirname}/../webui`;
+const assetsDir = `${__dirname}/../assets`;
 const jobOutDir = process.env.JOB_OUTPUT || `${__dirname}/../jobs`;
 const checkInterval: number = parseInt(process.env.HEALTH_CHECK_INTERVAL || '80') * 1000;
 
@@ -62,8 +63,7 @@ app.get('/', function(req, res) {
 
 app.use('/ui', express.static(webUIDir, { etag: false, maxAge: 0 }));
 app.use('/jobs', express.static(jobOutDir));
-
-
+app.use('/assets', express.static(assetsDir));
 
 // Silly stuff to intercept calls to console.log so we can capture them
 export const allLogs: string[] = [];

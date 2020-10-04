@@ -38,9 +38,12 @@ ENV NODE_ENV production
 COPY controller/package*.json ./
 RUN npm install --production --silent
 
-# NPM is done, now copy in the the whole project to the workdir
+# NPM is done, copy in transpiled JS from dist
 COPY --from=build /build/controller/dist/ ./dist
+
+# Also need the WebUI, assets and jobs directories
 COPY controller/webui/ ./webui
+COPY controller/assets/ ./assets
 RUN mkdir jobs
 
 # Install bash inside for debugging, ffmeg also needed now
