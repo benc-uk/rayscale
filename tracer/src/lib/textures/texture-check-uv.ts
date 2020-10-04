@@ -7,6 +7,7 @@ import { Texture } from './texture';
 import { Colour } from '../colour';
 
 const ENABLE_AA = true;
+const AA_MAGIC_FACTOR = 10;
 
 export class TextureCheckUV extends Texture {
   colour1: Colour;
@@ -26,7 +27,7 @@ export class TextureCheckUV extends Texture {
 
     // Fake anti-aliasing, it's hacky but does look better than nothing
     if(ENABLE_AA){
-      const thres = 1 / (this.scaleU * 10) ;
+      const thres = 1 / (this.scaleU * AA_MAGIC_FACTOR) ;
       const thresRecip = 1 / thres;
 
       if(u < thres) {

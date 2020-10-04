@@ -23,6 +23,7 @@ export class TextureCheckSolid extends Texture {
   // ====================================================================================================
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getColourAtSolid(x: number, y: number, z: number): Colour {
+    // FIXME: Clearly getColourAtSolid was never finished
     //if((u > 0.5 && v > 0.5) || (u < 0.5 && v < 0.5)) return this.colour2;
     return this.colour1;
   }
