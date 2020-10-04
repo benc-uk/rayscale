@@ -81,7 +81,7 @@ export class API {
     // Ignore results if job not running (i.e CANCELLED or FAILED)
     if(job.status != 'RUNNING') {
       console.log(`### Task results '${req.params.id}' discarded as job is ${job.status}`);
-      // TODO: Why do we send 200 here, should be an error code
+      // Sending a 200 back might seem odd, but this is not an error or failure condition
       res.status(200).send({ msg: 'Task data discarded' });
       return;
     }
@@ -91,7 +91,7 @@ export class API {
       const reason = `Ray tracing failed, task ${req.body.taskIndex} had an error, ${req.body.error}`;
       this.scheduler.failJob(reason);
       console.error(`### ERROR! ${reason}`);
-      // TODO: Why do we send 200 here, should be an error code
+      // Sending a 200 back might seem odd, but we're confirming we got the error
       res.status(200).send({msg: reason});
       return;
     }

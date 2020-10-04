@@ -107,7 +107,8 @@ export class API {
           'x-stats-objtests': Stats.objectTests,
           'x-stats-meshtests': Stats.meshFaceTests
         },
-        maxContentLength: Infinity // Apparently this is a thing
+        maxContentLength: Infinity, // Apparently this is a thing
+        maxBodyLength: Infinity
         });
     } catch(e) {
       console.log(`### ERROR! ${e}. Ray tracing task failed`);
