@@ -16,7 +16,7 @@ export default {
   },
 
   template: `
-  <div class="flexcol">
+  <div class="flexcol"  v-on:keydown.ctrl.83.prevent.stop="jobSubmit">
     <div class="mb-1">
       <button class="button is-success is-medium" @click="jobSubmit" v-show="!running">Start Job &nbsp;<i class="fas fa-play fa-fw"></i></button>
       <button class="button is-warning is-medium" @click="jobCancel" v-show="running">Cancel Job &nbsp;<i class="fas fa-stop fa-fw"></i></button>
