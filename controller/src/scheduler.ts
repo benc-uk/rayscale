@@ -369,16 +369,19 @@ export class Scheduler {
     fs.writeFileSync(`${outDir}/job.yaml`, this.inputJobYaml);
 
     // Render video
-    const videoFilename = 'video.mp4';
-    child_process.exec(`ffmpeg -hide_banner -loglevel warning -framerate ${this.job.framerate} -i "result_%05d.png" -vcodec libx264 -pix_fmt yuv420p -y -tune animation -preset veryslow ${videoFilename}`, {cwd:`${outDir}`}, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`### Video generation ffmpeg error: ${error}`);
-        return;
-      }
-      if(stdout) console.log(`### Video generation ffmpeg output: ${stdout}`);
-      if(stderr) console.log(`### Video generation ffmpeg error: ${stderr}`);
-      console.log(`### Video generation of ${videoFilename} complete!`);
-    });
+    if(this.job.frameCount > 1) {
+      const videoFilename = 'video.mp4';
+
+      child_process.exec(`ffmpeg -hide_banner -loglevel warning -framerate ${this.job.framerate} -i "result_%05d.png" -vcodec libx264 -pix_fmt yuv420p -y -tune animation -preset veryslow ${videoFilename}`, {cwd:`${outDir}`}, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`### Video generation ffmpeg error: ${error}`);
+          return;
+        }
+        if(stdout) console.log(`### Video generation ffmpeg output: ${stdout}`);
+        if(stderr) console.log(`### Video generation ffmpeg error: ${stderr}`);
+        console.log(`### Video generation of ${videoFilename} complete!`);
+      });
+    }
   }
 
   // ====================================================================================
