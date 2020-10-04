@@ -5,9 +5,9 @@ import { Raytracer } from './raytracer';
 import { Task } from './lib/task';
 import { Scene } from './lib/scene';
 import { Stats } from './lib/stats';
+import { numberWithCommas } from './lib/utils';
 //import { PngManager } from './lib/png-manager';
 //import { ObjManager } from './lib/obj-manager';
-import { Utils } from './lib/utils';
 
 // =======================================================================================================
 
@@ -86,11 +86,11 @@ export class API {
 
       // Log stats
       console.log('### Task complete, sending image fragment back to controller');
-      console.log(`### Rays created: ${Utils.numberWithCommas(Stats.raysCreated)}`);
-      console.log(`### Rays cast:    ${Utils.numberWithCommas(Stats.raysCast)}`);
-      console.log(`### Shadow rays:  ${Utils.numberWithCommas(Stats.shadowRays)}`);
-      console.log(`### Object tests: ${Utils.numberWithCommas(Stats.objectTests)}`);
-      console.log(`### Face tests: ${Utils.numberWithCommas(Stats.meshFaceTests)}`);
+      console.log(`### Rays created: ${numberWithCommas(Stats.raysCreated)}`);
+      console.log(`### Rays cast:    ${numberWithCommas(Stats.raysCast)}`);
+      console.log(`### Shadow rays:  ${numberWithCommas(Stats.shadowRays)}`);
+      console.log(`### Object tests: ${numberWithCommas(Stats.objectTests)}`);
+      console.log(`### Face tests: ${numberWithCommas(Stats.meshFaceTests)}`);
 
       // Send image buffer to controller as binary (octet-stream)
       await axios.post(

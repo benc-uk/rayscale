@@ -8,8 +8,8 @@ import { Ray } from '../ray';
 import { Hit } from '../hit';
 import { Material } from '../material';
 import { Animation } from '../animation';
-import { Utils } from '../utils';
 import { TResult } from '../t-result';
+import { degreeToRad } from '../utils';
 
 // ====================================================================================
 // Base interface all objects need to implement
@@ -56,9 +56,9 @@ export abstract class Object3D implements Object3DInterface {
 
     // Build transforms based on position and rotation
     const rotQuat: quat = quat.identity(quat.create());
-    quat.rotateX(rotQuat, rotQuat, Utils.degreeToRad(this.rot[0]));
-    quat.rotateY(rotQuat, rotQuat, Utils.degreeToRad(this.rot[1]));
-    quat.rotateZ(rotQuat, rotQuat, Utils.degreeToRad(this.rot[2]));
+    quat.rotateX(rotQuat, rotQuat, degreeToRad(this.rot[0]));
+    quat.rotateY(rotQuat, rotQuat, degreeToRad(this.rot[1]));
+    quat.rotateZ(rotQuat, rotQuat, degreeToRad(this.rot[2]));
     mat4.fromRotationTranslationScale(this.transFwd, rotQuat, this.pos, [1, 1, 1]);
     mat4.invert(this.trans, this.transFwd);
   }

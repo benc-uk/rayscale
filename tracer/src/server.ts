@@ -12,7 +12,7 @@ import dotenv from 'dotenv';
 import { v4 as uuidv4 }from 'uuid';
 import axios from 'axios';
 import os from 'os';
-import { Utils } from './lib/utils';
+import { getNetInterfaceIP } from './lib/utils';
 import { API } from './api';
 import fs from 'fs';
 
@@ -62,7 +62,7 @@ app.listen(port, async () => {
   let hostname = process.env.OVERRIDE_HOSTNAME || null;
   if(!hostname){
     if(process.env.USE_IPADDRESS == 'true') {
-      hostname = Utils.getNetInterfaceIP();
+      hostname = getNetInterfaceIP();
     } else {
       hostname = os.hostname();
     }

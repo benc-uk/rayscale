@@ -8,12 +8,12 @@ import { Colour } from './lib/colour';
 import { Ray } from './lib/ray';
 import { Scene } from './lib/scene';
 import { Task } from './lib/task';
-import { Utils } from './lib/utils';
 import { Hit } from './lib/hit';
 import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
 import { ObjectConsts, Object3D } from './lib/objects/object3d';
 import { Mesh } from './lib/objects/mesh';
+import { degreeToRad } from './lib/utils';
 
 // ====================================================================================================
 // The core & heart of everything
@@ -52,7 +52,7 @@ export class Raytracer {
     for (let y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y ++) {
       for (let x = 0; x < this.task.imageWidth; x++) {
         // Field of view scaling factor
-        const fovScale = Math.tan(Utils.degreeToRad(this.scene.camera.FOV * 0.5));
+        const fovScale = Math.tan(degreeToRad(this.scene.camera.FOV * 0.5));
 
         // Top of ray tracing process
         let outPixel: Colour;

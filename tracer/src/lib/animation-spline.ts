@@ -5,8 +5,8 @@
 
 import { vec3 } from 'gl-matrix';
 import { CatmullRomSpline } from './spline';
-import { Utils } from './utils';
 import { Animation } from './animation';
+import { clamp } from './utils';
 
 export class AnimationSpline implements Animation {
   points: vec3[];
@@ -31,7 +31,7 @@ export class AnimationSpline implements Animation {
 
     // t is normalised time offset into anim duration (0 - 1)
     // Allow calc for time past the end, which results in t=1
-    const t = Utils.clamp((time - this.start) / this.duration, 0.0, 1.0);
+    const t = clamp((time - this.start) / this.duration, 0.0, 1.0);
 
     // Get entity/object property we are going to modify
     const input = entity[this.propertyName];
