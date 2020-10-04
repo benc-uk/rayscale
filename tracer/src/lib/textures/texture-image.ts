@@ -18,7 +18,7 @@ export class TextureImage extends Texture {
   png: pngjs.PNG;
 
   // ====================================================================================================
-  // NOTE: Important texture is loaded into TextureManager first
+  // Important, texture is loaded into TextureManager first
   // We can't do that here, or we'd be in async/await/Promise hell
   // ====================================================================================================
   constructor(url: string) {
@@ -35,7 +35,7 @@ export class TextureImage extends Texture {
     if(this.flipU) u = (1 - u);
     if(this.flipV) v = (1 - v);
 
-    // Tiny fudge factor here is not ideal, but it prevents seams
+    // NOTE: Tiny fudge factor here is not ideal, but it prevents seams
     let ui, vi: number;
     if(this.swapUV) {
       ui = (v * this.png.width * 0.99);

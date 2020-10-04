@@ -55,8 +55,8 @@ export class Scene {
       console.log('### Begin parsing scene...');
 
       try {
-        // NOTE: We need to use the same random seed across all tracers otherwise
-        // We'll get banding with noiseTextures
+        // NOTE: We need to use the same random seed across all tracers
+        // This prevents banding with randomized noiseTextures
         if(!input.seed)
           scene.seed = jobId;
         else
@@ -77,7 +77,7 @@ export class Scene {
 
         if(!input.camera) throw('Scene camera missing');
         if(!input.camera.pos) throw(`Camera pos missing ${JSON.stringify(input.camera)}`);
-        if(!input.camera.lookAt) throw(`Camera pos missing ${JSON.stringify(input.camera)}`);
+        if(!input.camera.lookAt) throw(`Camera lookAt missing ${JSON.stringify(input.camera)}`);
 
         // Camera field of view, with default of 30
         let cameraFov = 30;
@@ -194,7 +194,7 @@ export class Scene {
         // Parse lights
         scene.lights = [];
         for(const rawLight of input.lights) {
-          let b = 1;
+          let b = 1;    // Default radius and brightness
           let r = 200;
           if(rawLight.brightness) b = rawLight.brightness;
           if(rawLight.radius) r = rawLight.radius;
@@ -383,21 +383,24 @@ export class Scene {
     if(!rawObj.animation) return anims;
 
     for(const rawAnim of rawObj.animation) {
-      if(!rawAnim.type) throw(`Animation missing required field 'type' ${JSON.stringify(rawAnim)}`);
-      if(!rawAnim.property) throw(`Animation missing required field 'property' ${JSON.stringify(rawAnim)}`);
-      if(!rawAnim.hasOwnProperty('start')) throw(`Animation missing required field 'start' ${JSON.stringify(rawAnim)}`);
-      if(!rawAnim.duration) throw(`Animation missing required field 'duration' ${JSON.stringify(rawAnim)}`);
+      if(!rawAnim.type) throw('Animation missing required field \'type\'');
+      if(!rawAnim.property) throw('Animation missing required field \'property\'');
+      if(!rawAnim.hasOwnProperty('start')) throw('Animation missing required field \'start\'');
+      if(typeof rawAnim.start !== 'number') throw('Animation start must be a number');
+      if(typeof rawAnim.duration !== 'number') throw('Animation duration must be a number');
+
+      if(!rawAnim.duration) throw('Animation missing required field \'duration\'');
 
       switch(rawAnim.type.toLowerCase()) {
         case 'vector': {
-          if(!rawAnim.hasOwnProperty('target')) throw(`Animation type vector missing required field 'target' ${JSON.stringify(rawAnim)}`);
+          if(!rawAnim.hasOwnProperty('target')) throw('Animation type vector missing required field \'target\'');
           const anim = new AnimationVector(rawAnim.property, rawAnim.target, rawAnim.start, rawAnim.duration);
           anims.push(anim);
           break;
         }
 
         case 'spline': {
-          if(!rawAnim.hasOwnProperty('points')) throw(`Animation type vector missing required field 'points' ${JSON.stringify(rawAnim)}`);
+          if(!rawAnim.hasOwnProperty('points')) throw('Animation type vector missing required field \'points\'');
           const anim = new AnimationSpline(rawAnim.property, rawAnim.points, rawAnim.start, rawAnim.duration);
           anims.push(anim);
           break;

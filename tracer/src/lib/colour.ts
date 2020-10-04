@@ -3,6 +3,8 @@
 // (C) Ben Coleman 2018
 //
 
+import { lerp } from './utils';
+
 export class Colour {
   r: number; g: number; b: number;
 
@@ -102,6 +104,24 @@ export class Colour {
     this.r = Math.min(1, this.r);
     this.g = Math.min(1, this.g);
     this.b = Math.min(1, this.b);
+  }
+
+  public mixNew(col: Colour): Colour {
+    return new Colour(
+      (this.r + col.r) / 2,
+      (this.g + col.g) / 2,
+      (this.b + col.b) / 2
+    );
+  }
+
+  public mixAndMultNew(col: Colour, amount: number): Colour {
+    const out = new Colour(
+      lerp(this.r, col.r, amount),
+      lerp(this.g, col.g, amount),
+      lerp(this.b, col.b, amount)
+    );
+
+    return out;
   }
 
   public toArray(): Float32Array {
