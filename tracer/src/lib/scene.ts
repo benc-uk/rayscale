@@ -24,8 +24,10 @@ import { AnimationVector } from './animation-vector';
 import { Camera } from './camera';
 import { AnimationSpline } from './animation-spline';
 
+// TODO: Support variables e.g. host name string for textures, positions too?
+
 // ====================================================================================================
-//
+// Scene is a fundamental class holding all details of a scene to be rendered
 // ====================================================================================================
 export class Scene {
   backgroundColour: Colour;
@@ -33,9 +35,6 @@ export class Scene {
   ior: number;
   seed: string;
 
-  // cameraPos: vec3;      // Camera position in world
-  // cameraLookAt: vec3;   // Camera look at point
-  // cameraFov: number;    // Camera field of view in radians
   camera: Camera;
 
   objects: Object3D[];

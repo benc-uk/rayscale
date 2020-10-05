@@ -84,6 +84,9 @@ export class Scheduler {
   // Create a new render job, with sub tasks fired off to tracers
   // ====================================================================================
   public createJob(jobInput: JobInput, jobRawYAML: string): string {
+    // TODO: Why not useJSON-schmea to validate the input and also the scene?
+    // This would save a lot of checking the in the scene parser and also here
+
     // Job object holds a lot of state
     this.job = new Job();
 

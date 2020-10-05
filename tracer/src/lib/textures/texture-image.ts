@@ -37,7 +37,7 @@ export class TextureImage extends Texture {
 
     // NOTE: Tiny fudge factor here is not ideal, but it prevents seams
     let ui, vi: number;
-    //(1 - 1/this.scaleV));
+
     if(this.swapUV) {
       ui = (v * this.png.width * 0.999);
       vi = (u * this.png.height * 0.999);
