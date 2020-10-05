@@ -25,7 +25,7 @@ RUN node node_modules/typescript/bin/tsc
 FROM node:12-alpine
 LABEL org.label-schema.name="RayScale: Tracer" \
       org.label-schema.description="Tracer microservice for RayScale app" \    
-      org.label-schema.version="1.4.0" \
+      org.label-schema.version="2.0.0" \
       org.label-schema.vcs-url=https://github.com/benc-uk/rayscale
 
 WORKDIR /app/tracer

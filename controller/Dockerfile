@@ -25,7 +25,7 @@ RUN node node_modules/typescript/bin/tsc
 FROM node:12-alpine
 LABEL org.label-schema.name="RayScale: Controller" \
       org.label-schema.description="Controller microservice for RayScale app" \    
-      org.label-schema.version="1.4.0" \
+      org.label-schema.version="2.0.0" \
       org.label-schema.vcs-url=https://github.com/benc-uk/rayscale
 
 WORKDIR /app/controller
@@ -38,13 +38,16 @@ ENV NODE_ENV production
 COPY controller/package*.json ./
 RUN npm install --production --silent
 
-# NPM is done, now copy in the the whole project to the workdir
+# NPM is done, copy in transpiled JS from dist
 COPY --from=build /build/controller/dist/ ./dist
+
+# Also need the WebUI, assets and jobs directories
 COPY controller/webui/ ./webui
+COPY controller/assets/ ./assets
 RUN mkdir jobs
 
-# Install bash inside container just for debugging 
-RUN apk update && apk add bash
+# Install bash inside for debugging, ffmeg also needed now
+RUN apk update && apk add bash && apk add ffmpeg
 
 EXPOSE 9000
 CMD npm start

@@ -3,17 +3,17 @@
 // (C) Ben Coleman 2018
 //
 
-import { vec4, mat4 } from 'gl-matrix';
+import { vec4 } from 'gl-matrix';
 import { Colour } from './lib/colour';
 import { Ray } from './lib/ray';
 import { Scene } from './lib/scene';
 import { Task } from './lib/task';
-import { Utils } from './lib/utils';
 import { Hit } from './lib/hit';
 import { Stats } from './lib/stats';
 import { TResult } from './lib/t-result';
-import { ObjectConsts, Object3D } from './lib/object3d';
-import { Mesh } from './lib/mesh';
+import { ObjectConsts, Object3D } from './lib/objects/object3d';
+import { Mesh } from './lib/objects/mesh';
+import { degreeToRad } from './lib/utils';
 
 // ====================================================================================================
 // The core & heart of everything
@@ -39,8 +39,8 @@ export class Raytracer {
     const aspectRatio = this.task.imageWidth / this.task.imageHeight; // assuming width > height
 
     // Create our camera transform and invert
-    const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
-    mat4.invert(camTrans, camTrans);
+    // const camTrans = mat4.lookAt(mat4.create(), this.scene.cameraPos, this.scene.cameraLookAt, [0, 1, 0]);
+    // mat4.invert(camTrans, camTrans);
 
     // Image buffer row
     let bufferY = 0;
@@ -51,16 +51,16 @@ export class Raytracer {
     // Main pixel casting loop, note we only render the slice of the image we're given in the task
     for (let y = this.task.sliceStart; y < (this.task.sliceStart + this.task.sliceHeight); y ++) {
       for (let x = 0; x < this.task.imageWidth; x++) {
-
         // Field of view scaling factor
-        const fovScale = Math.tan(Utils.degreeToRad(this.scene.cameraFov * 0.5));
+        const fovScale = Math.tan(degreeToRad(this.scene.camera.FOV * 0.5));
 
         // Top of ray tracing process
         let outPixel: Colour;
 
         if(this.task.antiAlias) {
           // Fire 5 rays. one in center and one in each corner of pixel
-          const outPixel0: Colour = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+          //const outPixel0: Colour = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+          const outPixel0: Colour = this.shadeRay(this.scene.camera.makeRay(x+0.5, y+0.5, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
 
           // All this  weird rubbish casts additional rays but also uses cached values
           // The cache consists of corner values of the previous pixel on the current row
@@ -72,20 +72,20 @@ export class Raytracer {
           if(cacheRow[x]) {
             outPixel1 = cacheRow[x].copy();
           } else {
-            outPixel1 = this.shadeRay(this.makeCameraRay(x, y, camTrans, fovScale, aspectRatio));
+            outPixel1 = this.shadeRay(this.scene.camera.makeRay(x, y, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
           }
           if(cacheRow[x+1]) {
             outPixel2 = cacheRow[x+1].copy();
           } else {
-            outPixel2 = this.shadeRay(this.makeCameraRay(x+1, y, camTrans, fovScale, aspectRatio));
+            outPixel2 = this.shadeRay(this.scene.camera.makeRay(x+1, y, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
           }
           if(cacheCorner) {
             outPixel3 = cacheCorner.copy();
           } else {
-            outPixel3 = this.shadeRay(this.makeCameraRay(x, y+1, camTrans, fovScale, aspectRatio));
+            outPixel3 = this.shadeRay(this.scene.camera.makeRay(x, y+1, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
             cacheRow[x] = outPixel3.copy();
           }
-          const outPixel4: Colour = this.shadeRay(this.makeCameraRay(x+1, y+1, camTrans, fovScale, aspectRatio));
+          const outPixel4: Colour = this.shadeRay(this.scene.camera.makeRay(x+1, y+1, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
           cacheRow[x+1] = outPixel4.copy();
           cacheCorner = outPixel4.copy();
 
@@ -103,7 +103,7 @@ export class Raytracer {
           outPixel = Colour.add(outPixel, outPixel4);
         } else {
           // Without anti-aliasing we just cast one ray in center of each pixel
-          outPixel = this.shadeRay(this.makeCameraRay(x+0.5, y+0.5, camTrans, fovScale, aspectRatio));
+          outPixel = this.shadeRay(this.scene.camera.makeRay(x + 0.5, y + 0.5, this.task.imageWidth, this.task.imageHeight, fovScale, aspectRatio));
         }
 
         // We have the final pixel colour so write to the image buffer
@@ -113,31 +113,11 @@ export class Raytracer {
       // Image row complete
       cacheCorner = null;
       bufferY++;
-      const perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
-      if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Task '${this.task.index + 1} / ${this.task.jobId}' rendered ${perc}%`);
+      //const perc: number = Math.round((bufferY / this.task.sliceHeight) * 100);
+      //if(bufferY % Math.floor(this.task.sliceHeight / 10) == 0) console.log(`### Frame ${this.task.frame}, task '${this.task.index + 1} / ${this.task.jobId}' rendered ${perc}%`);
     }
 
     return this.image;
-  }
-
-  // ====================================================================================================
-  // Create camera rays to cast into the scene for a given pixel
-  // ====================================================================================================
-  private makeCameraRay(x: number, y: number, camTrans: mat4, fovScale: number, aspectRatio: number): Ray {
-    // This converts from raster space (output image) -> normalized space -> screen space
-    const px: number = (2 * (x + 0.5) / this.task.imageWidth - 1) * fovScale  * aspectRatio;
-    const py: number = (1 - 2 * (y + 0.5) / this.task.imageHeight) * fovScale;
-
-    // Create camera ray, starting at origin and pointing into -z
-    const origin: vec4 = vec4.fromValues(0.0, 0.0, 0.0, 1);
-    const dir: vec4 = vec4.fromValues(px, py, -1.0, 0);
-    const ray: Ray = new Ray(origin, dir);
-
-    // Now move ray with respect to camera transform (into world space)
-    ray.transform(camTrans);
-    ray.depth = 1;
-
-    return ray;
   }
 
   // ====================================================================================================
@@ -197,7 +177,6 @@ export class Raytracer {
 
       // Loop over all lights...
       for(const light of this.scene.lights) {
-
         // shadeColour is a copy of the base colour modified for this light only
         const shadeColour: Colour = hitColour.copy();
 
@@ -227,6 +206,7 @@ export class Raytracer {
         shadowRay.pos[2] += hit.normal[2] * ObjectConsts.EPSILON2;
         let shadowT: number = Number.MAX_VALUE;
         let shadow = false;
+        let shadowObj = null;
 
         // Work out if we're in shadow
         if(vec4.dot(lightVect, hit.normal) > 0) {
@@ -243,6 +223,7 @@ export class Raytracer {
             // We can exit the first time we find a hit which is closer than the light
             if (shadTestT > 0.0 && shadTestT < shadowT && shadTestT < lightDist) {
               shadowT = shadTestT;
+              shadowObj = obj;
               break;
             }
           }
@@ -275,8 +256,14 @@ export class Raytracer {
             lightIntensity * lightAtten * hitObject.material.kd * light.colour.b);
 
         } else {
+          // Some approximation to letting light through transparent objects
+          let shadowFudge = 1;
+          if(shadowObj && shadowObj.material.kt > 0) {
+            shadowFudge = 10;
+          }
+
           // In shadow, use material ka & scene ambient level, nothing else
-          shadeColour.mult(hitObject.material.ka * this.scene.ambientLevel);
+          shadeColour.mult(hitObject.material.ka * this.scene.ambientLevel * shadowFudge);
         }
 
         // Add hitColour to our accumulator colour
@@ -323,9 +310,12 @@ export class Raytracer {
 
         // Move new ray inside object, use the normal at the hit
         // Reflections don't work otherwise
-        transRay.pos[0] -= hit.normal[0] * 0.2; //transRay.dir[0] * 0.1; //ObjectConsts.E5SILON2;
-        transRay.pos[1] -= hit.normal[1] * 0.2; //transRay.dir[1] * 0.1; //ObjectConsts.EPSILON2;
-        transRay.pos[2] -= hit.normal[2] * 0.2; //transRay.dir[2] * 0.1; //ObjectConsts.EPSILON2;
+        // transRay.pos[0] += transRay.dir[0] * 0.02; //ObjectConsts.E5SILON2;
+        // transRay.pos[1] += transRay.dir[1] * 0.02; //ObjectConsts.EPSILON2;
+        // transRay.pos[2] += transRay.dir[2] * 0.02; //ObjectConsts.EPSILON2;
+        transRay.pos[0] -= hit.normal[0] * 0.2;
+        transRay.pos[1] -= hit.normal[1] * 0.2;
+        transRay.pos[2] -= hit.normal[2] * 0.2;
         transRay.depth = ray.depth + 1;
 
         // What is new ray inside?

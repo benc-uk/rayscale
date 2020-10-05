@@ -36,8 +36,8 @@ jobs:
       - name: Build the controller image
         run: docker build . -f controller/Dockerfile --tag ghcr.io/$GITHUB_ACTOR/rayscale/controller:$IMAGE_TAG
 
-      - name: Push to dev tag Dockerhub
-        if: github.ref == 'refs/heads/master' # && github.event_name == 'push'
+      - name: Push to dev tag Github registry
+        #if: github.ref == 'refs/heads/master' # && github.event_name == 'push'
         run: |
           echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
           docker push ghcr.io/$GITHUB_ACTOR/rayscale/tracer:$IMAGE_TAG

@@ -5,8 +5,8 @@
 
 import SimplexNoise from 'simplex-noise';
 import { Texture } from './texture';
-import { Colour } from './colour';
-import { Scene } from './scene';
+import { Colour } from '../colour';
+import { Scene } from '../scene';
 
 // ====================================================================================================
 // Simplex noise based 3D/solid textures

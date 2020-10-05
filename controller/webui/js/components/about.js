@@ -28,7 +28,7 @@ export default {
         <a href="https://github.com/benc-uk/rayscale" class="button is-primary"><i class="fab fa-github"></i> &nbsp; Git Hub Project</a></p>
 
         <hr/>
-        <p>Version 1.4.1, July 2020</p>
+        <p>Version 2.0.0, Oct 2020</p>
         <p>&copy; Ben Coleman 2018 ~ 2020</p>        
       </div>
     </div>

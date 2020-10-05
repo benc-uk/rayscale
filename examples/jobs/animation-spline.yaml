@@ -1,0 +1,78 @@
+name: Animation Spline
+width: 640
+height: 480
+tasks: 8
+antiAlias: false
+animation:
+  duration: 10
+  framerate: 1
+scene:
+  backgroundColour: [80, 40, 7]
+  ambientLevel: 0.15
+
+  camera:
+    fov: 40
+    pos: [0, 60, 100]
+    lookAt: [0, 6, 0]
+
+  lights:
+    - pos: [-150, 150, 100]
+      radius: 9000
+      animation:
+        - type: spline
+          property: pos
+          start: 0
+          duration: 10
+          points: [[-150, 150, 100], [0, 150, 180], [150, 100, 60]]
+        - type: vector
+          property: pos
+          start: 0
+          duration: 10
+          target: [255, 255, 40]
+
+  objects:
+    - type: sphere
+      name: ball
+      pos: [0, 12, 0]
+      radius: 12
+      animation:
+        - type: spline
+          property: pos
+          start: 0
+          duration: 10
+          points:
+            [
+              [0, 12, 0],
+              [-25, 12, 10],
+              [-28, 12, -30],
+              [-15, 30, 0],
+              [25, 12, 30],
+            ]
+      material:
+        preset: shiny
+        texture:
+          type: basic
+          colour: [200, 10, 25]
+    - type: sphere
+      name: shinyball
+      pos: [0, 7, -20]
+      radius: 7
+      material:
+        preset: shiny
+        kr: 0.7
+        texture:
+          type: basic
+          colour: [20, 20, 20]
+
+    - type: plane
+      name: floor
+      pos: [0, 0, 0]
+      material:
+        preset: matte
+        ka: 1
+        texture:
+          type: check
+          scaleU: 15
+          scaleV: 15
+          colour1: [230, 230, 230]
+          colour2: [20, 140, 20]
