@@ -6,7 +6,6 @@ on:
 
 env:
   DOCKER_USER: bencuk
-  DOCKER_REG: docker.io
   # Release semver tagged version
   IMAGE_TAG: ${{ github.event.release.tag_name }}
 
