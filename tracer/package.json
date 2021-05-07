@@ -31,7 +31,7 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "gl-matrix": "^3.3.0",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "obj-file-parser": "^0.5.0",
     "pngjs": "^5.0.0",
