@@ -8,7 +8,6 @@ on:
     branches: [master]
 
 env:
-  DOCKER_USER: bencuk
   IMAGE_TAG: dev
 
 permissions:
@@ -16,6 +15,7 @@ permissions:
 
 jobs:
   buildDevImage:
+    name: Build & Push Dev Images
     runs-on: ubuntu-latest
 
     steps:
