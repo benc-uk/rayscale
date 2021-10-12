@@ -14,7 +14,7 @@ import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
 import axios from 'axios';
-import { CancelToken } from 'cancel-token';
+import { AbortController } from 'node-abort-controller';
 
 // ====================================================================================================
 // Class manages jobs, tasks tracers & and task results - it's the heart of everything
@@ -60,13 +60,13 @@ export class Scheduler {
       try {
         // Loooong story but timeouts in Axios simply don't work...
         // https://stackoverflow.com/a/54573024/1343261
-        const canTokensource = CancelToken.source();
+        const controller = new AbortController();
         setTimeout(() => {
-          canTokensource.cancel();
+          controller.abort();
         }, TIMEOUT);
 
         axios.defaults.timeout = TIMEOUT;
-        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, cancelToken: canTokensource.token});
+        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, signal: controller.signal});
         if(pingResp && pingResp.status == 200) {
           continue;
         } else {

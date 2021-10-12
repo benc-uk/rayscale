@@ -39,8 +39,10 @@ export class ObjManager {
           try {
             // Parse OBJ and store in cache
             // We use the url as object key
-            const parser = new ObjFileParser(respData.data.toString());
-            this.objs[url] = parser.parse();
+            if(respData && respData.data) {
+              const parser = new ObjFileParser(respData.data);
+              this.objs[url] = parser.parse();
+            }
 
             // Validate some stuff
             if(!this.objs[url].models[0]) throw 'File must contain at least one model';

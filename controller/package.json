@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/benc-uk/rayscale",
   "dependencies": {
-    "axios": "^0.20.0",
+    "axios": "^0.22.0",
     "cancel-token": "^0.1.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -34,6 +34,7 @@
     "intercept-stdout": "^0.1.2",
     "js-yaml": "^3.14.0",
     "morgan": "^1.10.0",
+    "node-abort-controller": "^3.0.1",
     "pngjs": "^5.0.0",
     "randomstring": "^1.1.5"
   },
@@ -51,8 +52,8 @@
     "@types/request-promise-native": "^1.0.17",
     "@typescript-eslint/eslint-plugin": "^4.0.1",
     "@typescript-eslint/parser": "^4.0.1",
-    "eslint": "^7.8.1",
-    "eslint-plugin-vue": "^6.2.2",
+    "eslint": "^7.0.0",
+    "eslint-plugin-vue": "^7.19.1",
     "pre-commit": "^1.2.2",
     "typescript": "^4.0.2"
   }
