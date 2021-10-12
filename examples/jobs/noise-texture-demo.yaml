@@ -6,13 +6,16 @@ height: 600
 scene:
   seed: 33332111
   ambientLevel: 0.4
-  cameraFov: 30
-  cameraPos: [0, 22, 38]
-  cameraLookAt: [0, 12, -20]
+  camera:
+    fov: 30
+    pos: [0, 22, 38]
+    lookAt: [0, 12, -20]
+
   lights:
     - pos: [300, 800, 700]
       radius: 30000
       brightness: 1.6
+
   materials:
     - name: wood1
       preset: matte
@@ -67,8 +70,8 @@ scene:
         turbPower: 2
         turbSize: 16
         pow: 0.8
-        mult: 1        
-        
+        mult: 1
+
   objects:
     - type: plane
       name: sky
@@ -100,7 +103,7 @@ scene:
           mult: 1.4
           pow: 2
           abs: true
-          
+
     - type: sphere
       name: stone-ball
       pos: [9, 20, -18]
@@ -121,30 +124,30 @@ scene:
       name: pillar
       pos: [-9, 7.5, -20]
       size: [10, 15, 10]
-      rotate: [0, -55, 0]      
+      rotate: [0, -55, 0]
       material:
         preset: marb1
     - type: cuboid
       name: pillar
       pos: [-9, 1, -20]
       size: [12, 2, 12]
-      rotate: [0, -55, 0]      
+      rotate: [0, -55, 0]
       material:
-        preset: marb1   
+        preset: marb1
     - type: cuboid
       name: pillar
       pos: [-9, 14, -20]
       size: [12, 2, 12]
-      rotate: [0, -55, 0]      
+      rotate: [0, -55, 0]
       material:
-        preset: marb1         
-        
+        preset: marb1
+
     - type: mesh
       name: stone-teapot
       pos: [-9, 15, -20]
       rotate: [0, 20, 0]
       scale: 2.5
-      src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/obj/teapot-med.obj
+      src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/obj/teapot-med.obj
       boundingSettings: [2, 300, 0.07]
       material:
         preset: marb3
@@ -153,20 +156,20 @@ scene:
       name: pillar
       pos: [9, 7.5, -20]
       size: [10, 15, 10]
-      rotate: [0, -55, 0]      
+      rotate: [0, -55, 0]
       material:
         preset: wood1
     - type: cuboid
       name: pillar
       pos: [9, 1, -20]
       size: [12, 2, 12]
-      rotate: [0, -55, 0]      
+      rotate: [0, -55, 0]
       material:
-        preset: wood1   
+        preset: wood1
     - type: cuboid
       name: pillar
       pos: [9, 14, -20]
       size: [12, 2, 12]
-      rotate: [0, -55, 0]      
+      rotate: [0, -55, 0]
       material:
-        preset: wood1 
+        preset: wood1

@@ -6,19 +6,20 @@ tasks: 6
 scene:
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.2
-  cameraFov: 28
-  cameraPos: [0, 8, 0]
-  cameraLookAt: [0, 1, -10]   
-  
+  camera:
+    fov: 28
+    pos: [0, 8, 0]
+    lookAt: [0, 1, -10]
+
   lights:
     - pos: [120, 63, 120]
       radius: 2000
-      brightness: 0.7      
+      brightness: 0.7
     - pos: [-100, 93, 180]
       radius: 2000
       brightness: 0.8
       colour: [232, 204, 125]
-      
+
   objects:
     # Tiled floor
     - type: plane
@@ -32,13 +33,13 @@ scene:
           type: check
           scaleU: 5
           scaleV: 5
-          colour1: [108, 94, 237]  
+          colour1: [108, 94, 237]
           colour2: [30, 30, 30]
     # Utah teapot obj mesh
     - type: mesh
       name: teapot
       #debug: true
-      src: https://github.com/benc-uk/rayscale/raw/master/examples/obj/teapot-high.obj
+      src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/obj/teapot-high.obj
       pos: [-1.3, 0, -11]
       rotate: [0, 40, 0]
       scale: 1
@@ -47,7 +48,7 @@ scene:
         preset: shiny
         hardness: 90
         kr: 0.6
-        texture: 
+        texture:
           colour: [201, 193, 165]
     # Rubber ball
     - type: sphere
@@ -58,7 +59,7 @@ scene:
         preset: matte
         ks: 0.2
         hardness: 5
-        texture: 
+        texture:
           colour: [255, 90, 90]
     # Mirror ball
     - type: sphere
@@ -70,5 +71,5 @@ scene:
         ks: 1.2
         kr: 0.8
         hardness: 90
-        texture: 
+        texture:
           colour: [60, 60, 90]

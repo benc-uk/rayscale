@@ -6,13 +6,16 @@ tasks: 8
 scene:
   backgroundColour: [10, 10, 30]
   ambientLevel: 0.6
-  cameraFov: 30
-  cameraPos: [4, 9, 2]
-  cameraLookAt: [0, 5, -45]
+  camera:
+    fov: 30
+    pos: [4, 9, 2]
+    lookAt: [0, 5, -45]
+
   lights:
     - pos: [-74, 60, -10]
       radius: 350
       brightness: 1.4
+
   objects:
     - type: sphere
       name: chrome-ball
@@ -40,7 +43,7 @@ scene:
         hardness: 2
         texture:
           type: image
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/earth.png
+          src: https://github.com/benc-uk/rayscale/raw/master/controller/assets/tex/earth.png
     - type: plane
       name: floor
       pos: [0, 0, 0]
@@ -53,7 +56,7 @@ scene:
           type: image
           scaleU: 50
           scaleV: 50
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/desert.png
+          src: https://github.com/benc-uk/rayscale/raw/master/controller/assets/tex/desert.png
     - type: plane
       name: sky
       pos: [0, 150, 0]
@@ -66,4 +69,4 @@ scene:
           type: image
           scaleU: 800
           scaleV: 800
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/sky.png          
+          src: https://github.com/benc-uk/rayscale/raw/master/controller/assets/tex/sky.png

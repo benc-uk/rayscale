@@ -7,9 +7,11 @@ tasks: 8
 scene:
   backgroundColour: [10, 90, 30]
   ambientLevel: 0.2
-  cameraFov: 30
-  cameraPos: [2, 18, 0]
-  cameraLookAt: [-0.5, 4, -30]
+  camera:
+    fov: 30
+    pos: [2, 18, 0]
+    lookAt: [-0.5, 4, -30]
+
   lights:
     - pos: [-30, 80, 38]
       radius: 120
@@ -17,8 +19,9 @@ scene:
     - pos: [20, 25, -39]
       colour: [244, 203, 66]
       radius: 50
-      brightness: 2.5  
-  objects: 
+      brightness: 2.5
+
+  objects:
     - type: plane
       name: floor
       pos: [0, 0, 0]
@@ -31,7 +34,7 @@ scene:
           scaleU: 8
           scaleV: 8
           colour1: [173, 34, 34]
-          colour2: [224, 224, 224]  
+          colour2: [224, 224, 224]
     - type: cylinder
       name: glass
       pos: [1, -0.05, -30]
@@ -81,7 +84,7 @@ scene:
           type: image
           scaleU: 8
           scaleV: 10
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+          src: https://github.com/benc-uk/rayscale/raw/master/controller/assets/tex/wooddark.png
     - type: cuboid
       name: rod
       pos: [7.5, 2.5, -30]

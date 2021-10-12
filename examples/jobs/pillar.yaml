@@ -6,9 +6,11 @@ tasks: 8
 scene:
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.15
-  cameraFov: 30
-  cameraPos: [0, 7, 7]
-  cameraLookAt: [0, 1, -20]
+  camera:
+    fov: 30
+    pos: [0, 7, 7]
+    lookAt: [0, 1, -20]
+
   materials:
     - name: stone
       preset: matte
@@ -19,16 +21,16 @@ scene:
         type: image
         scaleU: 8
         scaleV: 13
-        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png   
-        
+        src: https://github.com/benc-uk/rayscale/raw/master/controller/assets/tex/stone.png
+
   lights:
     - pos: [-28, 18, -3]
       radius: 300
       brightness: 1
     - pos: [28, 18, 17]
       radius: 300
-      brightness: 0.7      
-      
+      brightness: 0.7
+
   objects:
     - type: cuboid
       name: top
@@ -55,7 +57,7 @@ scene:
           type: image
           scaleU: 13
           scaleV: 13
-          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone.png           
+          src: https://github.com/benc-uk/rayscale/raw/master/controller/assets/tex/stone.png
     - type: sphere
       name: ball
       pos: [3, 5, -18]
@@ -77,7 +79,7 @@ scene:
           type: check
           scaleU: 5
           scaleV: 5
-          colour1: [0, 120, 0]  
+          colour1: [0, 120, 0]
           colour2: [250, 250, 250]
     - type: sphere
       name: mirror

@@ -39,7 +39,7 @@ export class API {
     const task: Task = req.body.task;
     let scene: Scene = null;
 
-    // FIXME: Had to disable this parsing optimization, as fundamental at odds with animation
+    // FIXME: Had to disable this parsing optimization, as it is fundamentally at odds with animation
     // Investigate caching/cloning properties of objects that have animations
 
     // We only parse the scene on new jobs, this way the tracer

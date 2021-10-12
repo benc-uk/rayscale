@@ -1,4 +1,4 @@
-name: Basic Demo 
+name: Basic Demo
 width: 1200
 height: 800
 #tasks: 8
@@ -6,124 +6,127 @@ antiAlias: false
 scene:
   backgroundColour: [10, 10, 30]
   ambientLevel: 0.6
-  cameraFov: 30
-  cameraPos: [-11, 8, 2]
-  cameraLookAt: [2, 5, -21]
+  camera:
+    fov: 30
+    pos: [-11, 8, 2]
+    lookAt: [2, 5, -21]
+
   lights:
-  - pos: [-34, 25, 4]
-    radius: 300
-    brightness: 1
+    - pos: [-34, 25, 4]
+      radius: 300
+      brightness: 1
+
   objects:
-  - type: sphere
-    name: red-ball
-    pos: [8, 2, -22]
-    radius: 2
-    material:
-      preset: shiny
-      kr: 0.0
-      ka: 0.2
-      kd: 0.99
-      ks: 0.6
-      hardness: 3
-      texture:
-        type: basic
-        colour: [225, 10, 65]
-  - type: sphere
-    name: blue-ball
-    pos: [6, 5, -29]
-    radius: 5
-    material:
-      preset: shiny
-      kr: 0.2
-      ka: 0.05
-      kd: 1.2
-      ks: 1.3
-      hardness: 100
-      texture:
-        type: basic
-        colour: [25, 10, 245]
-  - type: sphere
-    name: chrome1
-    pos: [-2, 3, -35]
-    radius: 3
-    material:
-      preset: shiny
-      kr: 0.9
-      ka: 0.0
-      kd: 1
-      ks: 1.3
-      hardness: 100
-      texture:
-        type: basic
-        colour: [20, 20, 40]      
-  - type: sphere
-    name: woodball
-    pos: [-1.6, 2, -20]
-    radius: 2
-    material:
-      preset: shiny
-      kr: 0.19
-      ka: 0.0
-      kd: 1.4
-      ks: 1.5
-      hardness: 10
-      texture:
-        scaleU: 0.2
-        scaleV: 1.7
-        type: image
-        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
-  - type: sphere
-    name: chrome3
-    pos: [20, 4, -30]
-    radius: 4
-    material:
-      preset: shiny
-      kr: 0.9
-      ka: 0.0
-      kd: 1
-      ks: 1.3
-      hardness: 100
-      texture:
-        type: basic
-        colour: [20, 20, 40]   
-  - type: plane
-    name: floor
-    pos: [0, 0, 0]
-    rotate: [0, 0, 0]
-    material:
-      preset: matte
-      ka: 0.25
-      kd: 0.9
-      kr: 0.5
-      texture:
-        scaleU: 10
-        scaleV: 10
-        type: check
-        colour1: [5, 130, 5]
-        colour2: [255, 255, 255]
-  - type: plane
-    name: wall
-    pos: [0, 0, -40]
-    rotate: [90, 0, 0]
-    material:
-      preset: matte
-      kd: 6
-      ka: 0.2
-      texture:
-        scaleU: 12
-        scaleV: 12
-        type: image
-        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png
-  - type: plane
-    name: wall
-    pos: [25, 0, -4]
-    rotate: [90, 0, 90]
-    material:
-      preset: matte
-      kd: 6
-      ka: 0.2
-      texture:
-        scaleU: 12
-        scaleV: 12
-        type: image
-        src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png        
+    - type: sphere
+      name: red-ball
+      pos: [8, 2, -22]
+      radius: 2
+      material:
+        preset: shiny
+        kr: 0.0
+        ka: 0.2
+        kd: 0.99
+        ks: 0.6
+        hardness: 3
+        texture:
+          type: basic
+          colour: [225, 10, 65]
+    - type: sphere
+      name: blue-ball
+      pos: [6, 5, -29]
+      radius: 5
+      material:
+        preset: shiny
+        kr: 0.2
+        ka: 0.05
+        kd: 1.2
+        ks: 1.3
+        hardness: 100
+        texture:
+          type: basic
+          colour: [25, 10, 245]
+    - type: sphere
+      name: chrome1
+      pos: [-2, 3, -35]
+      radius: 3
+      material:
+        preset: shiny
+        kr: 0.9
+        ka: 0.0
+        kd: 1
+        ks: 1.3
+        hardness: 100
+        texture:
+          type: basic
+          colour: [20, 20, 40]
+    - type: sphere
+      name: woodball
+      pos: [-1.6, 2, -20]
+      radius: 2
+      material:
+        preset: shiny
+        kr: 0.19
+        ka: 0.0
+        kd: 1.4
+        ks: 1.5
+        hardness: 10
+        texture:
+          scaleU: 0.2
+          scaleV: 1.7
+          type: image
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/wooddark.png
+    - type: sphere
+      name: chrome3
+      pos: [20, 4, -30]
+      radius: 4
+      material:
+        preset: shiny
+        kr: 0.9
+        ka: 0.0
+        kd: 1
+        ks: 1.3
+        hardness: 100
+        texture:
+          type: basic
+          colour: [20, 20, 40]
+    - type: plane
+      name: floor
+      pos: [0, 0, 0]
+      rotate: [0, 0, 0]
+      material:
+        preset: matte
+        ka: 0.25
+        kd: 0.9
+        kr: 0.5
+        texture:
+          scaleU: 10
+          scaleV: 10
+          type: check
+          colour1: [5, 130, 5]
+          colour2: [255, 255, 255]
+    - type: plane
+      name: wall
+      pos: [0, 0, -40]
+      rotate: [90, 0, 0]
+      material:
+        preset: matte
+        kd: 6
+        ka: 0.2
+        texture:
+          scaleU: 12
+          scaleV: 12
+          type: image
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png
+    - type: plane
+      name: wall
+      pos: [25, 0, -4]
+      rotate: [90, 0, 90]
+      material:
+        preset: matte
+        kd: 6
+        ka: 0.2
+        texture:
+          scaleU: 12
+          scaleV: 12
+          type: image
+          src: https://github.com/benc-uk/rayscale/raw/master/examples/textures/stone-wall.png

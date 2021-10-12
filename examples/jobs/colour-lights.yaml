@@ -4,9 +4,10 @@ height: 800
 scene:
   backgroundColour: [10, 10, 30]
   ambientLevel: 0.15
-  cameraFov: 50
-  cameraPos: [0, 45, 20]
-  cameraLookAt: [0, 0, 0]
+  camera:
+    fov: 50
+    pos: [0, 45, 20]
+    lookAt: [0, 0, 0]
   lights:
     - pos: [25, 12, 8]
       radius: 50
@@ -20,7 +21,7 @@ scene:
       radius: 50
       brightness: 2.85
       colour: [60, 60, 255]
-  objects: 
+  objects:
     - type: plane
       name: floor
       pos: [0, 0, 0]
@@ -34,7 +35,7 @@ scene:
           scaleU: 6
           scaleV: 6
           colour1: [70, 70, 70]
-          colour2: [180, 180, 180]  
+          colour2: [180, 180, 180]
     - type: sphere
       name: test
       pos: [0, 6, 0]

@@ -6,13 +6,16 @@ height: 1000
 scene:
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.15
-  cameraFov: 30
-  cameraPos: [0, 12, 10]
-  cameraLookAt: [0, 0, -20]
+  camera:
+    fov: 30
+    pos: [0, 12, 10]
+    lookAt: [0, 0, -20]
+
   lights:
     - pos: [0, 30, 20]
       radius: 3000
       brightness: 2.5
+
   objects:
     - type: sphere
       name: pillar
