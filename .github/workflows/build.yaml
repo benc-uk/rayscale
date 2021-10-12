@@ -11,6 +11,9 @@ env:
   DOCKER_USER: bencuk
   IMAGE_TAG: dev
 
+permissions:
+  packages: write
+
 jobs:
   buildDevImage:
     runs-on: ubuntu-latest
