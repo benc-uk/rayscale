@@ -1,0 +1,7 @@
+{
+  "input": "./",
+  "output": "./gallery",
+  "exclude": "./gallery/**",
+  "theme": "flow",
+  "title": "Rayscale Gallery"
+}
