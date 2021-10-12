@@ -33,7 +33,7 @@ RayScale currently provides:
 ## Sample Images
 These are some sample images rendered with RayScale
 
-### [📷 Complete Gallery Here](examples/gallery)
+### [📷 Complete Gallery Here](http://rayscale.benco.io/examples/gallery/)
 
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/table-scene-v2.png"><img src="examples/renders/table-scene-v2.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/teapot-best.png"><img src="examples/renders/teapot-best.png"></a>
