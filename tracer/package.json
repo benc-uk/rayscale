@@ -1,6 +1,6 @@
 {
   "name": "rayscale",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Container based distributed raytracer - tracer/worker",
   "main": "dist/server.js",
   "scripts": {

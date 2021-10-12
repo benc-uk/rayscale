@@ -100,6 +100,7 @@ export class Scheduler {
     if(!jobInput.scene) throw('Job must have a scene');
 
     // Animation settings
+    let snapFrame = -1;
     if(jobInput.animation) {
       if(!jobInput.animation.duration) throw('Job animation must have a duration');
       this.job.duration = jobInput.animation.duration;
@@ -110,6 +111,13 @@ export class Scheduler {
         this.job.framerate = 30;
 
       this.job.frameCount = this.job.duration * this.job.framerate;
+
+      // Special case for a single frame at a specific time
+      if(jobInput.animation.snapshot) {
+        console.log(`### Job will render a single frame, animation snapshot, at time ${jobInput.animation.snapshot}`);
+        snapFrame = jobInput.animation.snapshot * this.job.framerate;
+        this.job.frameCount = 1;
+      }
     } else {
       this.job.duration = 0;
       this.job.framerate = 0;
@@ -158,7 +166,7 @@ export class Scheduler {
     this.job.taskCount = this.job.tasksPerFrame * this.job.frameCount;
 
     // Create initial frame, or only frame for static images
-    this.job.currentFrame = 1;
+    this.job.currentFrame = snapFrame >= 0 ? snapFrame : 1;
     this.createNewFrame(this.job.currentFrame);
 
     console.log(`### New job created: '${this.job.name}' with ${this.job.taskCount} tasks`);

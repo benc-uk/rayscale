@@ -39,9 +39,13 @@ These are some sample images rendered with RayScale
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/teapot-best.png"><img src="examples/renders/teapot-best.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/transparency.png"><img src="examples/renders/transparency.png"></a>
 <a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/hires.png"><img src="examples/renders/hires.png"></a>
-<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/quilted-floor.png"><img src="examples/renders/quilted-floor.png"></a>
+<a href="https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/renders/sky-chess.png"><img src="examples/renders/sky-chess.png"></a>
 
+## Sample Video Animations
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/yhMa_ntaJ2g/0.jpg)](https://youtu.be/yhMa_ntaJ2g)
+
+### [🎬 Complete Playlist Here](https://www.youtube.com/playlist?list=PLoCN-5N_hBOT5Gl7QMQ9qWBf6iFrpDPs7) 
 
 # Core Components (Microservices)
 RayScale is comprised of two separate microservices, the *Controller* and the *Tracers*. Both are written in Node.js using TypeScript, and all interaction to/from these services is via REST API (using Express).

@@ -143,6 +143,7 @@ export class API {
   // List out the jobs directory, used by the UI
   // ====================================================================================
   public listJobs = (req: Request, res: Response): void => {
+    // FIXME: send back some contents, e.g. if video exists and first image frame (may not be 1)
     const jobData = { jobs: [] as string[] };
     fs.readdirSync(this.scheduler.outputDir).forEach(file => {
       jobData.jobs.push(file);
