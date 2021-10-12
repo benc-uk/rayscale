@@ -4,9 +4,10 @@ height: 480
 scene:
   backgroundColour: [100, 100, 100]
   ambientLevel: 0.15
-  cameraFov: 30
-  cameraPos: [0, 10, 50]
-  cameraLookAt: [0, 0, 0]
+  camera:
+    fov: 30
+    pos: [0, 10, 50]
+    lookAt: [0, 0, 0]
   lights:
     - pos: [0, 0, 200]
       radius: 3000

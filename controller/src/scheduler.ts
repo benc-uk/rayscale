@@ -14,7 +14,7 @@ import { JobInput } from './lib/job-input';
 import { Task } from './lib/task';
 import { Tracer } from './lib/tracer';
 import axios from 'axios';
-import { CancelToken } from 'cancel-token';
+import { AbortController } from 'node-abort-controller';
 
 // ====================================================================================================
 // Class manages jobs, tasks tracers & and task results - it's the heart of everything
@@ -60,13 +60,13 @@ export class Scheduler {
       try {
         // Loooong story but timeouts in Axios simply don't work...
         // https://stackoverflow.com/a/54573024/1343261
-        const canTokensource = CancelToken.source();
+        const controller = new AbortController();
         setTimeout(() => {
-          canTokensource.cancel();
+          controller.abort();
         }, TIMEOUT);
 
         axios.defaults.timeout = TIMEOUT;
-        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, cancelToken: canTokensource.token});
+        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, signal: controller.signal});
         if(pingResp && pingResp.status == 200) {
           continue;
         } else {
@@ -84,7 +84,7 @@ export class Scheduler {
   // Create a new render job, with sub tasks fired off to tracers
   // ====================================================================================
   public createJob(jobInput: JobInput, jobRawYAML: string): string {
-    // TODO: Why not useJSON-schmea to validate the input and also the scene?
+    // TODO: Why not use JSON-schema to validate the input and also the scene?
     // This would save a lot of checking the in the scene parser and also here
 
     // Job object holds a lot of state
@@ -100,6 +100,7 @@ export class Scheduler {
     if(!jobInput.scene) throw('Job must have a scene');
 
     // Animation settings
+    let snapFrame = -1;
     if(jobInput.animation) {
       if(!jobInput.animation.duration) throw('Job animation must have a duration');
       this.job.duration = jobInput.animation.duration;
@@ -110,6 +111,13 @@ export class Scheduler {
         this.job.framerate = 30;
 
       this.job.frameCount = this.job.duration * this.job.framerate;
+
+      // Special case for a single frame at a specific time
+      if(jobInput.animation.snapshot) {
+        console.log(`### Job will render a single frame, animation snapshot, at time ${jobInput.animation.snapshot}`);
+        snapFrame = jobInput.animation.snapshot * this.job.framerate;
+        this.job.frameCount = 1;
+      }
     } else {
       this.job.duration = 0;
       this.job.framerate = 0;
@@ -158,7 +166,7 @@ export class Scheduler {
     this.job.taskCount = this.job.tasksPerFrame * this.job.frameCount;
 
     // Create initial frame, or only frame for static images
-    this.job.currentFrame = 1;
+    this.job.currentFrame = snapFrame >= 0 ? snapFrame : 1;
     this.createNewFrame(this.job.currentFrame);
 
     console.log(`### New job created: '${this.job.name}' with ${this.job.taskCount} tasks`);

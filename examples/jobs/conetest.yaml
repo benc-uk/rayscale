@@ -4,10 +4,11 @@ height: 400
 scene:
   backgroundColour: [4, 22, 53]
   ambientLevel: 0.1
-  cameraFov: 50
-  cameraPos: [0, 3, 0]
-  cameraLookAt: [0, 0, -20]   
-  
+  camera:
+    fov: 50
+    pos: [0, 3, 0]
+    lookAt: [0, 0, -20]
+
   lights:
     - pos: [20, 40, 70]
       radius: 2000
@@ -23,5 +24,5 @@ scene:
       length: 11
       material:
         preset: shiny
-        texture: 
+        texture:
           colour: [255, 20, 20]

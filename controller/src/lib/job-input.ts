@@ -14,6 +14,7 @@ export class JobInput {
   animation: {           // Animation settings, can be omitted when rendering a single image
     framerate: number;   // Animation framerate in frames per second (e.g. 30)
     duration: number;    // Animation duration, in seconds
+    snapshot: number;    // Force a single frame snapshot at given time
   };
   scene:     Record<string, unknown>;     // Scene to be rendered, unparsed JSON
 }

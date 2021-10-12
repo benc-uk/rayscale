@@ -8,11 +8,14 @@ on:
     branches: [master]
 
 env:
-  DOCKER_USER: bencuk
   IMAGE_TAG: dev
+
+permissions:
+  packages: write
 
 jobs:
   buildDevImage:
+    name: Build & Push Dev Images
     runs-on: ubuntu-latest
 
     steps:
@@ -37,8 +40,8 @@ jobs:
         run: docker build . -f controller/Dockerfile --tag ghcr.io/$GITHUB_ACTOR/rayscale/controller:$IMAGE_TAG
 
       - name: Push to dev tag Github registry
-        #if: github.ref == 'refs/heads/master' # && github.event_name == 'push'
+        if: github.ref == 'refs/heads/master' # && github.event_name == 'push'
         run: |
-          echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
           docker push ghcr.io/$GITHUB_ACTOR/rayscale/tracer:$IMAGE_TAG
           docker push ghcr.io/$GITHUB_ACTOR/rayscale/controller:$IMAGE_TAG

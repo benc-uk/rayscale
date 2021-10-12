@@ -37,10 +37,11 @@ export class ObjManager {
       axios.get(url, {responseType: 'text'})
         .then(respData => {
           try {
-            // Parse OBJ and store in cache
-            // We use the url as object key
-            const parser = new ObjFileParser(respData.data.toString());
-            this.objs[url] = parser.parse();
+            // Parse OBJ and store in cache, we use the url as object key
+            if(respData && respData.data) {
+              const parser = new ObjFileParser(respData.data);
+              this.objs[url] = parser.parse();
+            }
 
             // Validate some stuff
             if(!this.objs[url].models[0]) throw 'File must contain at least one model';
@@ -48,7 +49,7 @@ export class ObjManager {
 
             resolve(respData.status);
           } catch(e) {
-          // Important we delete it for future runs, as we are singleton
+            // Important we delete it for future runs, as we are singleton
             delete this.objs[url];
             reject(`OBJ file did not parse. ${e}`);
           }

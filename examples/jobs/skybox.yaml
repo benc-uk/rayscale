@@ -26,34 +26,34 @@ scene:
         noShade: true
         texture:
           - type: image
-            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/textures/skybox/Stormydays/stormydays_lf.png
+            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/tex/skybox/Stormydays/stormydays_lf.png
             scaleU: 1000
             scaleV: 1000
           - type: image
-            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/textures/skybox/Stormydays/stormydays_rt.png
+            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/tex/skybox/Stormydays/stormydays_rt.png
             scaleU: 1000
             scaleV: 1000
             flipU: true
           - type: image
-            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/textures/skybox/Stormydays/stormydays_dn.png
+            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/tex/skybox/Stormydays/stormydays_dn.png
             scaleU: 1000
             scaleV: 1000
             flipV: true
             swapUV: true
           - type: image
-            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/textures/skybox/Stormydays/stormydays_up.png
+            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/tex/skybox/Stormydays/stormydays_up.png
             scaleU: 1000
             scaleV: 1000
             flipU: true
             flipV: true
             swapUV: true
           - type: image
-            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/textures/skybox/Stormydays/stormydays_bk.png
+            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/tex/skybox/Stormydays/stormydays_bk.png
             scaleU: 1000
             scaleV: 1000
             flipU: true
           - type: image
-            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/examples/textures/skybox/Stormydays/stormydays_ft.png
+            src: https://raw.githubusercontent.com/benc-uk/rayscale/master/controller/assets/tex/skybox/Stormydays/stormydays_ft.png
             scaleU: 1000
             scaleV: 1000
 

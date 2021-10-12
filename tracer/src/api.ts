@@ -39,7 +39,7 @@ export class API {
     const task: Task = req.body.task;
     let scene: Scene = null;
 
-    // FIXME: Had to disable this parsing optimization, as fundamental at odds with animation
+    // FIXME: Had to disable this parsing optimization, as it is fundamentally at odds with animation
     // Investigate caching/cloning properties of objects that have animations
 
     // We only parse the scene on new jobs, this way the tracer
@@ -100,12 +100,12 @@ export class API {
           'content-type': 'application/octet-stream',
           'x-tracer': this.tracerEndPoint,
           'x-task-id': task.id,
-          'x-task-index': task.index,
-          'x-stats-rayscreated': Stats.raysCreated,
-          'x-stats-rayscast': Stats.raysCast,
-          'x-stats-shadowrays': Stats.shadowRays,
-          'x-stats-objtests': Stats.objectTests,
-          'x-stats-meshtests': Stats.meshFaceTests
+          'x-task-index': task.index.toString(),
+          'x-stats-rayscreated': Stats.raysCreated.toString(),
+          'x-stats-rayscast': Stats.raysCast.toString(),
+          'x-stats-shadowrays': Stats.shadowRays.toString(),
+          'x-stats-objtests': Stats.objectTests.toString(),
+          'x-stats-meshtests': Stats.meshFaceTests.toString()
         },
         maxContentLength: Infinity, // Apparently this is a thing
         maxBodyLength: Infinity
