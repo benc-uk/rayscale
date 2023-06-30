@@ -66,7 +66,7 @@ export class Scheduler {
         }, TIMEOUT);
 
         axios.defaults.timeout = TIMEOUT;
-        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT, signal: controller.signal});
+        const pingResp = await axios.get(`${endPoint}/ping`, {timeout: TIMEOUT});
         if(pingResp && pingResp.status == 200) {
           continue;
         } else {

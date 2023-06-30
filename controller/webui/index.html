@@ -1,37 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RayScale: Admin Console</title>
-  <link rel="shortcut icon" href="img/icon.png" type="image/png">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RayScale: Admin Console</title>
+    <link rel="shortcut icon" href="img/icon.png" type="image/png" />
 
-  <!-- CSS framework and icons -->
-  <script defer src="https://use.fontawesome.com/releases/v5.13.1/js/all.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulmaswatch/0.8.1/darkly/bulmaswatch.min.css"/>
+    <!-- CSS framework and icons -->
+    <script
+      defer
+      src="https://use.fontawesome.com/releases/v5.13.1/js/all.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulmaswatch/0.8.1/darkly/bulmaswatch.min.css"
+    />
 
-  <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css" />
 
-  <!-- Vue support, without webpack or Node.js -->
-  <script src="https://unpkg.com/vue"></script>
-  <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+    <!-- Vue support, without webpack or Node.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
 
-  <!-- Monaco editor -->
-  <script src="js/monaco/loader.js"></script>
-</head>
+    <!-- Monaco editor -->
+    <script src="js/monaco/loader.js"></script>
+  </head>
 
-<body>
-  <!-- Vue app will be mounted here -->
-  <div id="app"></div>
+  <body>
+    <!-- Vue app will be mounted here -->
+    <div id="app"></div>
 
-  <script type="module">
-    import app from './js/app.js'
-    import router from './js/router.js'
-    new Vue({
-      router,
-      render: function (h) { return h(app); },
-    }).$mount('#app');
-  </script>
-</body>
-
+    <script type="module">
+      import app from "./js/app.js";
+      import router from "./js/router.js";
+      new Vue({
+        router,
+        render: function (h) {
+          return h(app);
+        },
+      }).$mount("#app");
+    </script>
+  </body>
 </html>
